@@ -1,0 +1,1653 @@
+<!DOCTYPE html>
+<html>
+<head>
+  
+  <meta charset="UTF-8">
+  <title>Sistema de Seguimiento EOT´s JCF - CDMX</title>
+
+  <style>
+    :root {
+      --guinda: #691b31;
+      --guinda-dark: #4c1022;
+      --gris: #f5f5f5;
+      --blanco: #ffffff;
+      --texto: #222;
+      --borde: #ddd;
+      --verde: #1b5e20;
+      --rojo: #b71c1c;
+      --amarillo: #fff8e1;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      margin: 0;
+      background: var(--gris);
+      color: var(--texto);
+    }
+
+    .login-view {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 25px;
+    }
+
+    .login-card {
+      background: white;
+      width: 100%;
+      max-width: 430px;
+      padding: 30px;
+      border-radius: 18px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .login-card h1 {
+      color: var(--guinda);
+      text-align: center;
+      margin-top: 0;
+      font-size: 24px;
+    }
+
+    .login-card p {
+      text-align: center;
+      color: #555;
+      font-size: 14px;
+    }
+
+    label {
+      display: block;
+      font-weight: bold;
+      margin-top: 14px;
+      font-size: 14px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      margin-top: 6px;
+      border: 1px solid var(--borde);
+      border-radius: 10px;
+      font-size: 14px;
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 85px;
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 11px 15px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    .btn-primary {
+      background: var(--guinda);
+      color: white;
+      width: 100%;
+      margin-top: 18px;
+    }
+
+    .btn-primary:hover {
+      background: var(--guinda-dark);
+    }
+
+    .btn-small {
+      background: var(--guinda);
+      color: white;
+      padding: 8px 12px;
+      margin: 4px;
+    }
+
+    .btn-danger {
+      background: #b71c1c;
+      color: white;
+      padding: 8px 12px;
+      margin: 4px;
+    }
+
+    .btn-gray {
+      background: #555;
+      color: white;
+      padding: 8px 12px;
+      margin: 4px;
+    }
+
+    .app-view {
+      display: none;
+      min-height: 100vh;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 275px;
+      background: var(--guinda);
+      color: white;
+      padding: 22px;
+      overflow-y: auto;
+    }
+
+    .sidebar h2 {
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 21px;
+    }
+
+    .user-box {
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 24px;
+      opacity: 0.95;
+    }
+
+    .menu-btn {
+      width: 100%;
+      background: transparent;
+      color: white;
+      border: 1px solid rgba(255,255,255,0.25);
+      text-align: left;
+      margin-bottom: 9px;
+    }
+
+    .menu-btn:hover,
+    .menu-btn.active {
+      background: white;
+      color: var(--guinda);
+    }
+
+    .logout-btn {
+      width: 100%;
+      background: #333;
+      color: white;
+      margin-top: 15px;
+    }
+
+    .content {
+      margin-left: 275px;
+      padding: 30px;
+    }
+
+    .modulo {
+      display: none;
+    }
+
+    .modulo.active {
+      display: block;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+      margin-bottom: 20px;
+    }
+
+    .card h2 {
+      margin-top: 0;
+      color: var(--guinda);
+    }
+
+    .alert {
+      padding: 12px;
+      border-radius: 10px;
+      margin-top: 12px;
+      font-size: 14px;
+    }
+
+    .alert.ok {
+      background: #e8f5e9;
+      color: var(--verde);
+    }
+
+    .alert.error {
+      background: #ffebee;
+      color: var(--rojo);
+    }
+
+    .alert.warn {
+      background: var(--amarillo);
+      color: #8a6d00;
+    }
+
+    .loader {
+      display: none;
+      margin-top: 15px;
+      font-size: 14px;
+      color: #555;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+    }
+
+    .grid-drives,
+    .grid-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .drive-card,
+    .doc-card,
+    .recurso-card,
+    .solicitud-card {
+      background: #ffffff;
+      border: 1px solid #ddd;
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    }
+
+    .drive-card h3,
+    .doc-card h3,
+    .recurso-card h3,
+    .solicitud-card h3 {
+      margin: 8px 0;
+      color: #691b31;
+      font-size: 18px;
+    }
+
+    .drive-card p,
+    .doc-card p,
+    .recurso-card p,
+    .solicitud-card p {
+      font-size: 14px;
+      color: #555;
+    }
+
+    .drive-card a,
+    .doc-card a,
+    .recurso-card a {
+      display: inline-block;
+      background: #691b31;
+      color: #fff;
+      text-decoration: none;
+      padding: 10px 14px;
+      border-radius: 10px;
+      font-weight: bold;
+      margin-top: 10px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #eeeeee;
+      color: #333;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      margin-bottom: 8px;
+    }
+
+    .badge-ok {
+      background: #e8f5e9;
+      color: #1b5e20;
+    }
+
+    .badge-warn {
+      background: #fff8e1;
+      color: #8a6d00;
+    }
+
+    .badge-error {
+      background: #ffebee;
+      color: #b71c1c;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+      background: white;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 9px;
+      font-size: 13px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #691b31;
+      color: white;
+    }
+
+    @media (max-width: 850px) {
+      .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+      }
+
+      .content {
+        margin-left: 0;
+        padding: 20px;
+      }
+    }
+
+    /* ================= BUSCADOR DE TARJETAS ================= */
+
+    .tarjetas-buscador {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .tarjetas-buscador .btn-primary {
+      width: auto;
+      min-width: 130px;
+      margin-top: 0;
+      height: 43px;
+    }
+
+    .tarjetas-resumen {
+      margin-top: 18px;
+    }
+
+    .tarjetas-seccion {
+      margin-top: 22px;
+    }
+
+    .tarjetas-seccion h3 {
+      color: var(--guinda);
+      margin-bottom: 10px;
+    }
+
+    .tabla-tarjetas-wrap {
+      width: 100%;
+      overflow-x: auto;
+      border: 1px solid var(--borde);
+      border-radius: 12px;
+      background: white;
+    }
+
+    .tabla-tarjetas {
+      min-width: 920px;
+      margin-top: 0;
+    }
+
+    .tabla-tarjetas th,
+    .tabla-tarjetas td {
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .tabla-tarjetas tbody tr:nth-child(even) {
+      background: #fafafa;
+    }
+
+    .tabla-tarjetas tbody tr:hover {
+      background: #f7edf0;
+    }
+
+    .estatus-tarjeta {
+      display: inline-block;
+      background: var(--guinda);
+      color: white;
+      padding: 6px 9px;
+      border-radius: 8px;
+      font-weight: bold;
+      white-space: nowrap;
+    }
+
+    .origen-tarjeta {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: bold;
+      margin-left: 6px;
+    }
+
+    .origen-operativos {
+      background: #e8f5e9;
+      color: #1b5e20;
+    }
+
+    .origen-reposicion {
+      background: #fff8e1;
+      color: #8a6d00;
+    }
+
+    @media (max-width: 650px) {
+      .tarjetas-buscador {
+        grid-template-columns: 1fr;
+      }
+
+      .tarjetas-buscador .btn-primary {
+        width: 100%;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <div id="loginView" class="login-view">
+    <div class="login-card">
+      <h1>Sistema de Seguimiento EOT´s JCF - CDMX</h1>
+      <p>Ingresa con tu CURP y clave de acceso.</p>
+
+      <label>CURP</label>
+      <input type="text" id="curpLogin" placeholder="INGRESA TU CURP">
+
+      <label>Clave</label>
+      <input type="password" id="claveLogin" placeholder="Ingresa tu clave">
+
+      <button class="btn-primary" onclick="iniciarSesion()">Ingresar</button>
+
+      <div id="loginMsg"></div>
+      <div id="loginLoader" class="loader">Validando acceso...</div>
+    </div>
+  </div>
+
+  <div id="appView" class="app-view">
+
+    <div class="sidebar">
+      <h2>EOT´s JCF</h2>
+
+      <div class="user-box">
+        <strong id="userNombre"></strong><br>
+        CURP: <span id="userCurp"></span><br>
+        Puesto: <span id="userPuesto"></span><br>
+        Nivel: <span id="userNivel"></span>
+      </div>
+
+      <button class="menu-btn active" onclick="abrirModulo('inicio', this)">Inicio</button>
+      <button class="menu-btn" onclick="abrirAtencionC(this)">Atención C</button>
+      <button class="menu-btn" onclick="abrirOficinaOV(this)">Oficina OV</button>
+      <button class="menu-btn" onclick="abrirDocumentos(this)">Carga de documentos</button>
+      <button class="menu-btn" onclick="abrirRecursos(this)">Recursos para descargar</button>
+      <button class="menu-btn" onclick="abrirDirectorioDrives(this)">Directorio de Drives</button>
+      <button class="menu-btn" onclick="abrirBuscadorTarjetas(this)">Buscador de tarjetas</button>
+      <button class="menu-btn" onclick="abrirVacaciones(this)">Vacaciones / Permisos</button>
+      <button id="btnAdminVacaciones" class="menu-btn" style="display:none;" onclick="abrirAdminVacaciones(this)">Administrador vacaciones</button>
+
+      <button class="logout-btn" onclick="cerrarSesion()">Cerrar sesión</button>
+    </div>
+
+    <div class="content">
+
+      <div id="inicio" class="modulo active">
+        <div class="card">
+          <h2>Bienvenido</h2>
+          <p>Selecciona un módulo del menú lateral.</p>
+        </div>
+      </div>
+
+      <div id="atencionC" class="modulo">
+        <div class="card">
+          <h2>Atención C</h2>
+
+          <div class="grid">
+            <div>
+              <label>Fecha</label>
+              <input type="date" id="acFecha">
+            </div>
+
+            <div>
+              <label>Estado</label>
+              <select id="acEstado"></select>
+            </div>
+
+            <div>
+              <label>Usuario</label>
+              <input type="text" id="acUsuario">
+            </div>
+
+            <div>
+              <label>Folio</label>
+              <input type="text" id="acFolio">
+            </div>
+
+            <div>
+              <label>Nombre del usuario</label>
+              <input type="text" id="acNombreUsuario">
+            </div>
+
+            <div>
+              <label>Trámite</label>
+              <select id="acTramite"></select>
+            </div>
+
+            <div>
+              <label>Estrategia mujeres</label>
+              <select id="acEstrategia">
+                <option value="">NO APLICA</option>
+              </select>
+            </div>
+          </div>
+
+          <label>Observaciones</label>
+          <textarea id="acObservaciones"></textarea>
+
+          <button class="btn-primary" onclick="guardarAC()">Guardar Atención C</button>
+
+          <div id="acMsg"></div>
+        </div>
+      </div>
+
+      <div id="oficinaOV" class="modulo">
+        <div class="card">
+          <h2>Oficina OV</h2>
+
+          <div class="grid">
+            <div>
+              <label>Fecha</label>
+              <input type="date" id="ovFecha">
+            </div>
+
+            <div>
+              <label>Estado</label>
+              <select id="ovEstado"></select>
+            </div>
+
+            <div>
+              <label>Usuario</label>
+              <input type="text" id="ovUsuario">
+            </div>
+
+            <div>
+              <label>Folio</label>
+              <input type="text" id="ovFolio">
+            </div>
+
+            <div>
+              <label>Nombre del usuario</label>
+              <input type="text" id="ovNombreUsuario">
+            </div>
+
+            <div>
+              <label>Trámite</label>
+              <select id="ovTramite"></select>
+            </div>
+          </div>
+
+          <label>Observaciones</label>
+          <textarea id="ovObservaciones"></textarea>
+
+          <button class="btn-primary" onclick="guardarOV()">Guardar Oficina OV</button>
+
+          <div id="ovMsg"></div>
+        </div>
+      </div>
+
+      <div id="documentos" class="modulo">
+        <div class="card">
+          <h2>Carga de documentos firmados</h2>
+          <p>Selecciona el tipo de documento, verifica si ya existe y carga el PDF correspondiente.</p>
+
+          <label>Documento</label>
+          <select id="docTipo"></select>
+
+          <button class="btn-primary" onclick="verificarDocumento()">Verificar documento</button>
+
+          <div id="docMsg"></div>
+          <div id="docLoader" class="loader">Cargando información...</div>
+
+          <div id="docResultado" style="display:none; margin-top:15px;">
+            <div class="doc-card">
+              <h3 id="docNombreEsperado"></h3>
+              <p id="docEstado"></p>
+
+              <input type="file" id="docArchivo" accept="application/pdf">
+
+              <button class="btn-primary" onclick="subirDocumento()">Subir / reemplazar PDF</button>
+
+              <div id="docLinkBox"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div id="recursos" class="modulo">
+        <div class="card">
+          <h2>Recursos para descargar</h2>
+          <p>Archivos disponibles para tu usuario.</p>
+
+          <div id="recursosLoader" class="loader">Cargando recursos...</div>
+          <div id="recursosMsg"></div>
+          <div id="recursosLista" class="grid-cards"></div>
+        </div>
+      </div>
+
+      <div id="directorioDrives" class="modulo">
+        <div class="card">
+          <h2>Directorio de Drives</h2>
+          <p>Listado de Drives disponibles según tu nivel de acceso.</p>
+
+          <div id="directorioDrivesLoader" class="loader">Cargando directorio...</div>
+          <div id="directorioDrivesMsg"></div>
+          <div id="directorioDrivesLista" class="grid-drives"></div>
+        </div>
+      </div>
+
+
+      <div id="buscadorTarjetas" class="modulo">
+        <div class="card">
+          <h2>Buscador de tarjetas</h2>
+          <p>
+            Consulta por Folio del Aprendiz o CURP para saber si la tarjeta
+            se encuentra en Operativos o en Reposición.
+          </p>
+
+          <div class="tarjetas-buscador">
+            <div>
+              <label>Folio del Aprendiz o CURP</label>
+              <input
+                type="text"
+                id="tarjetaCriterio"
+                placeholder="INGRESA FOLIO DEL APRENDIZ O CURP"
+                autocomplete="off"
+                onkeydown="buscarTarjetaConEnter(event)"
+              >
+            </div>
+
+            <button
+              id="btnBuscarTarjeta"
+              class="btn-primary"
+              onclick="ejecutarBusquedaTarjeta()"
+            >
+              Buscar
+            </button>
+          </div>
+
+          <div id="tarjetasLoader" class="loader">Buscando en Operativos y Reposición...</div>
+          <div id="tarjetasMsg"></div>
+          <div id="tarjetasResultado" class="tarjetas-resumen"></div>
+        </div>
+      </div>
+
+      <div id="vacaciones" class="modulo">
+        <div class="card">
+          <h2>Vacaciones / Permisos</h2>
+
+          <div id="vacacionesInfo"></div>
+
+          <h3>Solicitar vacaciones</h3>
+          <p>Selecciona uno o varios días. No se permiten sábados ni domingos.</p>
+
+          <label>Fechas de vacaciones</label>
+          <input type="text" id="vacFechas" placeholder="Ejemplo: 2026-07-15, 2026-07-16">
+
+          <button class="btn-primary" onclick="enviarVacaciones()">Enviar solicitud de vacaciones</button>
+
+          <hr>
+
+          <h3>Solicitar permiso</h3>
+
+          <div class="grid">
+            <div>
+              <label>Fecha</label>
+              <input type="date" id="permisoFecha">
+            </div>
+
+            <div>
+              <label>Tipo de permiso</label>
+              <select id="permisoTipo" onchange="toggleHorarioPermiso()">
+                <option value="">Selecciona</option>
+                <option value="TOTAL">TOTAL</option>
+                <option value="PARCIAL">PARCIAL</option>
+              </select>
+            </div>
+
+            <div class="horarioPermiso" style="display:none;">
+              <label>Hora inicio</label>
+              <input type="time" id="permisoHoraInicio">
+            </div>
+
+            <div class="horarioPermiso" style="display:none;">
+              <label>Hora fin</label>
+              <input type="time" id="permisoHoraFin">
+            </div>
+          </div>
+
+          <label>Justificación</label>
+          <textarea id="permisoJustificacion"></textarea>
+
+          <button class="btn-primary" onclick="enviarPermiso()">Enviar solicitud de permiso</button>
+
+          <div id="vacacionesMsg"></div>
+
+          <h3>Mis solicitudes</h3>
+          <div id="misSolicitudes"></div>
+        </div>
+      </div>
+
+      <div id="adminVacaciones" class="modulo">
+        <div class="card">
+          <h2>Administrador de vacaciones</h2>
+
+          <div id="adminVacacionesLoader" class="loader">Cargando solicitudes...</div>
+          <div id="adminVacacionesMsg"></div>
+          <div id="adminVacacionesTabla"></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+<script>
+  // URL pública del proxy Cloudflare Worker, NO URL de Apps Script.
+  const EOTS_API_URL = "https://seguimiento-eots.alfredo-jcf-2817.workers.dev";
+  // API compatible con el patrón google.script.run.withSuccessHandler(...).función(...)
+  window.google = { script: { run: new Proxy({}, {
+    get(_target, prop) {
+      const makeChain = (success, failure) => new Proxy({}, {
+        get(_chain, key) {
+          if (key === 'withSuccessHandler') return fn => makeChain(fn, failure);
+          if (key === 'withFailureHandler') return fn => makeChain(success, fn);
+          return (...args) => {
+            if (EOTS_API_URL === 'REEMPLAZAR_CON_URL_DEL_WORKER') {
+              failure?.(new Error('Configura la URL del Worker en index.html'));
+              return;
+            }
+            fetch(EOTS_API_URL, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ method: String(key), args })
+            })
+            .then(async response => {
+              if (!response.ok) throw new Error('Error HTTP ' + response.status);
+              return response.json();
+            })
+            .then(result => success?.(result))
+            .catch(error => failure?.(error));
+          };
+        }
+      });
+      if (prop === 'withSuccessHandler') return fn => makeChain(fn, null);
+      if (prop === 'withFailureHandler') return fn => makeChain(null, fn);
+      return makeChain(null, null)[prop];
+    }
+  }) } };
+</script>
+
+  <script>
+    let TOKEN = localStorage.getItem("TOKEN_EOTS") || "";
+    let USUARIO = JSON.parse(localStorage.getItem("USUARIO_EOTS") || "null");
+    let CATALOGOS = null;
+    let DOCUMENTO_VERIFICADO = null;
+
+    window.onload = function() {
+      const hoy = new Date().toISOString().slice(0, 10);
+
+      ["acFecha", "ovFecha", "permisoFecha"].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = hoy;
+      });
+
+      if (TOKEN && USUARIO) {
+        validarTokenInicial();
+      }
+    };
+
+    function iniciarSesion() {
+      const curp = document.getElementById("curpLogin").value.trim().toUpperCase();
+      const clave = document.getElementById("claveLogin").value.trim();
+
+      const loader = document.getElementById("loginLoader");
+      const msg = document.getElementById("loginMsg");
+
+      msg.innerHTML = "";
+
+      if (!curp || !clave) {
+        msg.innerHTML = alerta("Ingresa CURP y clave.", "error");
+        return;
+      }
+
+      loader.style.display = "block";
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          loader.style.display = "none";
+
+          if (!res.ok) {
+            msg.innerHTML = alerta(res.mensaje, "error");
+            return;
+          }
+
+          TOKEN = res.token;
+          USUARIO = res.usuario;
+
+          localStorage.setItem("TOKEN_EOTS", TOKEN);
+          localStorage.setItem("USUARIO_EOTS", JSON.stringify(USUARIO));
+
+          mostrarApp();
+        })
+        .withFailureHandler(function(error) {
+          loader.style.display = "none";
+          msg.innerHTML = alerta(error.message, "error");
+        })
+        .login(curp, clave);
+    }
+
+    function validarTokenInicial() {
+      google.script.run
+        .withSuccessHandler(function(res) {
+          if (!res.ok) {
+            cerrarSesionLocal();
+            return;
+          }
+
+          USUARIO = res.usuario;
+          localStorage.setItem("USUARIO_EOTS", JSON.stringify(USUARIO));
+          mostrarApp();
+        })
+        .withFailureHandler(function() {
+          cerrarSesionLocal();
+        })
+        .validarSesion(TOKEN);
+    }
+
+    function mostrarApp() {
+      document.getElementById("loginView").style.display = "none";
+      document.getElementById("appView").style.display = "block";
+
+      document.getElementById("userNombre").textContent = USUARIO.nombre || "";
+      document.getElementById("userCurp").textContent = USUARIO.curp || "";
+      document.getElementById("userPuesto").textContent = USUARIO.puesto || "";
+      document.getElementById("userNivel").textContent = USUARIO.nivel || "";
+
+      if (USUARIO.nivel === "1" || USUARIO.nivel === "2") {
+        document.getElementById("btnAdminVacaciones").style.display = "block";
+      }
+    }
+
+    function cerrarSesion() {
+      if (!TOKEN) {
+        cerrarSesionLocal();
+        return;
+      }
+
+      google.script.run
+        .withSuccessHandler(cerrarSesionLocal)
+        .withFailureHandler(cerrarSesionLocal)
+        .logout(TOKEN);
+    }
+
+    function cerrarSesionLocal() {
+      TOKEN = "";
+      USUARIO = null;
+
+      localStorage.removeItem("TOKEN_EOTS");
+      localStorage.removeItem("USUARIO_EOTS");
+
+      document.getElementById("appView").style.display = "none";
+      document.getElementById("loginView").style.display = "flex";
+
+      document.getElementById("curpLogin").value = "";
+      document.getElementById("claveLogin").value = "";
+    }
+
+    function abrirModulo(id, btn) {
+      document.querySelectorAll(".modulo").forEach(m => m.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+
+      document.querySelectorAll(".menu-btn").forEach(b => b.classList.remove("active"));
+      if (btn) btn.classList.add("active");
+    }
+
+    function cargarCatalogos(callback) {
+      if (CATALOGOS) {
+        if (callback) callback();
+        return;
+      }
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          if (!res.ok) {
+            alert(res.mensaje);
+            return;
+          }
+
+          CATALOGOS = res;
+
+          llenarSelect("acEstado", res.estados);
+          llenarSelect("ovEstado", res.estados);
+          llenarSelect("acTramite", res.tramitesAC);
+          llenarSelect("ovTramite", res.tramitesOV);
+          llenarSelect("acEstrategia", res.estrategiasMujeres, "NO APLICA");
+
+          if (callback) callback();
+        })
+        .withFailureHandler(function(error) {
+          alert(error.message);
+        })
+        .getCatalogosRegistro(TOKEN);
+    }
+
+    function abrirAtencionC(btn) {
+      abrirModulo("atencionC", btn);
+      cargarCatalogos();
+    }
+
+    function abrirOficinaOV(btn) {
+      abrirModulo("oficinaOV", btn);
+      cargarCatalogos();
+    }
+
+    function guardarAC() {
+      const data = {
+        fecha: val("acFecha"),
+        estado: val("acEstado"),
+        usuario: val("acUsuario"),
+        folio: val("acFolio"),
+        nombreUsuario: val("acNombreUsuario"),
+        tramite: val("acTramite"),
+        estrategiaMujeres: val("acEstrategia"),
+        observaciones: val("acObservaciones")
+      };
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          document.getElementById("acMsg").innerHTML = alerta(res.mensaje, res.ok ? "ok" : "error");
+          if (res.ok) limpiarCampos(["acUsuario", "acFolio", "acNombreUsuario", "acObservaciones"]);
+        })
+        .withFailureHandler(function(error) {
+          document.getElementById("acMsg").innerHTML = alerta(error.message, "error");
+        })
+        .guardarAtencionCiudadana(TOKEN, data);
+    }
+
+    function guardarOV() {
+      const data = {
+        fecha: val("ovFecha"),
+        estado: val("ovEstado"),
+        usuario: val("ovUsuario"),
+        folio: val("ovFolio"),
+        nombreUsuario: val("ovNombreUsuario"),
+        tramite: val("ovTramite"),
+        observaciones: val("ovObservaciones")
+      };
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          document.getElementById("ovMsg").innerHTML = alerta(res.mensaje, res.ok ? "ok" : "error");
+          if (res.ok) limpiarCampos(["ovUsuario", "ovFolio", "ovNombreUsuario", "ovObservaciones"]);
+        })
+        .withFailureHandler(function(error) {
+          document.getElementById("ovMsg").innerHTML = alerta(error.message, "error");
+        })
+        .guardarOficinaVirtual(TOKEN, data);
+    }
+
+    function abrirDocumentos(btn) {
+      abrirModulo("documentos", btn);
+      cargarDocumentos();
+    }
+
+    function cargarDocumentos() {
+      const select = document.getElementById("docTipo");
+      const msg = document.getElementById("docMsg");
+      select.innerHTML = "";
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          if (!res.ok) {
+            msg.innerHTML = alerta(res.mensaje, "error");
+            return;
+          }
+
+          select.innerHTML = `<option value="">Selecciona documento</option>`;
+
+          res.documentos.forEach(d => {
+            const opt = document.createElement("option");
+            opt.value = d.documento;
+            opt.textContent = d.documento;
+            select.appendChild(opt);
+          });
+        })
+        .withFailureHandler(function(error) {
+          msg.innerHTML = alerta(error.message, "error");
+        })
+        .getDocumentosCarga(TOKEN);
+    }
+
+    function verificarDocumento() {
+      const documento = val("docTipo");
+      const msg = document.getElementById("docMsg");
+      const loader = document.getElementById("docLoader");
+      const box = document.getElementById("docResultado");
+
+      DOCUMENTO_VERIFICADO = null;
+      box.style.display = "none";
+      msg.innerHTML = "";
+
+      if (!documento) {
+        msg.innerHTML = alerta("Selecciona un documento.", "error");
+        return;
+      }
+
+      loader.style.display = "block";
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          loader.style.display = "none";
+
+          if (!res.ok) {
+            msg.innerHTML = alerta(res.mensaje, "error");
+            return;
+          }
+
+          DOCUMENTO_VERIFICADO = res;
+
+          document.getElementById("docNombreEsperado").textContent = res.nombreArchivo;
+          document.getElementById("docEstado").innerHTML = res.existe
+            ? `<span class="badge badge-ok">Ya existe en ${escapeHtml(res.carpeta)}</span>`
+            : `<span class="badge badge-warn">No existe. Se cargará en ${escapeHtml(res.carpeta)}</span>`;
+
+          document.getElementById("docLinkBox").innerHTML = res.existe
+            ? `<a href="${escapeHtml(res.url)}" target="_blank">Abrir archivo existente</a>
+               <button class="btn-danger" onclick="eliminarDocumento('${escapeHtml(res.fileId)}')">Eliminar archivo</button>`
+            : "";
+
+          box.style.display = "block";
+        })
+        .withFailureHandler(function(error) {
+          loader.style.display = "none";
+          msg.innerHTML = alerta(error.message, "error");
+        })
+        .verificarArchivoFirmado(TOKEN, documento);
+    }
+
+    function subirDocumento() {
+      const documento = val("docTipo");
+      const file = document.getElementById("docArchivo").files[0];
+      const msg = document.getElementById("docMsg");
+
+      if (!documento) {
+        msg.innerHTML = alerta("Selecciona un documento.", "error");
+        return;
+      }
+
+      if (!file) {
+        msg.innerHTML = alerta("Selecciona un archivo PDF.", "error");
+        return;
+      }
+
+      const reader = new FileReader();
+
+      reader.onload = function(e) {
+        google.script.run
+          .withSuccessHandler(function(res) {
+            msg.innerHTML = alerta(res.mensaje, res.ok ? "ok" : "error");
+            if (res.ok) verificarDocumento();
+          })
+          .withFailureHandler(function(error) {
+            msg.innerHTML = alerta(error.message, "error");
+          })
+          .subirArchivoFirmado(TOKEN, documento, e.target.result, file.type);
+      };
+
+      reader.readAsDataURL(file);
+    }
+
+    function eliminarDocumento(fileId) {
+      const documento = val("docTipo");
+      const msg = document.getElementById("docMsg");
+
+      if (!confirm("¿Deseas eliminar este archivo?")) return;
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          msg.innerHTML = alerta(res.mensaje, res.ok ? "ok" : "error");
+          if (res.ok) verificarDocumento();
+        })
+        .withFailureHandler(function(error) {
+          msg.innerHTML = alerta(error.message, "error");
+        })
+        .eliminarArchivoFirmado(TOKEN, fileId, documento);
+    }
+
+    function abrirRecursos(btn) {
+      abrirModulo("recursos", btn);
+      cargarRecursos();
+    }
+
+    function cargarRecursos() {
+      const loader = document.getElementById("recursosLoader");
+      const msg = document.getElementById("recursosMsg");
+      const lista = document.getElementById("recursosLista");
+
+      loader.style.display = "block";
+      msg.innerHTML = "";
+      lista.innerHTML = "";
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          loader.style.display = "none";
+
+          if (!res.ok) {
+            msg.innerHTML = alerta(res.mensaje, "error");
+            return;
+          }
+
+          if (!res.recursos || res.recursos.length === 0) {
+            msg.innerHTML = alerta("No tienes recursos disponibles.", "warn");
+            return;
+          }
+
+          res.recursos.forEach(r => {
+            const card = document.createElement("div");
+            card.className = "recurso-card";
+            card.innerHTML = `
+              <span class="badge">${escapeHtml(r.tipo)}</span>
+              <h3>${escapeHtml(r.archivo)}</h3>
+              <button class="btn-small" onclick="descargarRecurso('${escapeAttr(r.archivo)}','${escapeAttr(r.tipo)}')">Descargar</button>
+            `;
+            lista.appendChild(card);
+          });
+        })
+        .withFailureHandler(function(error) {
+          loader.style.display = "none";
+          msg.innerHTML = alerta(error.message, "error");
+        })
+        .getRecursos(TOKEN);
+    }
+
+    function descargarRecurso(nombreArchivo, carpeta) {
+      const msg = document.getElementById("recursosMsg");
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          if (!res.ok) {
+            msg.innerHTML = alerta(res.mensaje, "error");
+            return;
+          }
+
+          const a = document.createElement("a");
+          a.href = "data:" + res.mimeType + ";base64," + res.base64;
+          a.download = res.nombreArchivo;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+        })
+        .withFailureHandler(function(error) {
+          msg.innerHTML = alerta(error.message, "error");
+        })
+        .descargarRecurso(TOKEN, nombreArchivo, carpeta);
+    }
+
+    function abrirDirectorioDrives(btn) {
+      abrirModulo("directorioDrives", btn);
+      cargarDirectorioDrives();
+    }
+
+    function cargarDirectorioDrives() {
+      const loader = document.getElementById("directorioDrivesLoader");
+      const msg = document.getElementById("directorioDrivesMsg");
+      const lista = document.getElementById("directorioDrivesLista");
+
+      loader.style.display = "block";
+      msg.innerHTML = "";
+      lista.innerHTML = "";
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          loader.style.display = "none";
+
+          if (!res.ok) {
+            msg.innerHTML = alerta(res.mensaje, "error");
+            return;
+          }
+
+          if (!res.drives || res.drives.length === 0) {
+            msg.innerHTML = alerta("No hay Drives disponibles para tu nivel.", "warn");
+            return;
+          }
+
+          res.drives.forEach(function(drive) {
+            const card = document.createElement("div");
+            card.className = "drive-card";
+
+            card.innerHTML = `
+              <span class="badge">Nivel ${escapeHtml(drive.nivel)}</span>
+              <h3>${escapeHtml(drive.nombreDrive)}</h3>
+              <p>${escapeHtml(drive.descripcion || "Sin descripción.")}</p>
+              <a href="${escapeHtml(drive.link)}" target="_blank">Abrir Drive</a>
+            `;
+
+            lista.appendChild(card);
+          });
+        })
+        .withFailureHandler(function(error) {
+          loader.style.display = "none";
+          msg.innerHTML = alerta(error.message, "error");
+        })
+        .getDirectorioDrives(TOKEN);
+    }
+
+
+    /* ================= BUSCADOR DE TARJETAS ================= */
+
+    function abrirBuscadorTarjetas(btn) {
+      abrirModulo("buscadorTarjetas", btn);
+
+      document.getElementById("tarjetasMsg").innerHTML = "";
+      document.getElementById("tarjetasResultado").innerHTML = "";
+
+      setTimeout(function() {
+        const input = document.getElementById("tarjetaCriterio");
+        if (input) input.focus();
+      }, 50);
+    }
+
+    function buscarTarjetaConEnter(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        ejecutarBusquedaTarjeta();
+      }
+    }
+
+    function ejecutarBusquedaTarjeta() {
+      const criterio = val("tarjetaCriterio").toUpperCase();
+      const loader = document.getElementById("tarjetasLoader");
+      const msg = document.getElementById("tarjetasMsg");
+      const resultado = document.getElementById("tarjetasResultado");
+      const boton = document.getElementById("btnBuscarTarjeta");
+
+      msg.innerHTML = "";
+      resultado.innerHTML = "";
+
+      if (!criterio) {
+        msg.innerHTML = alerta("Ingresa un Folio del Aprendiz o CURP válido.", "error");
+        return;
+      }
+
+      loader.style.display = "block";
+      boton.disabled = true;
+      boton.textContent = "Buscando...";
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          loader.style.display = "none";
+          boton.disabled = false;
+          boton.textContent = "Buscar";
+
+          if (!res.ok) {
+            msg.innerHTML = alerta(res.mensaje, "error");
+            return;
+          }
+
+          if (!res.encontrado) {
+            msg.innerHTML = alerta(res.mensaje, "warn");
+            return;
+          }
+
+          msg.innerHTML = alerta(res.mensaje, "ok");
+          resultado.innerHTML = renderizarResultadoTarjetas(res);
+        })
+        .withFailureHandler(function(error) {
+          loader.style.display = "none";
+          boton.disabled = false;
+          boton.textContent = "Buscar";
+          msg.innerHTML = alerta(error.message || "Ocurrió un error al buscar.", "error");
+        })
+        .buscarTarjeta(TOKEN, criterio);
+    }
+
+    function renderizarResultadoTarjetas(res) {
+      let html = "";
+
+      if (res.operativos && res.operativos.length) {
+        html += construirTablaTarjetas(
+          "Operativos",
+          res.operativos,
+          "origen-operativos"
+        );
+      }
+
+      if (res.reposiciones && res.reposiciones.length) {
+        html += construirTablaTarjetas(
+          "Reposición",
+          res.reposiciones,
+          "origen-reposicion"
+        );
+      }
+
+      return html;
+    }
+
+    function construirTablaTarjetas(titulo, registros, claseOrigen) {
+      let html = `
+        <div class="tarjetas-seccion">
+          <h3>
+            ${escapeHtml(titulo)}
+            <span class="origen-tarjeta ${claseOrigen}">
+              ${registros.length} ${registros.length === 1 ? "coincidencia" : "coincidencias"}
+            </span>
+          </h3>
+
+          <div class="tabla-tarjetas-wrap">
+            <table class="tabla-tarjetas">
+              <thead>
+                <tr>
+                  <th>Folio Aprendiz</th>
+                  <th>Alcaldía</th>
+                  <th>Nombre</th>
+                  <th>Apellido Paterno</th>
+                  <th>Apellido Materno</th>
+                  <th>Operativo</th>
+                  <th>Estatus</th>
+                </tr>
+              </thead>
+              <tbody>
+      `;
+
+      registros.forEach(function(r) {
+        html += `
+          <tr>
+            <td>${escapeHtml(r.folioAprendiz || "—")}</td>
+            <td>${escapeHtml(r.alcaldia || "—")}</td>
+            <td>${escapeHtml(r.nombre || "—")}</td>
+            <td>${escapeHtml(r.apellidoPaterno || "—")}</td>
+            <td>${escapeHtml(r.apellidoMaterno || "—")}</td>
+            <td>${escapeHtml(r.operativo || "—")}</td>
+            <td>
+              <span class="estatus-tarjeta">
+                ${escapeHtml(r.estatus || "SIN ESTATUS")}
+              </span>
+            </td>
+          </tr>
+        `;
+      });
+
+      html += `
+              </tbody>
+            </table>
+          </div>
+        </div>
+      `;
+
+      return html;
+    }
+
+    function abrirVacaciones(btn) {
+      abrirModulo("vacaciones", btn);
+      cargarInfoVacaciones();
+    }
+
+    function cargarInfoVacaciones() {
+      const info = document.getElementById("vacacionesInfo");
+      const solicitudes = document.getElementById("misSolicitudes");
+
+      info.innerHTML = "Cargando información...";
+      solicitudes.innerHTML = "";
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          if (!res.ok) {
+            info.innerHTML = alerta(res.mensaje, "error");
+            return;
+          }
+
+          info.innerHTML = `
+            <div class="alert ok">
+              <strong>Días disponibles:</strong> ${res.diasDisponibles}<br>
+              <strong>Días usados o activos:</strong> ${res.diasUsados}
+            </div>
+          `;
+
+          if (!res.solicitudes || res.solicitudes.length === 0) {
+            solicitudes.innerHTML = alerta("No tienes solicitudes registradas.", "warn");
+            return;
+          }
+
+          let html = "";
+
+          res.solicitudes.forEach(s => {
+            html += `
+              <div class="solicitud-card">
+                <span class="badge">${escapeHtml(s.estatus)}</span>
+                <h3>${escapeHtml(s.tipo)}</h3>
+                <p><strong>Fechas:</strong> ${escapeHtml(s.fechas)}</p>
+                <p><strong>Días/Horas:</strong> ${escapeHtml(s.diasHoras)}</p>
+                <p><strong>Justificación:</strong> ${escapeHtml(s.justificacion)}</p>
+                <p><strong>Observaciones:</strong> ${escapeHtml(s.observaciones)}</p>
+                <button class="btn-danger" onclick="solicitarEliminarSolicitud('${escapeAttr(s.row)}')">Solicitar eliminación</button>
+              </div>
+            `;
+          });
+
+          solicitudes.innerHTML = html;
+        })
+        .withFailureHandler(function(error) {
+          info.innerHTML = alerta(error.message, "error");
+        })
+        .getInfoVacaciones(TOKEN);
+    }
+
+    function enviarVacaciones() {
+      const msg = document.getElementById("vacacionesMsg");
+      const fechas = val("vacFechas")
+        .split(",")
+        .map(f => f.trim())
+        .filter(Boolean);
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          msg.innerHTML = alerta(res.mensaje, res.ok ? "ok" : "error");
+          if (res.ok) {
+            document.getElementById("vacFechas").value = "";
+            cargarInfoVacaciones();
+          }
+        })
+        .withFailureHandler(function(error) {
+          msg.innerHTML = alerta(error.message, "error");
+        })
+        .enviarSolicitudVacaciones(TOKEN, fechas);
+    }
+
+    function toggleHorarioPermiso() {
+      const tipo = val("permisoTipo");
+      document.querySelectorAll(".horarioPermiso").forEach(el => {
+        el.style.display = tipo === "PARCIAL" ? "block" : "none";
+      });
+    }
+
+    function enviarPermiso() {
+      const msg = document.getElementById("vacacionesMsg");
+
+      const data = {
+        fecha: val("permisoFecha"),
+        tipoPermiso: val("permisoTipo"),
+        horaInicio: val("permisoHoraInicio"),
+        horaFin: val("permisoHoraFin"),
+        justificacion: val("permisoJustificacion")
+      };
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          msg.innerHTML = alerta(res.mensaje, res.ok ? "ok" : "error");
+          if (res.ok) {
+            limpiarCampos(["permisoTipo", "permisoHoraInicio", "permisoHoraFin", "permisoJustificacion"]);
+            cargarInfoVacaciones();
+          }
+        })
+        .withFailureHandler(function(error) {
+          msg.innerHTML = alerta(error.message, "error");
+        })
+        .enviarSolicitudPermiso(TOKEN, data);
+    }
+
+    function solicitarEliminarSolicitud(row) {
+      if (!confirm("¿Deseas solicitar la eliminación de esta solicitud?")) return;
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          document.getElementById("vacacionesMsg").innerHTML = alerta(res.mensaje, res.ok ? "ok" : "error");
+          if (res.ok) cargarInfoVacaciones();
+        })
+        .withFailureHandler(function(error) {
+          document.getElementById("vacacionesMsg").innerHTML = alerta(error.message, "error");
+        })
+        .solicitarEliminacionVacaciones(TOKEN, row);
+    }
+
+    function abrirAdminVacaciones(btn) {
+      abrirModulo("adminVacaciones", btn);
+      cargarAdminVacaciones();
+    }
+
+    function cargarAdminVacaciones() {
+      const loader = document.getElementById("adminVacacionesLoader");
+      const msg = document.getElementById("adminVacacionesMsg");
+      const tabla = document.getElementById("adminVacacionesTabla");
+
+      loader.style.display = "block";
+      msg.innerHTML = "";
+      tabla.innerHTML = "";
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          loader.style.display = "none";
+
+          if (!res.ok) {
+            msg.innerHTML = alerta(res.mensaje, "error");
+            return;
+          }
+
+          let html = `
+            <table>
+              <thead>
+                <tr>
+                  <th>Nombre</th>
+                  <th>Tipo</th>
+                  <th>Fechas</th>
+                  <th>Estatus</th>
+                  <th>Observaciones</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+          `;
+
+          res.solicitudes.forEach(s => {
+            html += `
+              <tr>
+                <td>${escapeHtml(s.nombre)}<br><small>${escapeHtml(s.curp)}</small></td>
+                <td>${escapeHtml(s.tipo)}</td>
+                <td>${escapeHtml(s.fechas)}</td>
+                <td>${escapeHtml(s.estatus)}</td>
+                <td>${escapeHtml(s.observaciones)}</td>
+                <td>
+            `;
+
+            if (!s.sinSolicitud && res.esAdmin) {
+              html += `
+                <button class="btn-small" onclick="actualizarSolicitud('${s.row}','AUTORIZAR')">Autorizar</button>
+                <button class="btn-danger" onclick="actualizarSolicitud('${s.row}','CANCELAR')">Cancelar</button>
+                <button class="btn-gray" onclick="actualizarSolicitud('${s.row}','CON OBSERVACIONES')">Observaciones</button>
+              `;
+            } else {
+              html += `<span class="badge">Sin acciones</span>`;
+            }
+
+            html += `
+                </td>
+              </tr>
+            `;
+          });
+
+          html += `</tbody></table>`;
+          tabla.innerHTML = html;
+        })
+        .withFailureHandler(function(error) {
+          loader.style.display = "none";
+          msg.innerHTML = alerta(error.message, "error");
+        })
+        .getAdminVacaciones(TOKEN);
+    }
+
+    function actualizarSolicitud(row, accion) {
+      const obs = prompt("Observaciones:", "") || "";
+
+      google.script.run
+        .withSuccessHandler(function(res) {
+          document.getElementById("adminVacacionesMsg").innerHTML = alerta(res.mensaje, res.ok ? "ok" : "error");
+          if (res.ok) cargarAdminVacaciones();
+        })
+        .withFailureHandler(function(error) {
+          document.getElementById("adminVacacionesMsg").innerHTML = alerta(error.message, "error");
+        })
+        .actualizarSolicitudVacaciones(TOKEN, row, accion, obs);
+    }
+
+    function llenarSelect(id, arr, primerValor) {
+      const select = document.getElementById(id);
+      select.innerHTML = "";
+
+      if (primerValor !== undefined) {
+        const opt = document.createElement("option");
+        opt.value = "";
+        opt.textContent = primerValor;
+        select.appendChild(opt);
+      } else {
+        const opt = document.createElement("option");
+        opt.value = "";
+        opt.textContent = "Selecciona";
+        select.appendChild(opt);
+      }
+
+      (arr || []).forEach(v => {
+        const opt = document.createElement("option");
+        opt.value = v;
+        opt.textContent = v;
+        select.appendChild(opt);
+      });
+    }
+
+    function val(id) {
+      const el = document.getElementById(id);
+      return el ? el.value.trim() : "";
+    }
+
+    function limpiarCampos(ids) {
+      ids.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = "";
+      });
+    }
+
+    function alerta(texto, tipo) {
+      return `<div class="alert ${tipo}">${escapeHtml(texto)}</div>`;
+    }
+
+    function escapeHtml(text) {
+      return String(text || "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
+
+    function escapeAttr(text) {
+      return String(text || "")
+        .replace(/\\/g, "\\\\")
+        .replace(/'/g, "\\'")
+        .replace(/"/g, "&quot;");
+    }
+  </script>
+
+</body>
+</html>
