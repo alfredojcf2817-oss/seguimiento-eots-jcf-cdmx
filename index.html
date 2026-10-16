@@ -481,6 +481,9 @@
       <button class="menu-btn" onclick="abrirVacaciones(this)">Vacaciones / Permisos</button>
       <button id="btnAdminVacaciones" class="menu-btn" style="display:none;" onclick="abrirAdminVacaciones(this)">Administrador vacaciones</button>
 
+      <button id="btnBabien" class="menu-btn" style="display:none" onclick="abrirBaBien(this)">BaBien</button>
+      <button id="btnGestionModulos" class="menu-btn" style="display:none" onclick="abrirGestionModulos(this)">Agregar módulos</button>
+      <div id="modulosPersonalizadosMenu"></div>
       <button class="logout-btn" onclick="cerrarSesion()">Cerrar sesión</button>
     </div>
 
@@ -629,6 +632,28 @@
         </div>
       </div>
 
+      <div id="babien" class="modulo"><div class="card">
+        <h2>BaBien</h2><h3>Devolución de tarjetas (Operativo)</h3>
+        <p>Escanea o pega el código de barras. Si existen duplicados, selecciona la tarjeta correcta.</p>
+        <label for="babienCodigo">Código de barras</label>
+        <input id="babienCodigo" autocomplete="off" placeholder="Escanea aquí" onkeydown="if(event.key==='Enter') {event.preventDefault();babienBuscar();}">
+        <button class="btn-primary" onclick="babienBuscar()">Buscar y procesar</button>
+        <div id="babienMsg" aria-live="polite"></div><div id="babienMatches"></div>
+      </div></div>
+      <div id="gestionModulos" class="modulo"><div class="card">
+        <h2>Agregar módulos</h2><p>Los nuevos módulos serán enlaces HTTPS visibles únicamente para los niveles elegidos. Solo nivel 1 puede crearlos.</p>
+        <label>Nombre del módulo</label><input id="nuevoModuloNombre" maxlength="65" placeholder="Nombre del módulo">
+        <label>URL HTTPS</label><input id="nuevoModuloUrl" type="url" placeholder="https://...">
+        <label>Niveles permitidos</label>
+        <div style="display:flex;gap:12px;flex-wrap:wrap;margin:10px 0">
+          <label><input type="checkbox" class="nivelNuevoModulo" value="1" checked> 1</label>
+          <label><input type="checkbox" class="nivelNuevoModulo" value="2" checked> 2</label>
+          <label><input type="checkbox" class="nivelNuevoModulo" value="3"> 3</label>
+          <label><input type="checkbox" class="nivelNuevoModulo" value="4"> 4</label>
+        </div>
+        <button class="btn-primary" onclick="guardarModuloPersonalizado()">Agregar módulo</button>
+        <div id="gestionModulosMsg" aria-live="polite"></div>
+      </div></div>
       <div id="directorioDrives" class="modulo">
         <div class="card">
           <h2>Directorio de Drives</h2>
@@ -867,9 +892,11 @@
       document.getElementById("userPuesto").textContent = USUARIO.puesto || "";
       document.getElementById("userNivel").textContent = USUARIO.nivel || "";
 
-      if (USUARIO.nivel === "1" || USUARIO.nivel === "2") {
-        document.getElementById("btnAdminVacaciones").style.display = "block";
-      }
+      const babienAutorizado = USUARIO.nivel === '1' || USUARIO.nivel === '2';
+      document.getElementById('btnBabien').style.display = babienAutorizado ? 'block' : 'none';
+      document.getElementById('btnGestionModulos').style.display = USUARIO.nivel === '1' ? 'block' : 'none';
+      document.getElementById('btnAdminVacaciones').style.display = babienAutorizado ? 'block' : 'none';
+      cargarModulosPersonalizados();
     }
 
     function cerrarSesion() {
@@ -887,6 +914,7 @@
     function cerrarSesionLocal() {
       TOKEN = "";
       USUARIO = null;
+      recursosCargadosHasta = 0;
 
       localStorage.removeItem("TOKEN_EOTS");
       localStorage.removeItem("USUARIO_EOTS");
@@ -1118,9 +1146,10 @@
         .eliminarArchivoFirmado(TOKEN, fileId, documento);
     }
 
+    let recursosCargadosHasta = 0;
     function abrirRecursos(btn) {
       abrirModulo("recursos", btn);
-      cargarRecursos();
+      if (Date.now() > recursosCargadosHasta) cargarRecursos();
     }
 
     function cargarRecursos() {
@@ -1141,6 +1170,7 @@
             return;
           }
 
+          recursosCargadosHasta = Date.now() + 5*60*1000;
           if (!res.recursos || res.recursos.length === 0) {
             msg.innerHTML = alerta("No tienes recursos disponibles.", "warn");
             return;
@@ -1626,6 +1656,70 @@
         const el = document.getElementById(id);
         if (el) el.value = "";
       });
+    }
+
+    function abrirBaBien(btn) {
+      if (!USUARIO || !['1','2'].includes(String(USUARIO.nivel))) return;
+      abrirModulo('babien',btn);
+      document.getElementById('babienCodigo').focus();
+    }
+    function babienBuscar() {
+      const input=document.getElementById('babienCodigo');
+      const msg=document.getElementById('babienMsg');
+      const matches=document.getElementById('babienMatches');
+      const codigo=input.value.trim();
+      if (!codigo) {msg.textContent='Escanea un código válido.';return;}
+      msg.textContent='Buscando tarjeta...';matches.replaceChildren();
+      google.script.run.withSuccessHandler(res=>{
+        msg.textContent=res.message || res.mensaje || (res.ok?'Operación completada':'No se pudo completar.');
+        if (res.needsSelection && Array.isArray(res.matches)) {
+          const select=document.createElement('select');select.id='babienSeleccion';
+          res.matches.forEach(item=>{
+            const opt=document.createElement('option');opt.value=String(item.row);
+            opt.textContent=item.display+' (fila '+item.row+')';select.appendChild(opt);
+          });
+          const btn=document.createElement('button');btn.className='btn-primary';btn.textContent='Confirmar tarjeta seleccionada';
+          btn.onclick=()=>{
+            btn.disabled=true;msg.textContent='Actualizando tarjeta...';
+            google.script.run.withSuccessHandler(r=>{
+              msg.textContent=r.message||r.mensaje||'Operación finalizada.';
+              btn.disabled=false;
+              if(r.ok) {matches.replaceChildren();input.value='';input.focus();}
+            }).withFailureHandler(e=>{btn.disabled=false;msg.textContent=e.message;})
+            .babienConfirmar(TOKEN,Number(select.value),res.key);
+          };
+          matches.append(select,btn);
+        } else if(res.ok) {input.value='';input.focus();}
+      }).withFailureHandler(e=>{msg.textContent=e.message;}).babienEscanear(TOKEN,codigo);
+    }
+    function abrirGestionModulos(btn) {
+      if (!USUARIO || String(USUARIO.nivel)!=='1') return;
+      abrirModulo('gestionModulos',btn);
+    }
+    function cargarModulosPersonalizados() {
+      google.script.run.withSuccessHandler(res=>{
+        const menu=document.getElementById('modulosPersonalizadosMenu');menu.replaceChildren();
+        if(!res.ok) return;
+        (res.modulos||[]).forEach(m=>{
+          let url;try {url=new URL(m.url);if(url.protocol!=='https:')return;}catch(e){return;}
+          const btn=document.createElement('button');btn.className='menu-btn';
+          btn.textContent=m.nombre;
+          btn.onclick=()=>window.open(url.href,'_blank','noopener,noreferrer');
+          menu.appendChild(btn);
+        });
+      }).getModulosPersonalizados(TOKEN);
+    }
+    function guardarModuloPersonalizado() {
+      if (!USUARIO || String(USUARIO.nivel)!=='1') return;
+      const nombre=document.getElementById('nuevoModuloNombre').value.trim();
+      const url=document.getElementById('nuevoModuloUrl').value.trim();
+      const niveles=Array.from(document.querySelectorAll('.nivelNuevoModulo:checked')).map(el=>el.value).join(',');
+      const msg=document.getElementById('gestionModulosMsg');msg.textContent='Guardando...';
+      google.script.run.withSuccessHandler(r=>{
+        msg.textContent=r.mensaje||'Operación finalizada.';
+        if(r.ok) {document.getElementById('nuevoModuloNombre').value='';document.getElementById('nuevoModuloUrl').value='';cargarModulosPersonalizados();}
+      }).withFailureHandler(e=>msg.textContent=e.message)
+      .crearModuloPersonalizado(TOKEN,nombre,url,niveles);
     }
 
     function alerta(texto, tipo) {
