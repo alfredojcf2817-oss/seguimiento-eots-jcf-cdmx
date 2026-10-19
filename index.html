@@ -789,7 +789,7 @@
           if (key === 'withSuccessHandler') return fn => makeChain(fn, failure);
           if (key === 'withFailureHandler') return fn => makeChain(success, fn);
           return (...args) => {
-            if (EOTS_API_URL === 'REEMPLAZAR_CON_URL_DEL_WORKER') {
+            if (EOTS_API_URL === 'https://seguimiento-eots.alfredo-jcf-2817.workers.dev') {
               failure?.(new Error('Configura la URL del Worker en index.html'));
               return;
             }
