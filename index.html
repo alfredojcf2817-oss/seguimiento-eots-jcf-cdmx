@@ -483,6 +483,9 @@
 
       <button id="btnBabien" class="menu-btn" style="display:none" onclick="abrirBaBien(this)">BaBien</button>
       <button id="btnGestionModulos" class="menu-btn" style="display:none" onclick="abrirGestionModulos(this)">Agregar módulos</button>
+      <button id="btnUsuariosAdmin" class="menu-btn" style="display:none" onclick="v3OpenAdmin(this)">Administración de usuarios</button>
+      <button id="btnMiPerfil" class="menu-btn" style="display:none" onclick="v3OpenProfile(this)">Mi información personal</button>
+      <button id="btnSintaxis" class="menu-btn" style="display:none" onclick="v3OpenSyntax(this)">Sintaxis de documentos de carga EOTs</button>
       <div id="modulosPersonalizadosMenu"></div>
       <button class="logout-btn" onclick="cerrarSesion()">Cerrar sesión</button>
     </div>
@@ -611,7 +614,7 @@
               <h3 id="docNombreEsperado"></h3>
               <p id="docEstado"></p>
 
-              <input type="file" id="docArchivo" accept="application/pdf">
+              <input type="file" id="docArchivo" accept=".pdf,.png,.jpeg,.jpg,.xlsx,.xls,.docx,.doc,.csv,.txt">
 
               <button class="btn-primary" onclick="subirDocumento()">Subir / reemplazar PDF</button>
 
@@ -653,7 +656,12 @@
         </div>
         <button class="btn-primary" onclick="guardarModuloPersonalizado()">Agregar módulo</button>
         <div id="gestionModulosMsg" aria-live="polite"></div>
+        <hr><h3>Crear módulo interno</h3><label>Nombre</label><input id="v3ModuleName" placeholder="Nombre del módulo"><label>Tipo</label><select id="v3ModuleType"><option value="tabla">Tabla de datos</option><option value="dashboard">Dashboard</option><option value="buscador">Buscador</option><option value="documentos">Documentos / enlaces</option><option value="formulario">Formulario</option><option value="enlace">Enlace externo</option></select><label>Ubicación en menú (nombre del módulo padre, opcional)</label><input id="v3ModuleParent" placeholder="BaBien"><label>URL HTTPS (solo para enlaces)</label><input id="v3ModuleUrl" placeholder="https://..."><label>ID de Google Sheets</label><input id="v3ModuleSpreadsheet" placeholder="ID del archivo"><label>Nombre de la hoja</label><input id="v3ModuleSheet" placeholder="Nombre exacto de pestaña"><label>Columnas a mostrar (separadas por comas, opcional)</label><input id="v3ModuleColumns" placeholder="CURP, Estatus, Fecha"><label>Niveles permitidos</label><div style="display:flex;gap:12px;flex-wrap:wrap"><label><input class="v3ModuleLevel" type="checkbox" value="1" checked>1</label><label><input class="v3ModuleLevel" type="checkbox" value="2" checked>2</label><label><input class="v3ModuleLevel" type="checkbox" value="3">3</label><label><input class="v3ModuleLevel" type="checkbox" value="4">4</label></div><button class="btn-primary" onclick="v3SaveModuleUI()">Crear módulo interno</button><div id="v3ModuleMsg"></div>
       </div></div>
+      <div id="v3Admin" class="modulo"><div class="card"><h2>Administración de usuarios</h2><p>Usuarios y solicitudes pendientes de validación.</p><div id="v3AdminMsg"></div><h3>Solicitudes pendientes</h3><div id="v3Pending"></div><h3>Usuarios registrados</h3><input id="v3UserSearch" placeholder="Buscar por nombre o CURP" oninput="v3RenderUsers()"><div id="v3UserTable" style="overflow:auto"></div><h3 id="v3UserFormTitle">Agregar usuario</h3><div id="v3UserForm"></div><button class="btn-primary" onclick="v3SaveAdminUser()">Guardar usuario</button></div></div>
+      <div id="v3Profile" class="modulo"><div class="card"><h2>Mi información personal</h2><p>Los cambios se envían a validación de la Dirección Estatal; no se aplican inmediatamente.</p><div id="v3ProfileForm"></div><button class="btn-primary" onclick="v3SendProfile()">Enviar para validación</button><div id="v3ProfileMsg"></div></div></div>
+      <div id="v3Syntax" class="modulo"><div class="card"><h2>Sintaxis de documentos de carga EOTs</h2><label>Nombre del documento a cargar</label><input id="v3DocName" placeholder="Ej. Acuse de entrega"><label>Variable de la hoja usuarios</label><select id="v3SyntaxVariable"></select><button class="btn-primary" onclick="v3AddVariable()">Agregar variable</button><button class="btn-primary" onclick="v3AddText('_')">Agregar _</button><button class="btn-primary" onclick="v3AddText(' ')">Agregar espacio</button><label>Sintaxis resultante (puedes editarla)</label><textarea id="v3SyntaxText" rows="3" placeholder="{{Nombre}}_{{Apellido Paterno}}"></textarea><label>Extensión</label><select id="v3Ext"><option>.pdf</option><option>.png</option><option>.jpeg</option><option>.jpg</option><option>.xlsx</option><option>.xls</option><option>.docx</option><option>.doc</option><option>.csv</option><option>.txt</option></select><button class="btn-primary" onclick="v3SaveSyntaxUI()">Guardar sintaxis</button><div id="v3SyntaxMsg"></div></div></div>
+      <div id="v3Dynamic" class="modulo"><div class="card"><h2 id="v3DynamicTitle">Módulo</h2><input id="v3DynamicSearch" placeholder="Buscar registros" onkeydown="if(event.key==='Enter')v3LoadDynamic(1)"><button class="btn-primary" onclick="v3LoadDynamic(1)">Buscar</button><div id="v3DynamicBody" style="overflow:auto"></div><div id="v3DynamicPager"></div></div></div>
       <div id="directorioDrives" class="modulo">
         <div class="card">
           <h2>Directorio de Drives</h2>
@@ -896,6 +904,9 @@
       document.getElementById('btnBabien').style.display = babienAutorizado ? 'block' : 'none';
       document.getElementById('btnGestionModulos').style.display = USUARIO.nivel === '1' ? 'block' : 'none';
       document.getElementById('btnAdminVacaciones').style.display = babienAutorizado ? 'block' : 'none';
+      document.getElementById('btnUsuariosAdmin').style.display=babienAutorizado?'block':'none';
+      document.getElementById('btnMiPerfil').style.display=['1','2','3'].includes(String(USUARIO.nivel))?'block':'none';
+      document.getElementById('btnSintaxis').style.display=babienAutorizado?'block':'none';
       cargarModulosPersonalizados();
     }
 
@@ -1108,7 +1119,7 @@
       }
 
       if (!file) {
-        msg.innerHTML = alerta("Selecciona un archivo PDF.", "error");
+        msg.innerHTML = alerta("Selecciona un archivo.", "error");
         return;
       }
 
@@ -1699,15 +1710,24 @@
     function cargarModulosPersonalizados() {
       google.script.run.withSuccessHandler(res=>{
         const menu=document.getElementById('modulosPersonalizadosMenu');menu.replaceChildren();
-        if(!res.ok) return;
+        if(!res.ok)return;
+        const nodes=new Map();
         (res.modulos||[]).forEach(m=>{
-          let url;try {url=new URL(m.url);if(url.protocol!=='https:')return;}catch(e){return;}
-          const btn=document.createElement('button');btn.className='menu-btn';
-          btn.textContent=m.nombre;
-          btn.onclick=()=>window.open(url.href,'_blank','noopener,noreferrer');
-          menu.appendChild(btn);
+          const btn=document.createElement('button');btn.className='menu-btn';btn.textContent=m.nombre;
+          btn.onclick=()=>{
+            if(m.tipo==='enlace') {if(/^https:\/\//.test(m.url))window.open(m.url,'_blank','noopener,noreferrer');}
+            else {v3CurrentModule=m.id;v3CurrentModuleType=m.tipo;abrirModulo('v3Dynamic',btn);document.getElementById('v3DynamicTitle').textContent=m.nombre;v3LoadDynamic(1);}
+          };
+          nodes.set(m.nombre,{btn,parent:m.padre});
         });
-      }).getModulosPersonalizados(TOKEN);
+        nodes.forEach(({btn,parent})=>{
+          if(parent&&nodes.has(parent)){
+            let group=nodes.get(parent).group;
+            if(!group){group=document.createElement('div');group.style.paddingLeft='16px';nodes.get(parent).group=group;nodes.get(parent).btn.after(group);}
+            group.appendChild(btn);
+          }else menu.appendChild(btn);
+        });
+      }).v3ListModules(TOKEN);
     }
     function guardarModuloPersonalizado() {
       if (!USUARIO || String(USUARIO.nivel)!=='1') return;
@@ -1720,6 +1740,107 @@
         if(r.ok) {document.getElementById('nuevoModuloNombre').value='';document.getElementById('nuevoModuloUrl').value='';cargarModulosPersonalizados();}
       }).withFailureHandler(e=>msg.textContent=e.message)
       .crearModuloPersonalizado(TOKEN,nombre,url,niveles);
+    }
+
+    // V3 - Administración, perfil, sintaxis y módulos internos
+    let v3Users=[],v3Fields=[],v3EditingCurp='',v3CurrentModule='',v3CurrentModuleType='';
+    function v3Call(method,args,cb,el){
+      if(el)document.getElementById(el).textContent='Cargando...';
+      google.script.run.withSuccessHandler(r=>{if(el)document.getElementById(el).textContent=r.ok?'':r.mensaje;cb&&cb(r);})
+        .withFailureHandler(e=>{if(el)document.getElementById(el).textContent=e.message;})[method](...args);
+    }
+    function v3El(tag,attrs={},text){const e=document.createElement(tag);Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,v));if(text!==undefined)e.textContent=String(text);return e;}
+    function v3InputField(parent,key,value,opts={}){
+      const wrap=v3El('div');wrap.style.marginBottom='12px';wrap.appendChild(v3El('label',{},key));
+      let input;if(opts.select){input=v3El('select');opts.select.forEach(v=>input.appendChild(v3El('option',{value:v},v)));input.value=value||opts.select[0];}
+      else input=v3El('input',{type:opts.password?'password':'text',autocomplete:'off'});if(!opts.select)input.value=value||'';
+      input.dataset.field=key;wrap.appendChild(input);parent.appendChild(wrap);return input;
+    }
+    function v3Collect(id){const out={};document.querySelectorAll('#'+id+' [data-field]').forEach(x=>out[x.dataset.field]=x.value);return out;}
+    function v3OpenProfile(btn){abrirModulo('v3Profile',btn);v3Call('v3GetProfile',[TOKEN],r=>{
+      if(!r.ok)return;const form=document.getElementById('v3ProfileForm');form.replaceChildren();
+      r.campos.forEach(k=>v3InputField(form,k,r.usuario[k]||''));
+    },'v3ProfileMsg');}
+    function v3SendProfile(){
+      if(!confirm('Tu información será validada por la Dirección Estatal. ¿Enviar solicitud?'))return;
+      v3Call('v3RequestProfile',[TOKEN,v3Collect('v3ProfileForm')],r=>{if(r.ok)alert(r.mensaje);},'v3ProfileMsg');
+    }
+    function v3OpenAdmin(btn){abrirModulo('v3Admin',btn);v3RefreshAdmin();}
+    function v3RefreshAdmin(){
+      v3Call('v3ListUsers',[TOKEN],r=>{if(!r.ok)return;v3Users=r.usuarios;v3Fields=r.campos;v3RenderUsers();v3EditUser('');},'v3AdminMsg');
+      v3Call('v3ListPending',[TOKEN],r=>{
+        if(!r.ok)return;const host=document.getElementById('v3Pending');host.replaceChildren();
+        if(!r.solicitudes.length)host.textContent='Sin solicitudes pendientes.';
+        r.solicitudes.forEach(s=>{
+          const div=v3El('div');div.style.padding='10px';div.style.borderBottom='1px solid #ddd';
+          div.appendChild(v3El('strong',{},s.curp+' · '+s.fecha));
+          div.appendChild(v3El('pre',{},JSON.stringify(s.datos,null,2)));
+          ['Aprobada','Rechazada'].forEach(accion=>{const b=v3El('button',{class:'btn-primary'},accion==='Aprobada'?'Aprobar':'Rechazar');b.onclick=()=>{
+            if(!confirm('¿Confirmar '+accion.toLowerCase()+'?'))return;
+            const obs=prompt('Observaciones (opcional):','')||'';
+            v3Call('v3ReviewPending',[TOKEN,s.id,accion,obs],r=>{if(r.ok)v3RefreshAdmin();},'v3AdminMsg');
+          };div.appendChild(b);});host.appendChild(div);
+        });
+      },'v3AdminMsg');
+    }
+    function v3RenderUsers(){
+      const q=document.getElementById('v3UserSearch').value.toUpperCase();const host=document.getElementById('v3UserTable');host.replaceChildren();
+      const table=v3El('table'),head=v3El('tr');['CURP','Nombre','Nivel','Estatus','Acción'].forEach(h=>head.appendChild(v3El('th',{},h)));table.appendChild(head);
+      v3Users.filter(u=>(u.curp+' '+u.nombreSistema).toUpperCase().includes(q)).slice(0,150).forEach(u=>{
+        const tr=v3El('tr');[u.curp,u.nombreSistema,u.nivel,u.Estatus||'activo'].forEach(v=>tr.appendChild(v3El('td',{},v)));
+        const td=v3El('td'),b=v3El('button',{class:'btn-primary'},'Editar');b.onclick=()=>v3EditUser(u.curp);td.appendChild(b);tr.appendChild(td);table.appendChild(tr);
+      });host.appendChild(table);
+    }
+    function v3EditUser(curp){
+      v3EditingCurp=curp;const u=v3Users.find(x=>x.curp===curp)||{};const form=document.getElementById('v3UserForm');form.replaceChildren();
+      document.getElementById('v3UserFormTitle').textContent=curp?'Editar usuario: '+curp:'Agregar usuario';
+      if(!curp){v3InputField(form,'curp','');v3InputField(form,'clave','',{password:true});}
+      ['puesto','numeroEmpleado','idPlataforma','nivel','diasVacaciones','correo'].forEach(k=>v3InputField(form,k,u[k]||'',k==='nivel'?{select:['1','2','3','4']}:{}));
+      v3Fields.forEach(k=>v3InputField(form,k,u[k]||'',k==='Estatus'?{select:['activo','inactivo','vacaciones','incapacidad']}:{}));
+      form.scrollIntoView({behavior:'smooth',block:'start'});
+    }
+    function v3SaveAdminUser(){
+      const data=v3Collect('v3UserForm');const method=v3EditingCurp?'v3SaveUser':'v3CreateUser';
+      const args=v3EditingCurp?[TOKEN,v3EditingCurp,data]:[TOKEN,data];
+      if(!confirm('¿Guardar cambios del usuario?'))return;
+      v3Call(method,args,r=>{if(r.ok){alert(r.mensaje);v3RefreshAdmin();}},'v3AdminMsg');
+    }
+    function v3OpenSyntax(btn){abrirModulo('v3Syntax',btn);v3Call('v3SyntaxFields',[TOKEN],r=>{
+      if(!r.ok)return;const s=document.getElementById('v3SyntaxVariable');s.replaceChildren();r.campos.forEach(k=>s.appendChild(v3El('option',{value:k},k)));
+    },'v3SyntaxMsg');}
+    function v3AddVariable(){document.getElementById('v3SyntaxText').value+='{{'+document.getElementById('v3SyntaxVariable').value+'}}';}
+    function v3AddText(s){document.getElementById('v3SyntaxText').value+=s;}
+    function v3SaveSyntaxUI(){
+      const name=document.getElementById('v3DocName').value,template=document.getElementById('v3SyntaxText').value,ext=document.getElementById('v3Ext').value;
+      v3Call('v3SaveSyntax',[TOKEN,name,template,ext],r=>{if(r.ok){alert(r.mensaje);document.getElementById('v3DocName').value='';document.getElementById('v3SyntaxText').value='';}},'v3SyntaxMsg');
+    }
+    function v3SaveModuleUI(){
+      const g=id=>document.getElementById(id).value.trim();
+      const data={nombre:g('v3ModuleName'),tipo:g('v3ModuleType'),padre:g('v3ModuleParent'),url:g('v3ModuleUrl'),spreadsheetId:g('v3ModuleSpreadsheet'),hoja:g('v3ModuleSheet'),columnas:g('v3ModuleColumns'),niveles:[...document.querySelectorAll('.v3ModuleLevel:checked')].map(x=>x.value).join(',')};
+      v3Call('v3SaveModule',[TOKEN,data],r=>{if(r.ok)cargarModulosPersonalizados();},'v3ModuleMsg');
+    }
+    function v3LoadDynamic(page){
+      const q=document.getElementById('v3DynamicSearch').value;
+      v3Call('v3ModuleData',[TOKEN,v3CurrentModule,q,page],r=>{
+        if(!r.ok)return;const host=document.getElementById('v3DynamicBody');host.replaceChildren();
+        if(r.tipo==='enlace'){host.appendChild(v3El('a',{href:r.url,target:'_blank',rel:'noopener noreferrer'},'Abrir recurso'));return;}
+        if(r.tipo==='formulario'){
+          const form=v3El('div',{id:'v3DynamicForm'});r.headers.forEach(k=>v3InputField(form,k,''));
+          const btn=v3El('button',{class:'btn-primary'},'Guardar registro');btn.onclick=()=>v3Call('v3ModuleSubmit',[TOKEN,v3CurrentModule,v3Collect('v3DynamicForm')],x=>{if(x.ok){alert(x.mensaje);v3LoadDynamic(1);}},null);
+          host.append(form,btn);return;
+        }
+        if(r.tipo==='dashboard'){
+          const total=v3El('h3',{},'Total de registros: '+r.total);host.appendChild(total);
+        }
+        const table=v3El('table'),head=v3El('tr');r.headers.forEach(k=>head.appendChild(v3El('th',{},k)));table.appendChild(head);
+        r.rows.forEach(row=>{const tr=v3El('tr');row.forEach(v=>{const td=v3El('td');
+          if(r.tipo==='documentos'&&/^https:\/\//.test(v)){td.appendChild(v3El('a',{href:v,target:'_blank',rel:'noopener noreferrer'},'Abrir archivo'));}
+          else td.textContent=v;tr.appendChild(td);
+        });table.appendChild(tr);});host.appendChild(table);
+        const pager=document.getElementById('v3DynamicPager');pager.replaceChildren();pager.appendChild(v3El('span',{},'Página '+r.page+' de '+r.pages+' · '+r.total+' registros '));
+        if(r.page>1){const b=v3El('button',{class:'btn-primary'},'Anterior');b.onclick=()=>v3LoadDynamic(r.page-1);pager.appendChild(b);}
+        if(r.page<r.pages){const b=v3El('button',{class:'btn-primary'},'Siguiente');b.onclick=()=>v3LoadDynamic(r.page+1);pager.appendChild(b);}
+      },null);
     }
 
     function alerta(texto, tipo) {
