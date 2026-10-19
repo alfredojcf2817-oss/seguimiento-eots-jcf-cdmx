@@ -2058,13 +2058,13 @@ function v4RenderLevels(){
   table.append(body);wrap.append(table);host.append(wrap);
 }
 function v4ListSyntax(){v4Api('v4ListSyntax',[TOKEN],r=>{const host=v4$('v4SyntaxList');host.replaceChildren();const table=document.createElement('table'),head=document.createElement('tr');['Documento','Sintaxis','Registrado por','Nivel','Fecha'].forEach(k=>head.append(v4txt('th',k)));table.append(head);r.registros.forEach(s=>{const tr=document.createElement('tr');[s.documento,s.sintaxis,s.creadoPor,s.nivel,s.fecha].forEach(v=>tr.append(v4txt('td',v)));table.append(tr);});host.append(table);});}
-function v4OpenRole(btn){abrirModulo('v4Role',btn);v4Api('v4Roster',[TOKEN],r=>{v4Users=r.personas;v7LoadExistingRoles();});v4Api('v4ActivityTypes',[TOKEN],r=>v4RoleTypes=r.tipos);}
+function v4OpenRole(btn){abrirModulo('v4Role',btn);v4Api('v4Roster',[TOKEN],r=>{v4Users=r.personas||[];if(!v4$('v4RoleModal').hidden)v7LoadExistingRoles();});v4Api('v4ActivityTypes',[TOKEN],r=>v4RoleTypes=r.tipos);}
 let v7RoleExisting=[];function v7LoadExistingRoles(){const fecha=v4$('v4RoleDate').value;v7RoleExisting=[];v4RenderRolePeople();if(!fecha)return;v4Api('v4RoleHistory',[TOKEN,fecha],r=>{v7RoleExisting=r.registros||[];v4RenderRolePeople();});}
-function v4ShowRoleModal(){v4$('v4RoleModal').hidden=false;v4$('v4RoleDate').value=new Date().toISOString().slice(0,10);v7LoadExistingRoles();}
+function v4ShowRoleModal(){v4$('v4RoleModal').hidden=false;v4$('v4RoleDate').value=new Date().toLocaleDateString('en-CA');if(!v4Users.length){v4$('v4RolePeople').textContent='Cargando personal activo…';v4Api('v4Roster',[TOKEN],r=>{v4Users=r.personas||[];v7LoadExistingRoles();});}else{v7LoadExistingRoles();}}
 function v4RenderRolePeople(){
   const level=v4$('v4RoleLevel').value,host=v4$('v4RolePeople');
   host.replaceChildren();
-  v4RolePeople=v4Users.filter(p=>p.nivel===level);
+  v4RolePeople=v4Users.filter(p=>String(p.nivel)===String(level));
   const wrap=document.createElement('div');wrap.className='v7-table-wrap';
   const table=document.createElement('table');table.className='v7-table v7-role-table';
   const thead=document.createElement('thead'),head=document.createElement('tr');
@@ -2103,7 +2103,7 @@ function v4RenderRolePeople(){
       const fecha=v4$('v4RoleDate').value;
       if(!fecha){alert('Selecciona una fecha.');return;}
       edit.disabled=true;
-      v4Api('v4SaveRole',[TOKEN,{nivel:level,fecha,inicio,fin,asignaciones:[{curp:p.curp,actividad:value,observaciones:activity.querySelector('textarea').value,nueva}]}],r=>{
+      v4Api('v4SaveRole',[TOKEN,{nivel:level,fecha,inicio,fin,asignaciones:[{curp:p.curp,actividad:value,inicio,fin,observaciones:activity.querySelector('textarea').value,nueva}]}],r=>{
         edit.disabled=false;edit.dataset.editing='no';edit.textContent='✎';
         const observaciones=activity.querySelector('textarea')?.value||'';activity.replaceChildren(v4txt('strong',value));v7RoleExisting=v7RoleExisting.filter(x=>x.curp!==p.curp);v7RoleExisting.push({curp:p.curp,actividad:value,inicio,fin,observaciones});
         startCell.replaceChildren(v4txt('span',inicio||'—'));
@@ -2118,7 +2118,7 @@ function v4RenderRolePeople(){
     edit.dataset.editing='no';edit.className+=' v7-edit-button';edit.title='Editar actividad de '+p.nombre;
     action.append(edit);row.append(activity,startCell,endCell,action);tbody.append(row);
   });
-  table.append(tbody);wrap.append(table);host.append(wrap);
+  table.append(tbody);wrap.append(table);host.append(wrap);if(!v4RolePeople.length)host.append(v4txt('p','No se encontraron usuarios activos del nivel '+level+'. Comprueba la hoja usuarios y el estatus Activo.'));
 }
 function v4DownloadRole(){
   const fecha=v4$('v4RoleDownloadDate').value;
