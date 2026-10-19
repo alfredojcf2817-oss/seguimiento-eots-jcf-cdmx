@@ -514,6 +514,27 @@
   #inicio .v6-home-logo { width: min(82%, 390px); top: 64%; }
 }
 
+
+/* V7: tablas de administración y asignación individual */
+.v7-modules-header{text-align:center;margin:0 auto 24px}
+#gestionModulos #v7ModuleAction{max-width:520px;margin:8px 0 20px}
+.v7-table-wrap{width:100%;overflow-x:auto;border:1px solid #e6dce0;border-radius:12px;margin-top:12px}
+.v7-table{width:100%;border-collapse:collapse;min-width:640px;font-size:14px}
+.v7-table th{background:#f2e8ec;color:#6b1933;font-weight:700;text-align:center;padding:13px 12px;border-bottom:2px solid #9d2449}
+.v7-table td{padding:12px;vertical-align:middle;border-bottom:1px solid #eadfe3}
+.v7-table tbody tr:nth-child(even){background:#faf7f8}
+.v7-table td:first-child{font-weight:600}
+.v7-table td:last-child{text-align:center}
+.v7-level-table td:not(:first-child){text-align:center}
+.v7-level-table input[type=checkbox]{accent-color:#9d2449;width:17px;height:17px}
+.v7-edit-button{white-space:nowrap;padding:8px 12px!important}
+.v7-unassigned{display:inline-block;background:#d1d1d1;color:#414141;padding:8px 10px;border-radius:6px;font-weight:600}
+.v7-role-table select,.v7-role-table input,.v7-role-table textarea{width:100%;min-width:135px;box-sizing:border-box}
+.v7-role-table td:nth-child(2){min-width:210px}
+.v7-role-table td:first-child{min-width:210px}
+.v7-hint{color:#626262;font-size:13px}
+#v4RoleModal .v4-dialog{width:min(96vw,1100px);max-width:1100px}
+@media(max-width:700px){.v7-table{font-size:13px}.v7-table th,.v7-table td{padding:9px}.v7-table-wrap{margin-top:8px}}
 </style>
 <style>
 .v4-modal[hidden],.v4-busy[hidden]{display:none!important}.v4-modal{position:fixed;inset:0;z-index:9998;background:#0009;display:flex;align-items:center;justify-content:center;padding:16px}.v4-dialog{background:#fff;border-radius:16px;padding:24px;max-width:850px;width:100%;max-height:90vh;overflow:auto;box-shadow:0 20px 60px #0004}.v4-busy{position:fixed;inset:0;z-index:99999;background:#1119;display:grid;place-items:center}.v4-busy-card{background:white;border-radius:16px;padding:30px;display:flex;align-items:center;gap:18px;color:#701a36}.v4-spinner{display:inline-block;width:34px;height:34px;border:4px solid #ddd;border-top-color:#9d2449;border-radius:50%;animation:v4spin .8s linear infinite}@keyframes v4spin{to{transform:rotate(360deg)}}.v4-tags{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}.v4-tag{background:#f2dfe6;border:1px solid #b8768d;padding:5px 8px;border-radius:16px}.v4-tag button{border:0;background:transparent;cursor:pointer;margin-left:4px}.v4-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}.v4-day{border:1px solid #ddd;border-radius:7px;min-height:86px;padding:5px;cursor:pointer;overflow-wrap:anywhere}.v4-day strong{display:block}.v4-day small{display:block;background:#f1e4e8;margin:2px 0;border-radius:4px;padding:2px}.v4-section{margin:15px 0;border-bottom:1px solid #ddd;padding-bottom:15px}.v4-dialog input,.v4-dialog select,.v4-dialog textarea{max-width:100%}@media(max-width:700px){.v4-calendar{gap:2px}.v4-day{min-height:70px;font-size:11px}.v4-day small{font-size:9px}}
@@ -734,7 +755,14 @@
         <div id="babienMsg" aria-live="polite"></div><div id="babienMatches"></div>
       </div></div>
       <div id="gestionModulos" class="modulo"><div class="card">
-        <h2>Administrador de módulos</h2><p>Gestiona los módulos de cada persona y sus niveles de acceso.</p><div class="v4-tags"><button class="btn-primary" onclick="v4TabModules('personas')">Personal y módulos</button><button class="btn-primary" onclick="v4TabModules('niveles')">Niveles de módulos</button><button class="btn-primary" onclick="v4TabModules('crear')">Crear módulo</button></div><div id="v4CreateModuleSection" hidden>
+        <header class="v7-modules-header"><h2>Administrador de módulos</h2><p>Gestiona los módulos de cada persona y sus niveles de acceso.</p></header>
+<label for="v7ModuleAction">Selecciona el tipo de acción</label>
+<select id="v7ModuleAction" onchange="v4TabModules(this.value)">
+<option value="personas">Personal y módulos</option>
+<option value="niveles">Niveles de módulos</option>
+<option value="crear">Crear módulo</option>
+</select>
+<div id="v4CreateModuleSection" hidden>
         <label>Nombre del módulo</label><input id="nuevoModuloNombre" maxlength="65" placeholder="Nombre del módulo">
         <label>URL HTTPS</label><input id="nuevoModuloUrl" type="url" placeholder="https://...">
         <label>Niveles permitidos</label>
@@ -753,7 +781,7 @@
       <div id="v3Syntax" class="modulo"><div class="card"><h2>Sintaxis de documentos de carga EOTs</h2><div class="v4-tags"><button class="btn-primary" onclick="v4SyntaxTab('nuevo')">Agregar sintaxis nuevo documento</button><button class="btn-primary" onclick="v4SyntaxTab('lista')">Visualizador de sintaxis existentes</button></div><div id="v4SyntaxNew"><label>Nombre del documento a cargar</label><input id="v3DocName" placeholder="Ej. Acuse de entrega"><label>Variable de la hoja usuarios</label><select id="v3SyntaxVariable"></select><button class="btn-primary" onclick="v3AddVariable()">Agregar variable</button><button class="btn-primary" onclick="v3AddText('_')">Agregar _</button><button class="btn-primary" onclick="v3AddText(' ')">Agregar espacio</button><label>Sintaxis resultante (puedes editarla)</label><textarea id="v3SyntaxText" rows="3" placeholder="{{Nombre}}_{{Apellido Paterno}}"></textarea><label>Extensión</label><select id="v3Ext"><option>.pdf</option><option>.png</option><option>.jpeg</option><option>.jpg</option><option>.xlsx</option><option>.xls</option><option>.docx</option><option>.doc</option><option>.csv</option><option>.txt</option></select><button class="btn-primary" onclick="v3SaveSyntaxUI()">Guardar sintaxis</button><div id="v3SyntaxMsg"></div></div><div id="v4SyntaxExisting" hidden><h3>Visualizador de sintaxis existentes</h3><button class="btn-primary" onclick="v4ListSyntax()">Actualizar listado</button><div id="v4SyntaxList"></div></div></div></div>
       <div id="v3Dynamic" class="modulo"><div class="card"><h2 id="v3DynamicTitle">Módulo</h2><input id="v3DynamicSearch" placeholder="Buscar registros" onkeydown="if(event.key==='Enter')v3LoadDynamic(1)"><button class="btn-primary" onclick="v3LoadDynamic(1)">Buscar</button><div id="v3DynamicBody" style="overflow:auto"></div><div id="v3DynamicPager"></div></div></div>
 
-<div id="v4Role" class="modulo"><div class="card"><h2>Rol de actividades</h2><button class="btn-primary" onclick="v4ShowRoleModal()">Agregar rol de actividades</button><label>Fecha del rol para descargar imagen</label><input id="v4RoleDownloadDate" type="date"><button class="btn-primary" onclick="v4DownloadRole()">Descargar imagen de rol</button><div id="v4RoleMessage"></div><div id="v4RoleModal" class="v4-modal" hidden><div class="v4-dialog"><button onclick="document.getElementById('v4RoleModal').hidden=true" style="float:right">✕</button><h3>Agregar rol de actividades</h3><label>Nivel de acceso</label><select id="v4RoleLevel" onchange="v4RenderRolePeople()"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select><label>Fecha</label><input type="date" id="v4RoleDate"><label><input type="checkbox" id="v4RoleTimeToggle" onchange="document.getElementById('v4RoleTimes').hidden=!this.checked"> Agregar hora de inicio y fin</label><div id="v4RoleTimes" hidden><label>Hora inicio</label><input type="time" id="v4RoleStart"><label>Hora fin</label><input type="time" id="v4RoleEnd"></div><div id="v4RolePeople"></div><button class="btn-primary" onclick="v4SaveRoleUI()">Guardar rol</button></div></div></div></div>
+<div id="v4Role" class="modulo"><div class="card"><h2>Rol de actividades</h2><button class="btn-primary" onclick="v4ShowRoleModal()">Agregar rol de actividades</button><label>Fecha del rol para descargar imagen</label><input id="v4RoleDownloadDate" type="date"><button class="btn-primary" onclick="v4DownloadRole()">Descargar imagen de rol</button><div id="v4RoleMessage"></div><div id="v4RoleModal" class="v4-modal" hidden><div class="v4-dialog"><button onclick="document.getElementById('v4RoleModal').hidden=true" style="float:right">✕</button><h3>Agregar rol de actividades</h3><label>Nivel de acceso</label><select id="v4RoleLevel" onchange="v4RenderRolePeople()"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select><label>Fecha</label><input type="date" id="v4RoleDate" onchange="v7LoadExistingRoles()"><p class="v7-hint">Asigna actividades y horarios individualmente mediante el botón de editar.</p><div id="v4RolePeople"></div><p class="v7-hint">Cada fila se guarda al presionar su botón Guardar.</p></div></div></div></div>
 <div id="v4Calendar" class="modulo"><div class="card"><h2>Actividades</h2><div style="display:flex;gap:12px;align-items:center"><button onclick="v4ShiftMonth(-1)">‹</button><h3 id="v4MonthTitle"></h3><button onclick="v4ShiftMonth(1)">›</button></div><div id="v4CalendarGrid" class="v4-calendar"></div><hr><h3>Agregar actividad personal o compartida</h3><label>Fecha</label><input id="v4EventDate" type="date"><label>Actividad</label><input id="v4EventTitle" placeholder="Descripción de la actividad"><label>Hora de inicio</label><input id="v4EventStart" type="time"><label>Hora de fin</label><input id="v4EventEnd" type="time"><label>Compartir con personal (escribe nombre y selecciona)</label><input id="v4ShareSearch" list="v4ShareOptions" placeholder="Buscar nombre" oninput="v4SuggestShare()"><datalist id="v4ShareOptions"></datalist><button onclick="v4AddShare()">Agregar persona</button><div id="v4Shares"></div><label>Observaciones</label><textarea id="v4EventObs"></textarea><button class="btn-primary" onclick="v4SaveEventUI()">Guardar actividad</button><div id="v4EventMsg"></div></div></div>
 <div id="v4Notes" class="modulo"><div class="card"><h2>Notas personales</h2><button class="btn-primary" onclick="v4NewNote()">Agregar nota</button><div id="v4NotesList"></div><div id="v4NoteModal" class="v4-modal" hidden><div class="v4-dialog"><button onclick="document.getElementById('v4NoteModal').hidden=true" style="float:right">✕</button><h3>Nota</h3><input id="v4NoteId" type="hidden"><label>Título</label><input id="v4NoteTitle"><label>Observaciones</label><textarea id="v4NoteBody" rows="9"></textarea><button class="btn-primary" onclick="v4SaveNoteUI()">Guardar nota</button></div></div></div></div>
 <div id="v4GlobalBusy" class="v4-busy" hidden><div class="v4-busy-card"><span class="v4-spinner"></span><strong>Procesando información...</strong></div></div>
@@ -1972,14 +2000,126 @@ function v4NewUser(){v3EditUser('');}function v4CloseUser(){v4$('v4UserModal').h
 function v4LoadMyAccess(){v4Api('v4MyModules',[TOKEN],r=>{const visible=new Set(r.ids);const buttons={atencionC:'abrirAtencionC',oficinaOV:'abrirOficinaOV',documentos:'abrirDocumentos',recursos:'abrirRecursos',directorioDrives:'abrirDirectorioDrives',buscadorTarjetas:'abrirBuscadorTarjetas',vacaciones:'abrirVacaciones',adminVacaciones:'abrirAdminVacaciones',babien:'abrirBaBien',v3Admin:'v3OpenAdmin',v3Profile:'v3OpenProfile',v3Syntax:'v3OpenSyntax',v4Role:'v4OpenRole',v4Calendar:'v4OpenCalendar',v4Notes:'v4OpenNotes',gestionModulos:'abrirGestionModulos'};Object.entries(buttons).forEach(([id,fn])=>{const b=[...document.querySelectorAll('.sidebar button')].find(x=>x.getAttribute('onclick')?.startsWith(fn+'('));if(b)b.style.display=visible.has(id)?'block':'none';});});}
 function v4LoadHome(){v4Api('v4Home',[TOKEN],r=>{v4$('v4Welcome').textContent=r.nombre;const host=v4$('v4HomeBody');host.replaceChildren();if(!r.actividades.length&&!r.avisos.length)host.append(v4txt('p','No hay actividades ni notificaciones próximas.'));r.actividades.forEach(a=>{const d=v4txt('div',`${a.fecha} · ${a.actividad} · Asignada por: ${a.creador}${a.observaciones?' · '+a.observaciones:''}`);d.className='v4-section';host.append(d);});r.avisos.forEach(a=>host.append(v4txt('p',a.texto)));});}
 function v4LoadAccess(){v4Api('v4Catalog',[TOKEN],r=>{v4CatalogData=r;v4RenderAccess();v4RenderLevels();});}
-function v4RenderAccess(){const host=v4$('v4AccessPeople');host.replaceChildren();v4CatalogData.personas.forEach(p=>{const wrap=document.createElement('div');wrap.className='v4-section';wrap.append(v4txt('strong',`${p.nombre} · Nivel ${p.nivel}`));const tags=document.createElement('div');tags.className='v4-tags';p.modulos.forEach(id=>{const d=v4CatalogData.modulos.find(x=>x.id===id);if(d)tags.append(v4txt('span',d.nombre+' · '));});wrap.append(tags,v4btn('Editar módulos',()=>v4EditAccess(p)));host.append(wrap);});}
+function v4RenderAccess(){
+  const host=v4$('v4AccessPeople');host.replaceChildren();
+  const box=document.createElement('div');box.className='v7-table-wrap';
+  const table=document.createElement('table');table.className='v7-table';
+  const thead=document.createElement('thead'),head=document.createElement('tr');
+  ['Nombre completo','Nivel','Módulos activos','Acción'].forEach(x=>head.append(v4txt('th',x)));
+  thead.append(head);table.append(thead);
+  const body=document.createElement('tbody');
+  v4CatalogData.personas.forEach(p=>{
+    const tr=document.createElement('tr');
+    tr.append(v4txt('td',p.nombre),v4txt('td',p.nivel));
+    const td=document.createElement('td');
+    const labels=p.modulos.map(id=>v4CatalogData.modulos.find(d=>d.id===id)?.nombre).filter(Boolean);
+    td.textContent=labels.length?labels.join(' · '):'Sin módulos';tr.append(td);
+    const action=document.createElement('td');
+    const edit=v4btn('✎ Editar módulos',()=>v4EditAccess(p));edit.classList.add('v7-edit-button');
+    edit.setAttribute('aria-label','Editar módulos de '+p.nombre);
+    action.append(edit);tr.append(action);body.append(tr);
+  });
+  table.append(body);box.append(table);host.append(box);
+}
 function v4EditAccess(p){v4EditingAccess=p.curp;v4SelectedIds=[...p.modulos];const host=v4$('v4AccessPeople');let editor=v4$('v4AccessEditor');if(editor)editor.remove();editor=document.createElement('div');editor.id='v4AccessEditor';editor.className='v4-dialog';editor.append(v4txt('h3','Editar módulos: '+p.nombre));const tags=document.createElement('div');tags.className='v4-tags';editor.append(tags);const draw=()=>{tags.replaceChildren();v4SelectedIds.forEach(id=>{const d=v4CatalogData.modulos.find(x=>x.id===id);if(!d)return;const chip=v4txt('span',d.nombre);chip.className='v4-tag';const del=v4txt('button','×');del.onclick=()=>{v4SelectedIds=v4SelectedIds.filter(x=>x!==id);draw();};chip.append(del);tags.append(chip);});};draw();const search=document.createElement('input');search.placeholder='Escribe para autocompletar módulo';const list=document.createElement('datalist');list.id='v4ModSuggestions';search.setAttribute('list',list.id);v4CatalogData.modulos.forEach(d=>{const op=document.createElement('option');op.value=d.nombre;list.append(op);});editor.append(search,list,v4btn('Agregar tag',()=>{const d=v4CatalogData.modulos.find(d=>d.nombre.toLowerCase()===search.value.toLowerCase());if(d&&!v4SelectedIds.includes(d.id)){v4SelectedIds.push(d.id);draw();}search.value='';}),v4btn('Actualizar',()=>v4Api('v4SaveAccess',[TOKEN,p.curp,v4SelectedIds],()=>{v4LoadAccess();alert('Permisos actualizados.');})));host.prepend(editor);editor.scrollIntoView({behavior:'smooth'});}
-function v4RenderLevels(){const host=v4$('v4ModuleLevels');host.replaceChildren();v4CatalogData.modulos.forEach(d=>{const row=document.createElement('div');row.className='v4-section';row.append(v4txt('strong',d.nombre));const checks=document.createElement('div');checks.className='v4-tags';['1','2','3','4'].forEach(n=>{const label=document.createElement('label'),c=document.createElement('input');c.type='checkbox';c.value=n;c.checked=d.niveles.split(',').includes(n);label.append(c,document.createTextNode(' Nivel '+n));checks.append(label);});row.append(checks,v4btn('Actualizar niveles',()=>{const arr=[...checks.querySelectorAll('input:checked')].map(x=>x.value);v4Api('v4SaveLevels',[TOKEN,d.id,arr.join(',')],()=>{v4LoadAccess();alert('Niveles actualizados.');});}));host.append(row);});}
+function v4RenderLevels(){
+  const host=v4$('v4ModuleLevels');host.replaceChildren();
+  const wrap=document.createElement('div');wrap.className='v7-table-wrap';
+  const table=document.createElement('table');table.className='v7-table v7-level-table';
+  const thead=document.createElement('thead'),tr=document.createElement('tr');
+  ['Nombre del módulo','Nivel 1','Nivel 2','Nivel 3','Nivel 4','Acción'].forEach(t=>tr.append(v4txt('th',t)));
+  thead.append(tr);table.append(thead);
+  const body=document.createElement('tbody');
+  v4CatalogData.modulos.forEach(d=>{
+    const row=document.createElement('tr');row.append(v4txt('td',d.nombre));
+    const checks=[];
+    ['1','2','3','4'].forEach(n=>{
+      const td=document.createElement('td'),input=document.createElement('input');
+      input.type='checkbox';input.value=n;input.checked=d.niveles.split(',').includes(n);
+      input.setAttribute('aria-label',`Permitir ${d.nombre} al nivel ${n}`);
+      input.disabled=true;checks.push(input);td.append(input);row.append(td);
+    });
+    const td=document.createElement('td'),btn=v4btn('✎ Editar',()=>{
+      if(btn.dataset.editing!=='yes'){
+        checks.forEach(c=>c.disabled=false);btn.dataset.editing='yes';btn.textContent='Guardar';return;
+      }
+      const levels=checks.filter(c=>c.checked).map(c=>c.value).join(',');
+      if(!levels){alert('Selecciona al menos un nivel.');return;}
+      btn.disabled=true;
+      v4Api('v4SaveLevels',[TOKEN,d.id,levels],()=>{
+        btn.disabled=false;btn.dataset.editing='no';btn.textContent='✎ Editar';
+        checks.forEach(c=>c.disabled=true);v4LoadAccess();
+      });
+      // Se habilita de nuevo si falla la petición (el manejador genérico informa del error).
+      setTimeout(()=>{btn.disabled=false;},10000);
+    });
+    btn.classList.add('v7-edit-button');td.append(btn);row.append(td);body.append(row);
+  });
+  table.append(body);wrap.append(table);host.append(wrap);
+}
 function v4ListSyntax(){v4Api('v4ListSyntax',[TOKEN],r=>{const host=v4$('v4SyntaxList');host.replaceChildren();const table=document.createElement('table'),head=document.createElement('tr');['Documento','Sintaxis','Registrado por','Nivel','Fecha'].forEach(k=>head.append(v4txt('th',k)));table.append(head);r.registros.forEach(s=>{const tr=document.createElement('tr');[s.documento,s.sintaxis,s.creadoPor,s.nivel,s.fecha].forEach(v=>tr.append(v4txt('td',v)));table.append(tr);});host.append(table);});}
-function v4OpenRole(btn){abrirModulo('v4Role',btn);v4Api('v4Roster',[TOKEN],r=>{v4Users=r.personas;v4RenderRolePeople();});v4Api('v4ActivityTypes',[TOKEN],r=>v4RoleTypes=r.tipos);}
-function v4ShowRoleModal(){v4$('v4RoleModal').hidden=false;v4$('v4RoleDate').value=new Date().toISOString().slice(0,10);v4RenderRolePeople();}
-function v4RenderRolePeople(){const level=v4$('v4RoleLevel').value,host=v4$('v4RolePeople');host.replaceChildren();v4RolePeople=v4Users.filter(p=>p.nivel===level);v4RolePeople.forEach(p=>{const row=document.createElement('div');row.className='v4-section';row.dataset.curp=p.curp;row.append(v4txt('strong',p.nombre));const btn=v4btn('Agregar actividad',()=>{btn.remove();const sel=document.createElement('select');sel.className='v4RoleType';v4RoleTypes.concat(['Otro']).forEach(t=>{const opt=document.createElement('option');opt.value=t;opt.textContent=t;sel.append(opt);});const other=document.createElement('input');other.placeholder='Especifica otra actividad';other.className='v4RoleOther';other.hidden=true;sel.onchange=()=>other.hidden=sel.value!=='Otro';const obs=document.createElement('textarea');obs.className='v4RoleObs';obs.placeholder='Observaciones (opcional)';row.append(sel,other,obs);});row.append(btn);host.append(row);});}
-function v4SaveRoleUI(){const assigns=[...v4$('v4RolePeople').querySelectorAll('[data-curp]')].filter(row=>row.querySelector('.v4RoleType')).map(row=>{const sel=row.querySelector('.v4RoleType'),other=row.querySelector('.v4RoleOther'),nueva=sel.value==='Otro';return {curp:row.dataset.curp,actividad:nueva?other.value.trim():sel.value,observaciones:row.querySelector('.v4RoleObs').value,nueva};});const d={nivel:v4$('v4RoleLevel').value,fecha:v4$('v4RoleDate').value,inicio:v4$('v4RoleTimeToggle').checked?v4$('v4RoleStart').value:'',fin:v4$('v4RoleTimeToggle').checked?v4$('v4RoleEnd').value:'',asignaciones:assigns};v4Api('v4SaveRole',[TOKEN,d],r=>{v4$('v4RoleModal').hidden=true;v4$('v4RoleMessage').textContent=r.mensaje;v4$('v4RoleDownloadDate').value=d.fecha;v4LoadHome();});}
+function v4OpenRole(btn){abrirModulo('v4Role',btn);v4Api('v4Roster',[TOKEN],r=>{v4Users=r.personas;v7LoadExistingRoles();});v4Api('v4ActivityTypes',[TOKEN],r=>v4RoleTypes=r.tipos);}
+let v7RoleExisting=[];function v7LoadExistingRoles(){const fecha=v4$('v4RoleDate').value;v7RoleExisting=[];v4RenderRolePeople();if(!fecha)return;v4Api('v4RoleHistory',[TOKEN,fecha],r=>{v7RoleExisting=r.registros||[];v4RenderRolePeople();});}
+function v4ShowRoleModal(){v4$('v4RoleModal').hidden=false;v4$('v4RoleDate').value=new Date().toISOString().slice(0,10);v7LoadExistingRoles();}
+function v4RenderRolePeople(){
+  const level=v4$('v4RoleLevel').value,host=v4$('v4RolePeople');
+  host.replaceChildren();
+  v4RolePeople=v4Users.filter(p=>p.nivel===level);
+  const wrap=document.createElement('div');wrap.className='v7-table-wrap';
+  const table=document.createElement('table');table.className='v7-table v7-role-table';
+  const thead=document.createElement('thead'),head=document.createElement('tr');
+  ['Nombre completo','Actividad','Hora inicio','Hora fin','Acción'].forEach(t=>head.append(v4txt('th',t)));
+  thead.append(head);table.append(thead);
+  const tbody=document.createElement('tbody');
+  v4RolePeople.forEach(p=>{
+    const row=document.createElement('tr');row.dataset.curp=p.curp;
+    row.append(v4txt('td',p.nombre));
+    const activity=document.createElement('td'),activityLabel=v4txt('span','Sin actividad');
+    activityLabel.className='v7-unassigned';if(existing){activityLabel.textContent=existing.actividad;activityLabel.className='v7-assigned';}activity.append(activityLabel);
+    const startCell=document.createElement('td'),endCell=document.createElement('td'),action=document.createElement('td');
+    const startLabel=v4txt('span','—'),endLabel=v4txt('span','—');
+    startLabel.textContent=existing?.inicio||'—';endLabel.textContent=existing?.fin||'—';startCell.append(startLabel);endCell.append(endLabel);
+    const edit=v4btn('✎',()=>{
+      if(edit.dataset.editing!=='yes'){
+        edit.dataset.editing='yes';edit.textContent='Guardar';activity.replaceChildren();
+        const sel=document.createElement('select');sel.className='v4RoleType';
+        const blank=document.createElement('option');blank.value='';blank.textContent='Selecciona una actividad';sel.append(blank);
+        [...new Set([...v4RoleTypes,'Otro'])].forEach(t=>{const o=document.createElement('option');o.value=t;o.textContent=t;sel.append(o);});
+        const other=document.createElement('input');other.className='v4RoleOther';other.placeholder='Especifica otra actividad';other.hidden=true;
+        const obs=document.createElement('textarea');obs.className='v4RoleObs';obs.placeholder='Observaciones (opcional)';obs.rows=2;
+        sel.onchange=()=>other.hidden=sel.value!=='Otro';
+        activity.append(sel,other,obs);
+        startCell.replaceChildren();endCell.replaceChildren();
+        const st=document.createElement('input'),en=document.createElement('input');
+        st.type=en.type='time';st.className='v7-time-input';en.className='v7-time-input';
+        st.value=existing?.inicio||'';en.value=existing?.fin||'';startCell.append(st);endCell.append(en);if(existing){sel.value=v4RoleTypes.includes(existing.actividad)?existing.actividad:'Otro';other.hidden=sel.value!=='Otro';if(!other.hidden)other.value=existing.actividad;obs.value=existing.observaciones||'';}return;
+      }
+      const sel=activity.querySelector('select'),other=activity.querySelector('.v4RoleOther');
+      const nueva=sel.value==='Otro',value=nueva?other.value.trim():sel.value;
+      const inicio=startCell.querySelector('input').value,fin=endCell.querySelector('input').value;
+      if(!value){alert('Selecciona una actividad.');return;}
+      if((inicio&&!fin)||(!inicio&&fin)){alert('Indica ambas horas o deja las dos vacías.');return;}
+      if(inicio&&fin&&fin<=inicio){alert('La hora de fin debe ser posterior a la de inicio.');return;}
+      const fecha=v4$('v4RoleDate').value;
+      if(!fecha){alert('Selecciona una fecha.');return;}
+      edit.disabled=true;
+      v4Api('v4SaveRole',[TOKEN,{nivel:level,fecha,inicio,fin,asignaciones:[{curp:p.curp,actividad:value,observaciones:activity.querySelector('textarea').value,nueva}]}],r=>{
+        edit.disabled=false;edit.dataset.editing='no';edit.textContent='✎';
+        const observaciones=activity.querySelector('textarea')?.value||'';activity.replaceChildren(v4txt('strong',value));v7RoleExisting=v7RoleExisting.filter(x=>x.curp!==p.curp);v7RoleExisting.push({curp:p.curp,actividad:value,inicio,fin,observaciones});
+        startCell.replaceChildren(v4txt('span',inicio||'—'));
+        endCell.replaceChildren(v4txt('span',fin||'—'));
+        v4$('v4RoleMessage').textContent=r.mensaje;
+        v4$('v4RoleDownloadDate').value=fecha;
+        if(nueva&&!v4RoleTypes.includes(value))v4RoleTypes.push(value);
+        v4LoadHome();
+      });
+      setTimeout(()=>{edit.disabled=false;},10000);
+    });
+    edit.dataset.editing='no';edit.className+=' v7-edit-button';edit.title='Editar actividad de '+p.nombre;
+    action.append(edit);row.append(activity,startCell,endCell,action);tbody.append(row);
+  });
+  table.append(tbody);wrap.append(table);host.append(wrap);
+}
 function v4DownloadRole(){
   const fecha=v4$('v4RoleDownloadDate').value;
   if(!/^\d{4}-\d{2}-\d{2}$/.test(fecha)){
@@ -2060,7 +2200,7 @@ function v4SaveNoteUI(){const d={id:v4$('v4NoteId').value,titulo:v4$('v4NoteTitl
 
 </script>
 <script>
-function v4TabModules(tab){['personas','niveles','crear'].forEach(k=>{const id={personas:'v4PeopleSection',niveles:'v4LevelsSection',crear:'v4CreateModuleSection'}[k];document.getElementById(id).hidden=k!==tab;});}
+function v4TabModules(tab){const select=document.getElementById('v7ModuleAction');if(select)select.value=tab;['personas','niveles','crear'].forEach(k=>{const id={personas:'v4PeopleSection',niveles:'v4LevelsSection',crear:'v4CreateModuleSection'}[k];document.getElementById(id).hidden=k!==tab;});}
 function v4SyntaxTab(tab){document.getElementById('v4SyntaxNew').hidden=tab!=='nuevo';document.getElementById('v4SyntaxExisting').hidden=tab!=='lista';if(tab==='lista')v4ListSyntax();}
 </script></body>
 </html>
