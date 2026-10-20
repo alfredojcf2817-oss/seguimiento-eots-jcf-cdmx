@@ -553,6 +553,27 @@
 .v8-footer{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:15px 0;margin-top:14px;border-top:2px solid #9d2449}
 .v8-footer button{max-width:330px}\n.v7-role-table td:last-child select{min-width:170px;max-width:260px}
 @media(max-width:680px){.v8-assignment{display:block}.v8-assignment-actions{margin-top:10px}.v8-footer{flex-direction:column;align-items:stretch}.v8-footer button{max-width:none}}
+
+/* V10: seguimiento de documentos */
+.v10-toolbar{display:flex;align-items:flex-end;flex-wrap:wrap;gap:12px;margin:16px 0}
+.v10-toolbar label{width:100%;margin-bottom:0}
+.v10-toolbar input{flex:1;min-width:210px;max-width:500px}
+.v10-audit-folder{border:1px solid #e4d5da;border-radius:12px;padding:16px;margin:20px 0;background:#fff}
+.v10-audit-folder h3{color:#9d2449;margin:0 0 8px}
+.v10-yes{color:#336a46;font-weight:700}.v10-no{color:#6a6264}
+.v10-file{margin:0 0 10px;display:flex;flex-direction:column;gap:3px}
+.v10-file a{color:#9d2449;overflow-wrap:anywhere}.v10-file small{color:#777}
+@media(max-width:600px){.v10-audit-folder{padding:10px}.v10-toolbar button{width:100%}}
+
+.v10-notice{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:12px;margin:8px 0;border:1px solid #e6d9de;border-radius:10px;background:#fff}
+.v10-notice p{margin:5px 0 0}.v10-notice button{white-space:nowrap}
+.v10-calendar-pin{display:block;width:100%;text-align:left;margin:3px 0;padding:4px 6px;border:1px solid #e4d8dd;border-radius:7px;background:#faf4f6;color:#672038;font-size:12px;cursor:pointer;white-space:normal;overflow-wrap:anywhere}
+.v10-calendar-pin:hover{background:#efdee4}
+.v10-confetti{position:fixed;inset:0;pointer-events:none;z-index:9999;overflow:hidden}
+.v10-confetti span{position:absolute;top:-20px;width:9px;height:14px;background:#9d2449;animation:v10-fall 3s linear forwards}
+.v10-confetti span:nth-child(3n){background:#838e5d}.v10-confetti span:nth-child(3n+1){background:#e9bb57}
+@keyframes v10-fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
+@media(max-width:550px){.v10-notice{flex-direction:column}}
 </style>
 <style>
 .v4-modal[hidden],.v4-busy[hidden]{display:none!important}.v4-modal{position:fixed;inset:0;z-index:9998;background:#0009;display:flex;align-items:center;justify-content:center;padding:16px}.v4-dialog{background:#fff;border-radius:16px;padding:24px;max-width:850px;width:100%;max-height:90vh;overflow:auto;box-shadow:0 20px 60px #0004}.v4-busy{position:fixed;inset:0;z-index:99999;background:#1119;display:grid;place-items:center}.v4-busy-card{background:white;border-radius:16px;padding:30px;display:flex;align-items:center;gap:18px;color:#701a36}.v4-spinner{display:inline-block;width:34px;height:34px;border:4px solid #ddd;border-top-color:#9d2449;border-radius:50%;animation:v4spin .8s linear infinite}@keyframes v4spin{to{transform:rotate(360deg)}}.v4-tags{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}.v4-tag{background:#f2dfe6;border:1px solid #b8768d;padding:5px 8px;border-radius:16px}.v4-tag button{border:0;background:transparent;cursor:pointer;margin-left:4px}.v4-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}.v4-day{border:1px solid #ddd;border-radius:7px;min-height:86px;padding:5px;cursor:pointer;overflow-wrap:anywhere}.v4-day strong{display:block}.v4-day small{display:block;background:#f1e4e8;margin:2px 0;border-radius:4px;padding:2px}.v4-section{margin:15px 0;border-bottom:1px solid #ddd;padding-bottom:15px}.v4-dialog input,.v4-dialog select,.v4-dialog textarea{max-width:100%}@media(max-width:700px){.v4-calendar{gap:2px}.v4-day{min-height:70px;font-size:11px}.v4-day small{font-size:9px}}
@@ -606,6 +627,7 @@
       <button id="btnV4Role" class="menu-btn" style="display:none" onclick="v4OpenRole(this)">Rol de actividades</button>
       <button id="btnV4Calendar" class="menu-btn" onclick="v4OpenCalendar(this)">Actividades</button>
       <button id="btnV4Notes" class="menu-btn" onclick="v4OpenNotes(this)">Notas</button>
+      <button id="btnV10DriveAudit" class="menu-btn" style="display:none" onclick="v10OpenDriveAudit(this)">Control de documentos en Drive</button>
       <button id="btnMiPerfil" class="menu-btn" style="display:none" onclick="v3OpenProfile(this)">Mi información personal</button>
       <button id="btnSintaxis" class="menu-btn" style="display:none" onclick="v3OpenSyntax(this)">Sintaxis de documentos de carga EOTs</button>
       <div id="modulosPersonalizadosMenu"></div>
@@ -830,7 +852,22 @@
 </div></div>
 </div></div>
 <div id="v4Calendar" class="modulo"><div class="card"><h2>Actividades</h2><div style="display:flex;gap:12px;align-items:center"><button onclick="v4ShiftMonth(-1)">‹</button><h3 id="v4MonthTitle"></h3><button onclick="v4ShiftMonth(1)">›</button></div><div id="v4CalendarGrid" class="v4-calendar"></div><hr><h3>Agregar actividad personal o compartida</h3><label>Fecha</label><input id="v4EventDate" type="date"><label>Actividad</label><input id="v4EventTitle" placeholder="Descripción de la actividad"><label>Hora de inicio</label><input id="v4EventStart" type="time"><label>Hora de fin</label><input id="v4EventEnd" type="time"><label>Compartir con personal (escribe nombre y selecciona)</label><input id="v4ShareSearch" list="v4ShareOptions" placeholder="Buscar nombre" oninput="v4SuggestShare()"><datalist id="v4ShareOptions"></datalist><button onclick="v4AddShare()">Agregar persona</button><div id="v4Shares"></div><label>Observaciones</label><textarea id="v4EventObs"></textarea><button class="btn-primary" onclick="v4SaveEventUI()">Guardar actividad</button><div id="v4EventMsg"></div></div></div>
+<div id="v9DriveControl" class="modulo"><div class="card">
+  <h2>Control de documentos en Drive</h2>
+  <p>Consulta las cargas realizadas desde este sistema. Cada registro incluye la persona, documento, fecha y archivo de Drive.</p>
+  <div class="v10-toolbar"><label for="v10Search">Buscar persona, documento o carpeta</label>
+  <input id="v10Search" placeholder="Buscar..." oninput="v10RenderAudit()">
+  <button class="btn-primary" onclick="v10LoadAudit()">Actualizar registros</button></div>
+  <div id="v10AuditMessage" role="status"></div>
+  <div id="v10AuditContent"></div>
+</div></div>
 <div id="v4Notes" class="modulo"><div class="card"><h2>Notas personales</h2><button class="btn-primary" onclick="v4NewNote()">Agregar nota</button><div id="v4NotesList"></div><div id="v4NoteModal" class="v4-modal" hidden><div class="v4-dialog"><button onclick="document.getElementById('v4NoteModal').hidden=true" style="float:right">✕</button><h3>Nota</h3><input id="v4NoteId" type="hidden"><label>Título</label><input id="v4NoteTitle"><label>Observaciones</label><textarea id="v4NoteBody" rows="9"></textarea><button class="btn-primary" onclick="v4SaveNoteUI()">Guardar nota</button></div></div></div></div>
+<div id="v10NoticeModal" class="v4-modal" hidden><div class="v4-dialog">
+<button type="button" style="float:right" onclick="v4$('v10NoticeModal').hidden=true" aria-label="Cerrar">✕</button>
+<h2>Todas las notificaciones</h2><div id="v10NoticeAll"></div></div></div>
+<div id="v10CalendarModal" class="v4-modal" hidden><div class="v4-dialog">
+<button type="button" style="float:right" onclick="v4$('v10CalendarModal').hidden=true" aria-label="Cerrar">✕</button>
+<h2>Detalles de la actividad</h2><div id="v10CalendarDetails"></div></div></div>
 <div id="v4GlobalBusy" class="v4-busy" hidden><div class="v4-busy-card"><span class="v4-spinner"></span><strong>Procesando información...</strong></div></div>
       <div id="directorioDrives" class="modulo">
         <div class="card">
@@ -2044,8 +2081,53 @@ const v4txt=(tag,content)=>{const e=document.createElement(tag);e.textContent=St
 const v4btn=(name,fn)=>{const b=v4txt('button',name);b.className='btn-primary';b.onclick=fn;return b;};
 function v4Api(name,args,cb){v3Call(name,args,r=>{if(!r.ok){alert(r.mensaje||'No se pudo completar la operación.');return;}cb&&cb(r);});}
 function v4NewUser(){v3EditUser('');}function v4CloseUser(){v4$('v4UserModal').hidden=true;}
-function v4LoadMyAccess(){v4Api('v4MyModules',[TOKEN],r=>{const visible=new Set(r.ids);const buttons={atencionC:'abrirAtencionC',oficinaOV:'abrirOficinaOV',documentos:'abrirDocumentos',recursos:'abrirRecursos',directorioDrives:'abrirDirectorioDrives',buscadorTarjetas:'abrirBuscadorTarjetas',vacaciones:'abrirVacaciones',adminVacaciones:'abrirAdminVacaciones',babien:'abrirBaBien',v3Admin:'v3OpenAdmin',v3Profile:'v3OpenProfile',v3Syntax:'v3OpenSyntax',v4Role:'v4OpenRole',v4Calendar:'v4OpenCalendar',v4Notes:'v4OpenNotes',gestionModulos:'abrirGestionModulos'};Object.entries(buttons).forEach(([id,fn])=>{const b=[...document.querySelectorAll('.sidebar button')].find(x=>x.getAttribute('onclick')?.startsWith(fn+'('));if(b)b.style.display=visible.has(id)?'block':'none';});});}
-function v4LoadHome(){v4Api('v4Home',[TOKEN],r=>{v4$('v4Welcome').textContent=r.nombre;const host=v4$('v4HomeBody');host.replaceChildren();if(!r.actividades.length&&!r.avisos.length)host.append(v4txt('p','No hay actividades ni notificaciones próximas.'));r.actividades.forEach(a=>{const d=v4txt('div',`${a.fecha} · ${a.actividad} · Asignada por: ${a.creador}${a.observaciones?' · '+a.observaciones:''}`);d.className='v4-section';host.append(d);});r.avisos.forEach(a=>host.append(v4txt('p',a.texto)));});}
+function v4LoadMyAccess(){v4Api('v4MyModules',[TOKEN],r=>{const visible=new Set(r.ids);const buttons={atencionC:'abrirAtencionC',oficinaOV:'abrirOficinaOV',documentos:'abrirDocumentos',recursos:'abrirRecursos',directorioDrives:'abrirDirectorioDrives',buscadorTarjetas:'abrirBuscadorTarjetas',vacaciones:'abrirVacaciones',adminVacaciones:'abrirAdminVacaciones',babien:'abrirBaBien',v3Admin:'v3OpenAdmin',v3Profile:'v3OpenProfile',v3Syntax:'v3OpenSyntax',v4Role:'v4OpenRole',v4Calendar:'v4OpenCalendar',v4Notes:'v4OpenNotes',gestionModulos:'abrirGestionModulos',v9DriveControl:'v10OpenDriveAudit'};Object.entries(buttons).forEach(([id,fn])=>{const b=[...document.querySelectorAll('.sidebar button')].find(x=>x.getAttribute('onclick')?.startsWith(fn+'('));if(b)b.style.display=visible.has(id)?'block':'none';});});}
+let v10HomeNotifications=[];
+function v4LoadHome(){
+  v4Api('v4Home',[TOKEN],r=>{
+    v4$('v4Welcome').textContent=r.nombre||USUARIO?.nombre||'';
+    v10HomeNotifications=(r.notificaciones||[]).filter(x=>!x.oculta);
+    v10DrawHome();
+    const birthdays=r.cumpleanios||[];
+    if(birthdays.length)v10Birthday(birthdays);
+  });
+}
+function v10DrawHome(){
+  const host=v4$('v4HomeBody');host.replaceChildren();
+  if(!v10HomeNotifications.length)host.append(v4txt('p','No hay notificaciones pendientes.'));
+  v10HomeNotifications.slice(0,5).forEach(n=>host.append(v10Notice(n)));
+  const button=v4btn('Ver todas las notificaciones',v10ShowAllNotices);
+  button.classList.add('btn-primary');host.append(button);
+}
+function v10Notice(n){
+  const row=document.createElement('div');row.className='v10-notice';
+  const info=document.createElement('div');info.append(v4txt('strong',n.fecha+' · '+n.tipo));
+  info.append(v4txt('p',n.texto));row.append(info);
+  const dismiss=v4btn('Quitar',()=>{
+    v4Api('v9DismissNotification',[TOKEN,n.id],()=>{
+      v10HomeNotifications=v10HomeNotifications.filter(x=>x.id!==n.id);
+      v10DrawHome();if(!v4$('v10NoticeModal').hidden)v10ShowAllNotices();
+    });
+  });dismiss.setAttribute('aria-label','Quitar notificación');row.append(dismiss);return row;
+}
+function v10ShowAllNotices(){
+  const modal=v4$('v10NoticeModal'),host=v4$('v10NoticeAll');host.replaceChildren();
+  if(!v10HomeNotifications.length)host.append(v4txt('p','No hay notificaciones pendientes.'));
+  v10HomeNotifications.forEach(n=>host.append(v10Notice(n)));
+  modal.hidden=false;
+}
+function v10Birthday(names){
+  const host=v4$('v4HomeBody');
+  const msg=v4txt('h3','🎉 ¡Feliz cumpleaños! '+names.join(', '));host.prepend(msg);
+  if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
+  const confetti=document.createElement('div');confetti.className='v10-confetti';confetti.setAttribute('aria-hidden','true');
+  for(let i=0;i<36;i++){
+    const part=document.createElement('span');part.style.left=(i*37%100)+'%';
+    part.style.animationDelay=(i%12)*0.16+'s';part.style.animationDuration=(2.5+(i%5)*0.35)+'s';
+    confetti.append(part);
+  }
+  host.append(confetti);setTimeout(()=>confetti.remove(),6000);
+}
 function v4LoadAccess(){v4Api('v4Catalog',[TOKEN],r=>{v4CatalogData=r;v4RenderAccess();v4RenderLevels();});}
 function v4RenderAccess(){
   const host=v4$('v4AccessPeople');host.replaceChildren();
@@ -2375,7 +2457,31 @@ function v4OpenCalendar(btn){abrirModulo('v4Calendar',btn);v4Month=new Date();v4
 function v4ShiftMonth(n){v4Month.setMonth(v4Month.getMonth()+n);v4LoadCalendar();}
 function v4ISO(d){return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');}
 function v4LoadCalendar(){const first=new Date(v4Month.getFullYear(),v4Month.getMonth(),1),last=new Date(v4Month.getFullYear(),v4Month.getMonth()+1,0);v4$('v4MonthTitle').textContent=first.toLocaleDateString('es-MX',{month:'long',year:'numeric'});v4Api('v4Activities',[TOKEN,v4ISO(first),v4ISO(last)],r=>{v4Events=r.eventos;v4Users=r.usuarios;v4RenderCalendar();});}
-function v4RenderCalendar(){const host=v4$('v4CalendarGrid');host.replaceChildren();['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'].forEach(x=>host.append(v4txt('strong',x)));const year=v4Month.getFullYear(),month=v4Month.getMonth(),start=new Date(year,month,1).getDay(),total=new Date(year,month+1,0).getDate();for(let i=0;i<start;i++)host.append(document.createElement('div'));for(let day=1;day<=total;day++){const date=v4ISO(new Date(year,month,day)),box=document.createElement('div');box.className='v4-day';box.append(v4txt('strong',day));v4Events.filter(e=>e.fecha===date).forEach(e=>{const label=v4txt('small',(e.tipo==='Rol'?'📌 ':'')+e.actividad);label.title=e.observaciones||'';box.append(label);});box.onclick=()=>{v4$('v4EventDate').value=date;};host.append(box);}}
+function v4RenderCalendar(){
+  const host=v4$('v4CalendarGrid');host.replaceChildren();
+  ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'].forEach(x=>host.append(v4txt('strong',x)));
+  const year=v4Month.getFullYear(),month=v4Month.getMonth(),start=new Date(year,month,1).getDay(),total=new Date(year,month+1,0).getDate();
+  const byDate=new Map();(v4Events||[]).forEach(e=>{if(!byDate.has(e.fecha))byDate.set(e.fecha,[]);byDate.get(e.fecha).push(e);});
+  for(let i=0;i<start;i++)host.append(document.createElement('div'));
+  for(let day=1;day<=total;day++){
+    const date=v4ISO(new Date(year,month,day)),box=document.createElement('div');box.className='v4-day';
+    box.append(v4txt('strong',day));
+    (byDate.get(date)||[]).forEach(e=>{
+      const btn=document.createElement('button');btn.className='v10-calendar-pin';btn.type='button';
+      btn.textContent='📍 '+e.actividad;btn.title='Ver detalles de '+e.actividad;
+      btn.onclick=event=>{event.stopPropagation();v10ShowCalendarDetails(e);};box.append(btn);
+    });
+    box.onclick=()=>{v4$('v4EventDate').value=date;};host.append(box);
+  }
+}
+function v10ShowCalendarDetails(e){
+  const host=v4$('v10CalendarDetails');host.replaceChildren();
+  [['Fecha',e.fecha],['Actividad',e.actividad],['Tipo',e.tipo],
+   ['Hora de inicio',e.inicio||'No indicada'],['Hora de fin',e.fin||'No indicada'],
+   ['Observaciones',e.observaciones||'Sin observaciones'],['Creada por',e.creador||'—']]
+    .forEach(([k,v])=>{const p=document.createElement('p');p.append(v4txt('strong',k+': '),document.createTextNode(v));host.append(p);});
+  v4$('v10CalendarModal').hidden=false;
+}
 function v4SuggestShare(){const q=v4$('v4ShareSearch').value.toLowerCase(),list=v4$('v4ShareOptions');list.replaceChildren();v4Users.filter(u=>u.nombre.toLowerCase().includes(q)&&q).slice(0,15).forEach(u=>{const opt=document.createElement('option');opt.value=u.nombre;list.append(opt);});}
 function v4AddShare(){const q=v4$('v4ShareSearch').value.trim().toLowerCase(),u=v4Users.find(u=>u.nombre.toLowerCase()===q);if(u&&!v4Shares.includes(u.curp))v4Shares.push(u.curp);v4$('v4ShareSearch').value='';v4DrawShares();}
 function v4DrawShares(){const host=v4$('v4Shares');host.replaceChildren();v4Shares.forEach(curp=>{const u=v4Users.find(x=>x.curp===curp),tag=v4txt('span',u?.nombre||curp);tag.className='v4-tag';const b=v4txt('button','×');b.onclick=()=>{v4Shares=v4Shares.filter(x=>x!==curp);v4DrawShares();};tag.append(b);host.append(tag);});}
@@ -2392,5 +2498,61 @@ function v4SaveNoteUI(){const d={id:v4$('v4NoteId').value,titulo:v4$('v4NoteTitl
 <script>
 function v4TabModules(tab){const select=document.getElementById('v7ModuleAction');if(select)select.value=tab;['personas','niveles','crear'].forEach(k=>{const id={personas:'v4PeopleSection',niveles:'v4LevelsSection',crear:'v4CreateModuleSection'}[k];document.getElementById(id).hidden=k!==tab;});}
 function v4SyntaxTab(tab){document.getElementById('v4SyntaxNew').hidden=tab!=='nuevo';document.getElementById('v4SyntaxExisting').hidden=tab!=='lista';if(tab==='lista')v4ListSyntax();}
+
+/* V10: Control documental por registro de cargas verificadas. */
+let v10AuditData=null;
+function v10OpenDriveAudit(btn){
+  if(!USUARIO||!['1','2'].includes(String(USUARIO.nivel)))return;
+  abrirModulo('v9DriveControl',btn);v10LoadAudit();
+}
+function v10LoadAudit(){
+  const status=document.getElementById('v10AuditMessage');
+  status.textContent='Consultando registro de cargas…';
+  v3Call('v9DriveAudit',[TOKEN],r=>{
+    if(!r||!r.ok){status.textContent=r?.mensaje||'No fue posible consultar el registro.';return;}
+    v10AuditData=r;status.textContent=r.nota||'';v10RenderAudit();
+  });
+}
+function v10RenderAudit(){
+  if(!v10AuditData)return;
+  const host=document.getElementById('v10AuditContent');host.replaceChildren();
+  const term=document.getElementById('v10Search').value.trim().toLocaleLowerCase('es');
+  const people=v10AuditData.personas||[],folders=v10AuditData.carpetas||[];
+  if(!folders.length){host.append(v4txt('p','Todavía no hay cargas registradas desde la versión V10. Los archivos anteriores no se marcan automáticamente como entregados.'));return;}
+  folders.forEach(folder=>{
+    const files=folder.archivos||[];
+    const matches=people.filter(p=>!term||[p.nombre,p.curp,folder.nombre,...(folder.documentos||[])].join(' ').toLocaleLowerCase('es').includes(term));
+    if(!matches.length)return;
+    const card=document.createElement('section');card.className='v10-audit-folder';
+    card.append(v4txt('h3',folder.nombre));
+    const sub=v4txt('p','Documentos: '+(folder.documentos||[]).join(', '));card.append(sub);
+    const wrap=document.createElement('div');wrap.className='v7-table-wrap';
+    const table=document.createElement('table');table.className='v7-table';
+    const thead=document.createElement('thead'),hr=document.createElement('tr');
+    ['Personal activo','Nivel','Documento','Entregó','Archivo vigente'].forEach(t=>hr.append(v4txt('th',t)));
+    thead.append(hr);table.append(thead);
+    const body=document.createElement('tbody');
+    matches.forEach(p=>{
+      (folder.documentos||[]).forEach(documento=>{
+        const tr=document.createElement('tr');
+        tr.append(v4txt('td',p.nombre),v4txt('td',p.nivel),v4txt('td',documento));
+        const docs=files.filter(f=>f.curp===p.curp&&f.documento===documento);
+        const status=document.createElement('td');
+        const mark=document.createElement('span');mark.className=docs.length?'v10-yes':'v10-no';
+        mark.textContent=docs.length?'☑ Sí':'☐ Sin registro';status.append(mark);tr.append(status);
+        const td=document.createElement('td');
+        if(!docs.length)td.textContent='—';
+        docs.forEach(f=>{
+          const div=document.createElement('div');div.className='v10-file';
+          const link=document.createElement('a');link.href=f.url;link.target='_blank';link.rel='noopener noreferrer';
+          link.textContent=f.archivo;
+          div.append(link,v4txt('small','Cargado: '+f.fecha));td.append(div);
+        });tr.append(td);body.append(tr);
+      });
+    });
+    table.append(body);wrap.append(table);card.append(wrap);host.append(card);
+  });
+  if(!host.children.length)host.append(v4txt('p','No hay coincidencias con la búsqueda.'));
+}
 </script></body>
 </html>
