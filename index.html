@@ -535,6 +535,24 @@
 .v7-hint{color:#626262;font-size:13px}
 #v4RoleModal .v4-dialog{width:min(96vw,1100px);max-width:1100px}
 @media(max-width:700px){.v7-table{font-size:13px}.v7-table th,.v7-table td{padding:9px}.v7-table-wrap{margin-top:8px}}
+
+/* V8: asignaciones múltiples y guardado por lote */
+.v8-dialog{width:min(96vw,1180px)!important;max-width:1180px!important;max-height:90dvh;overflow:auto}
+.v8-template-dialog{width:min(94vw,560px)!important}
+.v8-check{display:flex;align-items:center;gap:10px;margin:16px 0;font-weight:600}
+.v8-check input{width:18px;height:18px;accent-color:#9d2449}
+.v8-template{display:flex;justify-content:space-between;gap:12px;align-items:center;border:1px solid #e4d4da;border-radius:9px;padding:10px;margin:8px 0}
+.v8-assignment{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:9px 0;border-bottom:1px solid #e7dce0}
+.v8-assignment:last-child{border-bottom:0}
+.v8-assignment-info{display:grid;gap:4px;flex:1;min-width:180px}
+.v8-assignment-info small{color:#555}
+.v8-assignment-actions{display:flex;gap:6px;flex-wrap:wrap}
+.v8-assignment-actions button{padding:7px 9px}
+.v8-edit-fields{display:grid;gap:7px}
+.v8-edit-fields select,.v8-edit-fields input,.v8-edit-fields textarea{width:100%;box-sizing:border-box}
+.v8-footer{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:15px 0;margin-top:14px;border-top:2px solid #9d2449}
+.v8-footer button{max-width:330px}\n.v7-role-table td:last-child select{min-width:170px;max-width:260px}
+@media(max-width:680px){.v8-assignment{display:block}.v8-assignment-actions{margin-top:10px}.v8-footer{flex-direction:column;align-items:stretch}.v8-footer button{max-width:none}}
 </style>
 <style>
 .v4-modal[hidden],.v4-busy[hidden]{display:none!important}.v4-modal{position:fixed;inset:0;z-index:9998;background:#0009;display:flex;align-items:center;justify-content:center;padding:16px}.v4-dialog{background:#fff;border-radius:16px;padding:24px;max-width:850px;width:100%;max-height:90vh;overflow:auto;box-shadow:0 20px 60px #0004}.v4-busy{position:fixed;inset:0;z-index:99999;background:#1119;display:grid;place-items:center}.v4-busy-card{background:white;border-radius:16px;padding:30px;display:flex;align-items:center;gap:18px;color:#701a36}.v4-spinner{display:inline-block;width:34px;height:34px;border:4px solid #ddd;border-top-color:#9d2449;border-radius:50%;animation:v4spin .8s linear infinite}@keyframes v4spin{to{transform:rotate(360deg)}}.v4-tags{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}.v4-tag{background:#f2dfe6;border:1px solid #b8768d;padding:5px 8px;border-radius:16px}.v4-tag button{border:0;background:transparent;cursor:pointer;margin-left:4px}.v4-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}.v4-day{border:1px solid #ddd;border-radius:7px;min-height:86px;padding:5px;cursor:pointer;overflow-wrap:anywhere}.v4-day strong{display:block}.v4-day small{display:block;background:#f1e4e8;margin:2px 0;border-radius:4px;padding:2px}.v4-section{margin:15px 0;border-bottom:1px solid #ddd;padding-bottom:15px}.v4-dialog input,.v4-dialog select,.v4-dialog textarea{max-width:100%}@media(max-width:700px){.v4-calendar{gap:2px}.v4-day{min-height:70px;font-size:11px}.v4-day small{font-size:9px}}
@@ -781,7 +799,36 @@
       <div id="v3Syntax" class="modulo"><div class="card"><h2>Sintaxis de documentos de carga EOTs</h2><div class="v4-tags"><button class="btn-primary" onclick="v4SyntaxTab('nuevo')">Agregar sintaxis nuevo documento</button><button class="btn-primary" onclick="v4SyntaxTab('lista')">Visualizador de sintaxis existentes</button></div><div id="v4SyntaxNew"><label>Nombre del documento a cargar</label><input id="v3DocName" placeholder="Ej. Acuse de entrega"><label>Variable de la hoja usuarios</label><select id="v3SyntaxVariable"></select><button class="btn-primary" onclick="v3AddVariable()">Agregar variable</button><button class="btn-primary" onclick="v3AddText('_')">Agregar _</button><button class="btn-primary" onclick="v3AddText(' ')">Agregar espacio</button><label>Sintaxis resultante (puedes editarla)</label><textarea id="v3SyntaxText" rows="3" placeholder="{{Nombre}}_{{Apellido Paterno}}"></textarea><label>Extensión</label><select id="v3Ext"><option>.pdf</option><option>.png</option><option>.jpeg</option><option>.jpg</option><option>.xlsx</option><option>.xls</option><option>.docx</option><option>.doc</option><option>.csv</option><option>.txt</option></select><button class="btn-primary" onclick="v3SaveSyntaxUI()">Guardar sintaxis</button><div id="v3SyntaxMsg"></div></div><div id="v4SyntaxExisting" hidden><h3>Visualizador de sintaxis existentes</h3><button class="btn-primary" onclick="v4ListSyntax()">Actualizar listado</button><div id="v4SyntaxList"></div></div></div></div>
       <div id="v3Dynamic" class="modulo"><div class="card"><h2 id="v3DynamicTitle">Módulo</h2><input id="v3DynamicSearch" placeholder="Buscar registros" onkeydown="if(event.key==='Enter')v3LoadDynamic(1)"><button class="btn-primary" onclick="v3LoadDynamic(1)">Buscar</button><div id="v3DynamicBody" style="overflow:auto"></div><div id="v3DynamicPager"></div></div></div>
 
-<div id="v4Role" class="modulo"><div class="card"><h2>Rol de actividades</h2><button class="btn-primary" onclick="v4ShowRoleModal()">Agregar rol de actividades</button><label>Fecha del rol para descargar imagen</label><input id="v4RoleDownloadDate" type="date"><button class="btn-primary" onclick="v4DownloadRole()">Descargar imagen de rol</button><div id="v4RoleMessage"></div><div id="v4RoleModal" class="v4-modal" hidden><div class="v4-dialog"><button onclick="document.getElementById('v4RoleModal').hidden=true" style="float:right">✕</button><h3>Agregar rol de actividades</h3><label>Nivel de acceso</label><select id="v4RoleLevel" onchange="v7LoadExistingRoles()"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select><label>Fecha</label><input type="date" id="v4RoleDate" onchange="v7LoadExistingRoles()"><p class="v7-hint">Asigna actividades y horarios individualmente mediante el botón de editar.</p><div id="v4RolePeople"></div><p class="v7-hint">Cada fila se guarda al presionar su botón Guardar.</p></div></div></div></div>
+<div id="v4Role" class="modulo"><div class="card">
+<h2>Rol de actividades</h2>
+<button class="btn-primary" onclick="v4ShowRoleModal()">Agregar rol de actividades</button>
+<label>Fecha del rol para descargar imagen</label><input id="v4RoleDownloadDate" type="date">
+<button class="btn-primary" onclick="v4DownloadRole()">Descargar imagen de rol</button>
+<div id="v4RoleMessage" role="status"></div>
+<div id="v4RoleModal" class="v4-modal" hidden><div class="v4-dialog v8-dialog">
+<button onclick="v8CloseRole()" style="float:right" aria-label="Cerrar">✕</button>
+<h3>Agregar rol de actividades</h3>
+<label for="v4RoleLevel">Nivel de acceso</label><select id="v4RoleLevel" onchange="v8ChangeContext()"><option value="1">1</option><option value="2">2</option><option value="3">3</option></select>
+<label for="v4RoleDate">Fecha</label><input type="date" id="v4RoleDate" onchange="v8ChangeContext()">
+<label class="v8-check"><input type="checkbox" id="v8MultiToggle" onchange="v8ToggleMulti()"> Agregar múltiples actividades</label>
+<div id="v8Templates" hidden><button type="button" onclick="v8OpenTemplate()">+ Agregar actividad</button><div id="v8TemplateList"></div></div>
+<p class="v7-hint">Edita o asigna actividades por persona. Los cambios son locales hasta pulsar «Guardar todas las asignaciones».</p>
+<div id="v4RolePeople"></div>
+<div class="v8-footer"><span id="v8Pending" aria-live="polite">Sin cambios pendientes</span>
+<button type="button" class="btn-primary" id="v8CommitButton" onclick="v8Commit()" disabled>Guardar todas las asignaciones</button></div>
+<div id="v8RoleStatus" role="status" aria-live="polite"></div>
+</div></div>
+<div id="v8TemplateModal" class="v4-modal" hidden><div class="v4-dialog v8-template-dialog">
+<button type="button" onclick="v4$('v8TemplateModal').hidden=true" style="float:right">✕</button>
+<h3>Agregar actividad al catálogo temporal</h3>
+<label>Tipo de actividad</label><select id="v8TemplateType" onchange="v8OtherToggle()"></select>
+<input id="v8TemplateOther" placeholder="Especifica la actividad" hidden>
+<label>Hora inicio (opcional)</label><input type="time" id="v8TemplateStart">
+<label>Hora fin (opcional)</label><input type="time" id="v8TemplateEnd">
+<label>Observaciones (opcional)</label><textarea id="v8TemplateObs" rows="3"></textarea>
+<button class="btn-primary" type="button" onclick="v8AddTemplate()">Guardar actividad</button>
+</div></div>
+</div></div>
 <div id="v4Calendar" class="modulo"><div class="card"><h2>Actividades</h2><div style="display:flex;gap:12px;align-items:center"><button onclick="v4ShiftMonth(-1)">‹</button><h3 id="v4MonthTitle"></h3><button onclick="v4ShiftMonth(1)">›</button></div><div id="v4CalendarGrid" class="v4-calendar"></div><hr><h3>Agregar actividad personal o compartida</h3><label>Fecha</label><input id="v4EventDate" type="date"><label>Actividad</label><input id="v4EventTitle" placeholder="Descripción de la actividad"><label>Hora de inicio</label><input id="v4EventStart" type="time"><label>Hora de fin</label><input id="v4EventEnd" type="time"><label>Compartir con personal (escribe nombre y selecciona)</label><input id="v4ShareSearch" list="v4ShareOptions" placeholder="Buscar nombre" oninput="v4SuggestShare()"><datalist id="v4ShareOptions"></datalist><button onclick="v4AddShare()">Agregar persona</button><div id="v4Shares"></div><label>Observaciones</label><textarea id="v4EventObs"></textarea><button class="btn-primary" onclick="v4SaveEventUI()">Guardar actividad</button><div id="v4EventMsg"></div></div></div>
 <div id="v4Notes" class="modulo"><div class="card"><h2>Notas personales</h2><button class="btn-primary" onclick="v4NewNote()">Agregar nota</button><div id="v4NotesList"></div><div id="v4NoteModal" class="v4-modal" hidden><div class="v4-dialog"><button onclick="document.getElementById('v4NoteModal').hidden=true" style="float:right">✕</button><h3>Nota</h3><input id="v4NoteId" type="hidden"><label>Título</label><input id="v4NoteTitle"><label>Observaciones</label><textarea id="v4NoteBody" rows="9"></textarea><button class="btn-primary" onclick="v4SaveNoteUI()">Guardar nota</button></div></div></div></div>
 <div id="v4GlobalBusy" class="v4-busy" hidden><div class="v4-busy-card"><span class="v4-spinner"></span><strong>Procesando información...</strong></div></div>
@@ -2058,68 +2105,210 @@ function v4RenderLevels(){
   table.append(body);wrap.append(table);host.append(wrap);
 }
 function v4ListSyntax(){v4Api('v4ListSyntax',[TOKEN],r=>{const host=v4$('v4SyntaxList');host.replaceChildren();const table=document.createElement('table'),head=document.createElement('tr');['Documento','Sintaxis','Registrado por','Nivel','Fecha'].forEach(k=>head.append(v4txt('th',k)));table.append(head);r.registros.forEach(s=>{const tr=document.createElement('tr');[s.documento,s.sintaxis,s.creadoPor,s.nivel,s.fecha].forEach(v=>tr.append(v4txt('td',v)));table.append(tr);});host.append(table);});}
-function v4OpenRole(btn){abrirModulo('v4Role',btn);v4Api('v4Roster',[TOKEN],r=>{v4Users=r.personas||[];if(!v4$('v4RoleModal').hidden)v7LoadExistingRoles();});v4Api('v4ActivityTypes',[TOKEN],r=>v4RoleTypes=r.tipos);}
-let v7RoleExisting=[];function v7LoadExistingRoles(){const fecha=v4$('v4RoleDate').value;v7RoleExisting=[];v4RenderRolePeople();if(!fecha)return;v4Api('v4RoleHistory',[TOKEN,fecha],r=>{v7RoleExisting=r.registros||[];v4RenderRolePeople();});}
-function v4ShowRoleModal(){v4$('v4RoleModal').hidden=false;v4$('v4RoleDate').value=new Date().toLocaleDateString('en-CA');if(!v4Users.length){v4$('v4RolePeople').textContent='Cargando personal activo…';v4Api('v4Roster',[TOKEN],r=>{v4Users=r.personas||[];v7LoadExistingRoles();});}else{v7LoadExistingRoles();}}
+
+/* V8: borrador local en memoria; ninguna edición llama a Apps Script antes de Guardar todas. */
+let v8Draft=[],v8Deleted=[],v8Templates=[],v8Context='',v8Loading=false,v8Busy=false,v8Seq=0;
+function v8Key(){return v4$('v4RoleDate').value+'|'+v4$('v4RoleLevel').value;}
+function v8Changed(){return v8Draft.some(x=>x.dirty)||v8Deleted.length>0;}
+function v8Guard(){if(v8Busy)return false;return !v8Changed()||confirm('Hay cambios sin guardar. ¿Descartarlos?');}
+function v8CloseRole(){if(!v8Guard())return;v4$('v4RoleModal').hidden=true;v4$('v8TemplateModal').hidden=true;}
+function v4OpenRole(btn){
+  abrirModulo('v4Role',btn);
+  v4Api('v4Roster',[TOKEN],r=>{v4Users=r.personas||[];if(!v4$('v4RoleModal').hidden)v8Load();});
+  v4Api('v4ActivityTypes',[TOKEN],r=>{v4RoleTypes=r.tipos||[];});
+}
+function v4ShowRoleModal(){
+  v4$('v4RoleModal').hidden=false;
+  v4$('v4RoleDate').value=v4ISO(new Date());
+  v8Context='';v8Templates=[];v4$('v8MultiToggle').checked=false;v8ToggleMulti();
+  v8Load();
+}
+function v8ChangeContext(){
+  const newKey=v8Key();
+  if(newKey===v8Context)return;
+  if(!v8Guard()){
+    const [date,level]=v8Context.split('|');
+    v4$('v4RoleDate').value=date;v4$('v4RoleLevel').value=level;return;
+  }
+  v8Load();
+}
+function v8Load(){
+  const key=v8Key(),[fecha]=key.split('|');
+  v8Context=key;v8Draft=[];v8Deleted=[];v8Loading=true;v8Seq++;
+  const seq=v8Seq;v4$('v4RolePeople').textContent='Cargando personal y actividades…';
+  v8PendingUpdate();
+  if(!fecha){v4$('v4RolePeople').textContent='Selecciona una fecha.';return;}
+  // Ambos datos deben estar listos; el historial contiene IDs de cada actividad.
+  const render=()=>{
+    if(seq!==v8Seq)return;
+    v4Api('v4RoleHistory',[TOKEN,fecha],r=>{
+      if(seq!==v8Seq)return;
+      v8Draft=(r.registros||[]).map(x=>({...x,localId:'db-'+x.id,dirty:false}));
+      v8Loading=false;v4RenderRolePeople();
+    });
+  };
+  if(!v4Users.length){
+    v4Api('v4Roster',[TOKEN],r=>{if(seq!==v8Seq)return;v4Users=r.personas||[];render();});
+  }else render();
+}
+function v8ToggleMulti(){
+  v4$('v8Templates').hidden=!v4$('v8MultiToggle').checked;
+  v8RenderTemplates();
+}
+function v8OpenTemplate(){
+  const sel=v4$('v8TemplateType');sel.replaceChildren();
+  [...new Set([...v4RoleTypes,'Otro'])].forEach(t=>{const o=new Option(t,t);sel.add(o);});
+  ['v8TemplateOther','v8TemplateStart','v8TemplateEnd','v8TemplateObs'].forEach(id=>v4$(id).value='');
+  v8OtherToggle();v4$('v8TemplateModal').hidden=false;
+}
+function v8OtherToggle(){v4$('v8TemplateOther').hidden=v4$('v8TemplateType').value!=='Otro';}
+function v8Valid(a){
+  if(!a.actividad||a.actividad.length>120)return 'Selecciona una actividad válida (máximo 120 caracteres).';
+  if((a.inicio&&!a.fin)||(!a.inicio&&a.fin))return 'Indica ambas horas o ninguna.';
+  if(a.inicio&&a.fin&&a.fin<=a.inicio)return 'La hora final debe ser posterior a la inicial.';
+  if((a.observaciones||'').length>2000)return 'Observaciones demasiado extensas.';
+  return '';
+}
+function v8AddTemplate(){
+  const sel=v4$('v8TemplateType'),other=sel.value==='Otro';
+  const a={actividad:(other?v4$('v8TemplateOther').value:sel.value).trim(),
+    inicio:v4$('v8TemplateStart').value,fin:v4$('v8TemplateEnd').value,
+    observaciones:v4$('v8TemplateObs').value,nueva:other};
+  const err=v8Valid(a);if(err){alert(err);return;}
+  a.templateId='t'+Date.now()+'-'+Math.random().toString(36).slice(2);
+  v8Templates.push(a);v4$('v8TemplateModal').hidden=true;v8RenderTemplates();
+}
+function v8RenderTemplates(){
+  const host=v4$('v8TemplateList');host.replaceChildren();
+  v8Templates.forEach(t=>{
+    const div=document.createElement('div');div.className='v8-template';
+    div.append(v4txt('span',t.actividad+(t.inicio?' · '+t.inicio+'–'+t.fin:'')));
+    div.append(v4btn('Quitar',()=>{
+      if(v8Draft.some(x=>x.templateId===t.templateId)){alert('Esta actividad ya fue asignada. Retira sus asignaciones antes de quitarla.');return;}
+      v8Templates=v8Templates.filter(x=>x!==t);v8RenderTemplates();
+    }));
+    host.append(div);
+  });
+}
+function v8PendingUpdate(){
+  const n=v8Draft.filter(x=>x.dirty).length+v8Deleted.length;
+  v4$('v8Pending').textContent=n?n+' cambios pendientes (sin guardar en Google Sheets)':'Sin cambios pendientes';
+  v4$('v8CommitButton').disabled=!n||v8Busy||v8Loading;
+}
+function v8StageRemove(a){
+  if(!confirm('¿Marcar esta actividad para eliminarla al guardar todos los cambios?'))return;
+  if(a.id&&!v8Deleted.some(x=>x.id===a.id))v8Deleted.push({id:a.id,curp:a.curp});
+  v8Draft=v8Draft.filter(x=>x!==a);v4RenderRolePeople();
+}
+function v8NewFor(p,template){
+  const item={localId:'new-'+Date.now()+'-'+Math.random().toString(36).slice(2),
+    curp:p.curp,nombre:p.nombre,actividad:template?.actividad||'',
+    inicio:template?.inicio||'',fin:template?.fin||'',
+    observaciones:template?.observaciones||'',nueva:!!template?.nueva,
+    templateId:template?.templateId||'',dirty:true};
+  v8Draft.push(item);v4RenderRolePeople();return item;
+}
+function v8RenderEditor(a,cell,action,saveButton){
+  cell.replaceChildren();action.replaceChildren();
+  const sel=document.createElement('select');
+  const opts=[...new Set([...v4RoleTypes,'Otro'])];
+  sel.append(new Option('Selecciona una actividad',''));
+  opts.forEach(t=>sel.append(new Option(t,t)));
+  const other=document.createElement('input');other.placeholder='Especifica otra actividad';
+  const isKnown=opts.includes(a.actividad)&&a.actividad!=='Otro';
+  sel.value=isKnown?a.actividad:(a.actividad?'Otro':'');
+  other.value=isKnown?'':a.actividad;other.hidden=sel.value!=='Otro';
+  sel.onchange=()=>other.hidden=sel.value!=='Otro';
+  const obs=document.createElement('textarea');obs.rows=2;obs.placeholder='Observaciones (opcional)';obs.value=a.observaciones||'';
+  const st=document.createElement('input'),en=document.createElement('input');
+  st.type=en.type='time';st.value=a.inicio||'';en.value=a.fin||'';
+  const fields=document.createElement('div');fields.className='v8-edit-fields';
+  fields.append(sel,other,st,en,obs);cell.append(fields);
+  const save=v4btn('Guardar',()=>{
+    const value=(sel.value==='Otro'?other.value:sel.value).trim();
+    const data={actividad:value,inicio:st.value,fin:en.value,observaciones:obs.value,nueva:sel.value==='Otro'};
+    const err=v8Valid(data);if(err){alert(err);return;}
+    Object.assign(a,data,{dirty:true});
+    if(data.nueva&&!v4RoleTypes.includes(value))v4RoleTypes.push(value);
+    v4RenderRolePeople();
+  });
+  const cancel=v4btn('Cancelar',()=>{if(!a.id&&!a.actividad)v8Draft=v8Draft.filter(x=>x!==a);v4RenderRolePeople();});
+  action.append(save,cancel);
+}
 function v4RenderRolePeople(){
-  const level=v4$('v4RoleLevel').value,host=v4$('v4RolePeople');
-  host.replaceChildren();
-  v4RolePeople=v4Users.filter(p=>String(p.nivel)===String(level));
+  const host=v4$('v4RolePeople');host.replaceChildren();
+  const level=v4$('v4RoleLevel').value;
+  const people=v4Users.filter(p=>String(p.nivel)===String(level));
   const wrap=document.createElement('div');wrap.className='v7-table-wrap';
   const table=document.createElement('table');table.className='v7-table v7-role-table';
-  const thead=document.createElement('thead'),head=document.createElement('tr');
-  ['Nombre completo','Actividad','Hora inicio','Hora fin','Acción'].forEach(t=>head.append(v4txt('th',t)));
-  thead.append(head);table.append(thead);
+  const thead=document.createElement('thead'),th=document.createElement('tr');
+  ['Nombre completo','Actividad y detalles','Acciones'].forEach(t=>th.append(v4txt('th',t)));
+  thead.append(th);table.append(thead);
   const tbody=document.createElement('tbody');
-  v4RolePeople.forEach(p=>{
-    const existing=v7RoleExisting.find(r=>String(r.curp)===String(p.curp));
-    const row=document.createElement('tr');row.dataset.curp=p.curp;
-    row.append(v4txt('td',p.nombre));
-    const activity=document.createElement('td'),activityLabel=v4txt('span','Sin actividad');
-    activityLabel.className='v7-unassigned';if(existing){activityLabel.textContent=existing.actividad;activityLabel.className='v7-assigned';}activity.append(activityLabel);
-    const startCell=document.createElement('td'),endCell=document.createElement('td'),action=document.createElement('td');
-    const startLabel=v4txt('span','—'),endLabel=v4txt('span','—');
-    startLabel.textContent=existing?.inicio||'—';endLabel.textContent=existing?.fin||'—';startCell.append(startLabel);endCell.append(endLabel);
-    const edit=v4btn('✎',()=>{
-      if(edit.dataset.editing!=='yes'){
-        edit.dataset.editing='yes';edit.textContent='Guardar';activity.replaceChildren();
-        const sel=document.createElement('select');sel.className='v4RoleType';
-        const blank=document.createElement('option');blank.value='';blank.textContent='Selecciona una actividad';sel.append(blank);
-        [...new Set([...v4RoleTypes,'Otro'])].forEach(t=>{const o=document.createElement('option');o.value=t;o.textContent=t;sel.append(o);});
-        const other=document.createElement('input');other.className='v4RoleOther';other.placeholder='Especifica otra actividad';other.hidden=true;
-        const obs=document.createElement('textarea');obs.className='v4RoleObs';obs.placeholder='Observaciones (opcional)';obs.rows=2;
-        sel.onchange=()=>other.hidden=sel.value!=='Otro';
-        activity.append(sel,other,obs);
-        startCell.replaceChildren();endCell.replaceChildren();
-        const st=document.createElement('input'),en=document.createElement('input');
-        st.type=en.type='time';st.className='v7-time-input';en.className='v7-time-input';
-        st.value=existing?.inicio||'';en.value=existing?.fin||'';startCell.append(st);endCell.append(en);if(existing){sel.value=v4RoleTypes.includes(existing.actividad)?existing.actividad:'Otro';other.hidden=sel.value!=='Otro';if(!other.hidden)other.value=existing.actividad;obs.value=existing.observaciones||'';}return;
-      }
-      const sel=activity.querySelector('select'),other=activity.querySelector('.v4RoleOther');
-      const nueva=sel.value==='Otro',value=nueva?other.value.trim():sel.value;
-      const inicio=startCell.querySelector('input').value,fin=endCell.querySelector('input').value;
-      if(!value){alert('Selecciona una actividad.');return;}
-      if((inicio&&!fin)||(!inicio&&fin)){alert('Indica ambas horas o deja las dos vacías.');return;}
-      if(inicio&&fin&&fin<=inicio){alert('La hora de fin debe ser posterior a la de inicio.');return;}
-      const fecha=v4$('v4RoleDate').value;
-      if(!fecha){alert('Selecciona una fecha.');return;}
-      edit.disabled=true;
-      v4Api('v4SaveRole',[TOKEN,{nivel:level,fecha,inicio,fin,asignaciones:[{curp:p.curp,actividad:value,inicio,fin,observaciones:activity.querySelector('textarea').value,nueva}]}],r=>{
-        edit.disabled=false;edit.dataset.editing='no';edit.textContent='✎';
-        const observaciones=activity.querySelector('textarea')?.value||'';activity.replaceChildren(v4txt('strong',value));v7RoleExisting=v7RoleExisting.filter(x=>x.curp!==p.curp);v7RoleExisting.push({curp:p.curp,actividad:value,inicio,fin,observaciones});
-        startCell.replaceChildren(v4txt('span',inicio||'—'));
-        endCell.replaceChildren(v4txt('span',fin||'—'));
-        v4$('v4RoleMessage').textContent=r.mensaje;
-        v4$('v4RoleDownloadDate').value=fecha;
-        if(nueva&&!v4RoleTypes.includes(value))v4RoleTypes.push(value);
-        v4LoadHome();
-      });
-      setTimeout(()=>{edit.disabled=false;},10000);
+  people.forEach(p=>{
+    const row=document.createElement('tr'),tdName=v4txt('td',p.nombre),tdActivities=document.createElement('td'),tdActions=document.createElement('td');
+    const entries=v8Draft.filter(x=>x.curp===p.curp);
+    if(!entries.length){const no=v4txt('span','Sin actividad');no.className='v7-unassigned';tdActivities.append(no);}
+    entries.forEach(a=>{
+      const item=document.createElement('div');item.className='v8-assignment';
+      const info=document.createElement('div');info.className='v8-assignment-info';
+      const title=v4txt('strong',a.actividad||'Sin actividad');info.append(title);
+      if(a.inicio)info.append(v4txt('small','Horario: '+a.inicio+' – '+a.fin));
+      if(a.observaciones)info.append(v4txt('small','Observaciones: '+a.observaciones));
+      if(a.dirty)info.append(v4txt('small','Pendiente de guardar'));
+      const actions=document.createElement('div');actions.className='v8-assignment-actions';
+      actions.append(v4btn('✎ Editar',()=>v8RenderEditor(a,info,actions)),
+        v4btn('Eliminar',()=>v8StageRemove(a)));
+      item.append(info,actions);tdActivities.append(item);
     });
-    edit.dataset.editing='no';edit.className+=' v7-edit-button';edit.title='Editar actividad de '+p.nombre;
-    action.append(edit);row.append(activity,startCell,endCell,action);tbody.append(row);
+    const assign=v4btn('Asignar',()=>{
+      if(v4$('v8MultiToggle').checked){
+        if(!v8Templates.length){alert('Primero agrega una actividad al catálogo temporal.');return;}
+        tdActions.replaceChildren();
+        const picker=document.createElement('select');picker.setAttribute('aria-label','Actividad para '+p.nombre);
+        picker.append(new Option('Selecciona una actividad',''));
+        v8Templates.forEach((t,i)=>picker.append(new Option(t.actividad+(t.inicio?' · '+t.inicio+'–'+t.fin:''),String(i))));
+        const add=v4btn('Confirmar asignación',()=>{
+          if(picker.value===''){alert('Selecciona una actividad.');return;}
+          v8NewFor(p,v8Templates[Number(picker.value)]);
+        });
+        const cancel=v4btn('Cancelar',()=>v4RenderRolePeople());
+        tdActions.append(picker,add,cancel);
+      }else{
+        const a=v8NewFor(p);
+        // Abrir el editor para seleccionar actividad antes de guardar.
+        const items=[...host.querySelectorAll('tr[data-curp]')];
+        const target=items.find(r=>r.dataset.curp===p.curp);
+        if(target){
+          const info=target.querySelector('.v8-assignment:last-child .v8-assignment-info');
+          const actions=target.querySelector('.v8-assignment:last-child .v8-assignment-actions');
+          if(info&&actions)v8RenderEditor(a,info,actions);
+        }
+      }
+    });
+    tdActions.append(assign);row.dataset.curp=p.curp;row.append(tdName,tdActivities,tdActions);tbody.append(row);
   });
-  table.append(tbody);wrap.append(table);host.append(wrap);if(!v4RolePeople.length)host.append(v4txt('p','No se encontraron usuarios activos del nivel '+level+'. Comprueba la hoja usuarios y el estatus Activo.'));
+  table.append(tbody);wrap.append(table);host.append(wrap);
+  if(!people.length)host.append(v4txt('p','No hay personal activo del nivel seleccionado.'));
+  v8PendingUpdate();
+}
+function v8Commit(){
+  if(v8Busy||v8Loading||!v8Changed())return;
+  const fecha=v4$('v4RoleDate').value,nivel=v4$('v4RoleLevel').value;
+  const changes=v8Draft.filter(x=>x.dirty);
+  for(const a of changes){const err=v8Valid(a);if(err){alert(err);return;}}
+  if(!confirm('¿Guardar '+changes.length+' actividades y eliminar '+v8Deleted.length+' registros en Google Sheets?'))return;
+  const payload={fecha,nivel,
+    cambios:changes.map(a=>({id:a.id||'',curp:a.curp,actividad:a.actividad,
+      inicio:a.inicio,fin:a.fin,observaciones:a.observaciones,nueva:a.nueva})),
+    eliminar:v8Deleted};
+  v8Busy=true;v8PendingUpdate();v4$('v8RoleStatus').textContent='Guardando en Google Sheets…';
+  v4Api('v4SaveRole',[TOKEN,payload],r=>{
+    v8Busy=false;v4$('v8RoleStatus').textContent=r.mensaje;
+    v4$('v4RoleMessage').textContent=r.mensaje;
+    v4$('v4RoleDownloadDate').value=fecha;
+    v8Load();v4LoadHome();
+  });
 }
 function v4DownloadRole(){
   const fecha=v4$('v4RoleDownloadDate').value;
