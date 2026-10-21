@@ -2936,12 +2936,13 @@ function v4AddShare(){const q=v4$('v4ShareSearch').value.trim().toLowerCase(),u=
 function v4DrawShares(){const host=v4$('v4Shares');host.replaceChildren();v4Shares.forEach(curp=>{const u=v4Users.find(x=>x.curp===curp),tag=v4txt('span',u?.nombre||curp);tag.className='v4-tag';const b=v4txt('button','×');b.onclick=()=>{v4Shares=v4Shares.filter(x=>x!==curp);v4DrawShares();};tag.append(b);host.append(tag);});}
 function v4SaveEventUI(){const d={fecha:v4$('v4EventDate').value,actividad:v4$('v4EventTitle').value,inicio:v4$('v4EventStart').value,fin:v4$('v4EventEnd').value,observaciones:v4$('v4EventObs').value,compartir:v4Shares};v4Api('v4SaveActivity',[TOKEN,d],r=>{v4$('v4EventMsg').textContent=r.mensaje;v4Shares=[];v4DrawShares();v4LoadCalendar();v4LoadHome();});}
 function v4OpenNotes(btn){abrirModulo('v4Notes',btn);v4LoadNotes();}
-const V112_COLORS=[{value:'#FFF1AE',name:'Amarillo'},{value:'#DDF0D4',name:'Verde'},{value:'#FADCE6',name:'Rosa'},{value:'#DCEBFA',name:'Azul'}];
+const V112_COLORS=[{value:'#FFF1AE',name:'Amarillo'},{value:'#DDF0D4',name:'Verde'},{value:'#FADCE6',name:'Rosa'},{value:'#DCEBFA',name:'Azul'},{value:'#E9DDF8',name:'Lila'}];
 let v112NoteFilter='Todas',v112SelectedColor='#FFF1AE';
 function v4LoadNotes(){v4Api('v4Notes',[TOKEN],r=>{v4NotesData=r.notas||[];v112RenderNotes();});}
 function v112RenderNotes(){
   const host=v4$('v4NotesList');host.replaceChildren();
   v4$('v112NotesCount').textContent=v4NotesData.length+' notas activas';
+  const oldFilters=v4$('v12NoteFilters');if(oldFilters)oldFilters.remove();
   const filters=v4$('v112NotesFilters');filters.replaceChildren();
   const all=v4btn('Todas',()=>{v112NoteFilter='Todas';v112RenderNotes();});
   all.className='v112-filter-all'+(v112NoteFilter==='Todas'?' selected':'');filters.append(all);
@@ -3135,33 +3136,11 @@ function v12DrawHomeNotes(){
   v4Api('v4Notes',[TOKEN],r=>{if(r?.ok){v4NotesData=r.notas||[];v12DrawHomeNotes();}});
 };
  const loadNotes=v4LoadNotes;
- v4LoadNotes=function(){v4Api('v4Notes',[TOKEN],r=>{v4NotesData=r.notas||[];v12RenderNotes();v12DrawHomeNotes();});};
- const edit=v4EditNote;
- v4EditNote=function(n){edit(n);document.getElementById('v12NoteColor').value=V12_COLORS.includes(String(n.color).toUpperCase())?n.color:'#FFF1AE';};
- v4SaveNoteUI=function(){const d={id:v4$('v4NoteId').value,titulo:v4$('v4NoteTitle').value,texto:v4$('v4NoteBody').value,color:v4$('v12NoteColor').value};v4Api('v4SaveNote',[TOKEN,d],()=>{v4$('v4NoteModal').hidden=true;v4LoadNotes();});};
+ v4LoadNotes=function(){v4Api('v4Notes',[TOKEN],r=>{v4NotesData=r.notas||[];v112RenderNotes();v12DrawHomeNotes();});};
  const loadCal=v4LoadCalendar;
  v4LoadCalendar=function(){loadCal();};
 })();
-let v12NoteFilter='Todas';
-function v12RenderNotes(){
- const host=document.getElementById('v4NotesList');host.replaceChildren();
- let bar=document.getElementById('v12NoteFilters');if(!bar){bar=document.createElement('div');bar.id='v12NoteFilters';bar.className='v12-note-filters';host.before(bar);}bar.replaceChildren();
- [['Todas',''],['Amarillo',V12_COLORS[0]],['Verde',V12_COLORS[1]],['Rosa',V12_COLORS[2]],['Azul',V12_COLORS[3]],['Lila',V12_COLORS[4]]].forEach(([label,color])=>{
-  const b=document.createElement('button');b.type='button';b.className='v12-color-chip'+(v12NoteFilter===label?' selected':'');b.textContent=label;
-  if(color)b.style.borderBottomColor=color;b.onclick=()=>{v12NoteFilter=label;v12RenderNotes();};bar.append(b);
- });
- const grid=document.createElement('div');grid.className='v12-postit-grid';host.append(grid);
- const notes=(v4NotesData||[]).filter(n=>v12NoteFilter==='Todas'||(V12_COLORS.includes(String(n.color).toUpperCase())?String(n.color).toUpperCase():V12_COLORS[0])===V12_COLORS[['Amarillo','Verde','Rosa','Azul','Lila'].indexOf(v12NoteFilter)]);
- notes.forEach(n=>{const card=document.createElement('article');card.className='v12-postit';card.style.backgroundColor=V12_COLORS.includes(String(n.color).toUpperCase())?n.color:V12_COLORS[0];
-  const row=document.createElement('div');row.className='v12-postit-head';const title=document.createElement('strong');title.textContent=n.titulo;
-  const actions=document.createElement('div');const edit=document.createElement('button');edit.textContent='✎';edit.title='Editar nota';edit.setAttribute('aria-label','Editar nota');edit.onclick=()=>v4EditNote(n);
-  const del=document.createElement('button');del.textContent='🗑';del.title='Eliminar nota';del.setAttribute('aria-label','Eliminar nota');del.onclick=()=>{if(confirm('¿Estás seguro de eliminar esta nota?'))v4Api('v4DeleteNote',[TOKEN,n.id],v4LoadNotes);};
-  actions.append(edit,del);row.append(title,actions);
-  const body=document.createElement('p');body.textContent=n.texto||'';const date=document.createElement('small');date.textContent=n.fecha||'';
-  card.append(row,body,date);grid.append(card);
- });
- if(!notes.length)grid.textContent='No hay notas para este filtro.';
-}
+
 </script>
 <script>
 /* V13: panel de configuración. La autorización real se verifica en Apps Script. */
