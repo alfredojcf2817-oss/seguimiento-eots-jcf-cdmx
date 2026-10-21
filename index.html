@@ -4,6 +4,9 @@
   
   <meta charset="UTF-8">
   <title>Sistema de Seguimiento EOT´s JCF - CDMX</title>
+  <link rel="icon" type="image/svg+xml" href="./favicon_eots.svg">
+  <link rel="alternate icon" type="image/x-icon" href="./favicon.ico">
+  <link rel="apple-touch-icon" href="./favicon_eots.png">
 
   <style>
     :root {
@@ -730,6 +733,38 @@
 .v131-confetti span:nth-child(5n+2){background:#838e5d}
 .v131-confetti span:nth-child(5n+3){background:#db89a4}
 .v131-confetti span:nth-child(5n+4){background:#b69cde}
+
+/* V14: calendario, privacidad y administración de secciones */
+.v14-birthday-event{background:#f8e7ef!important;color:#861b40!important;border:1px solid #e9b5ca!important}
+.v14-birthday-privacy{padding:14px;border:1px solid #ead5dd;border-radius:12px;background:#fff9fb;margin:14px 0;display:grid;gap:8px}
+.v14-birthday-privacy label{display:flex;align-items:center;gap:9px;font-weight:650;color:#801b3b}
+.v14-birthday-privacy input{width:18px;height:18px;accent-color:#9d2449}
+.v14-birthday-privacy small{color:#625a62}
+.v14-create-section{border:1px solid #e6d5dc;background:#fcf8f9;border-radius:12px;padding:15px;margin:14px 0}
+.v14-section-controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0}
+.v14-section-controls input{flex:1;min-width:180px}
+.v14-section-controls button{width:auto}
+
+/* V14.1: dos marcas institucionales en la cabecera lateral */
+.v12-brand.v141-brand{padding:10px 9px 15px;gap:9px}
+.v141-brand-logos{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;padding:9px 0 2px}
+.v12-brand .v141-jcf-logo{width:51%;max-width:112px;height:83px;max-height:none;object-fit:contain;flex:0 1 auto}
+.v141-brand-divider{height:62px;width:1px;background:rgba(255,255,255,.55);flex:none}
+.v141-eots-badge{display:flex;align-items:center;justify-content:center;width:41%;max-width:96px;min-width:0;height:90px;border-radius:10px;background:#fff;padding:4px}
+.v12-brand .v141-eots-logo{width:100%;height:100%;max-height:none;max-width:none;object-fit:contain}
+.v141-brand .v12-close{right:-7px;top:-11px;z-index:2}
+.v141-brand strong{font-size:13px;line-height:1.3}
+@media(max-width:850px){.v141-brand-logos{gap:7px}.v141-eots-badge{height:80px}.v12-brand .v141-jcf-logo{height:75px}}
+
+/* V14.2: ambos logos blancos, centrados y con contraste directo sobre guinda. */
+.v12-brand.v141-brand{padding:10px 8px 15px;gap:7px}
+.v141-brand-logos{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:3px 10px 0}
+.v12-brand .v141-jcf-logo{display:block;width:82%;max-width:150px;height:75px;max-height:none;object-fit:contain;flex:none}
+.v141-brand-divider{display:none}
+.v141-eots-badge{display:flex;width:100%;max-width:178px;height:152px;min-width:0;max-height:none;padding:0;border-radius:0;background:transparent;align-items:center;justify-content:center}
+.v12-brand .v141-eots-logo{display:block;width:100%;height:100%;max-height:none;max-width:none;object-fit:contain;filter:brightness(0) invert(1);opacity:1}
+.v141-brand strong{font-size:13px;line-height:1.35}
+@media(max-width:850px){.v141-eots-badge{height:132px}.v12-brand .v141-jcf-logo{height:67px}}
 </style>
 <style>
 .v4-modal[hidden],.v4-busy[hidden]{display:none!important}.v4-modal{position:fixed;inset:0;z-index:9998;background:#0009;display:flex;align-items:center;justify-content:center;padding:16px}.v4-dialog{background:#fff;border-radius:16px;padding:24px;max-width:850px;width:100%;max-height:90vh;overflow:auto;box-shadow:0 20px 60px #0004}.v4-busy{position:fixed;inset:0;z-index:99999;background:#1119;display:grid;place-items:center}.v4-busy-card{background:white;border-radius:16px;padding:30px;display:flex;align-items:center;gap:18px;color:#701a36}.v4-spinner{display:inline-block;width:34px;height:34px;border:4px solid #ddd;border-top-color:#9d2449;border-radius:50%;animation:v4spin .8s linear infinite}@keyframes v4spin{to{transform:rotate(360deg)}}.v4-tags{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}.v4-tag{background:#f2dfe6;border:1px solid #b8768d;padding:5px 8px;border-radius:16px}.v4-tag button{border:0;background:transparent;cursor:pointer;margin-left:4px}.v4-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}.v4-day{border:1px solid #ddd;border-radius:7px;min-height:86px;padding:5px;cursor:pointer;overflow-wrap:anywhere}.v4-day strong{display:block}.v4-day small{display:block;background:#f1e4e8;margin:2px 0;border-radius:4px;padding:2px}.v4-section{margin:15px 0;border-bottom:1px solid #ddd;padding-bottom:15px}.v4-dialog input,.v4-dialog select,.v4-dialog textarea{max-width:100%}@media(max-width:700px){.v4-calendar{gap:2px}.v4-day{min-height:70px;font-size:11px}.v4-day small{font-size:9px}}
@@ -758,7 +793,15 @@
   <div id="appView" class="app-view">
 
     <div class="sidebar" id="v11Sidebar">
-      <div class="v12-brand"><button type="button" class="v12-close" onclick="v12ToggleSidebar(false)" aria-label="Contraer menú" title="Contraer menú">×</button><img src="logo_jcf_blanco.svg" alt="Jóvenes Construyendo el Futuro"><strong>Sistema de Seguimiento JCF</strong></div>
+      <div class="v12-brand v141-brand">
+        <button type="button" class="v12-close" onclick="v12ToggleSidebar(false)" aria-label="Contraer menú" title="Contraer menú">×</button>
+        <div class="v141-brand-logos">
+          <img class="v141-jcf-logo" src="./logo_jcf_blanco.svg" alt="Jóvenes Construyendo el Futuro">
+          
+          <span class="v141-eots-badge"><img class="v141-eots-logo" src="./logo_eots.png" alt="Sistema de Seguimiento EOT´s"></span>
+        </div>
+        <strong>Sistema de Seguimiento JCF</strong>
+      </div>
 
       <div class="user-box">
         <strong id="userNombre"></strong><br>
@@ -801,7 +844,7 @@
       <div id="inicio" class="modulo active">
         <div class="card v5-home-card">
           <div class="v6-home-header">
-            <h2>Bienvenido</h2>
+            <h2 id="v14Greeting">Bienvenido</h2>
             <h2 id="v4Welcome"></h2>
             <p class="v121-welcome-subtitle">Sistema de Seguimiento JCF</p>
           </div>
@@ -969,7 +1012,8 @@
 <option value="crear">Crear módulo</option>
 <option value="secciones">Organización de secciones</option>
 </select>
-<div id="v11SectionsSection" hidden><p>Organiza cada módulo en una sección. La visibilidad continúa dependiendo de los permisos de cada usuario.</p><div id="v11SectionEditor"></div><div id="v11SectionStatus" role="status"></div></div>
+<div id="v11SectionsSection" hidden><p>Organiza cada módulo en una sección. La visibilidad continúa dependiendo de los permisos de cada usuario.</p>
+<div class="v14-create-section"><label for="v14NewSection">Crear nueva sección</label><div class="v14-section-controls"><input id="v14NewSection" maxlength="45" placeholder="Nombre de la nueva sección"><button class="btn-primary" onclick="v14CreateSectionUI()">Crear sección</button></div><small>La nueva sección aparecerá en el menú cuando tenga al menos un módulo autorizado.</small></div><div id="v11SectionEditor"></div><div id="v11SectionStatus" role="status"></div></div>
 <div id="v4CreateModuleSection" hidden>
         <label>Nombre del módulo</label><input id="nuevoModuloNombre" maxlength="65" placeholder="Nombre del módulo">
         <label>URL HTTPS</label><input id="nuevoModuloUrl" type="url" placeholder="https://...">
@@ -2165,6 +2209,18 @@
     function v3OpenProfile(btn){abrirModulo('v3Profile',btn);v3Call('v3GetProfile',[TOKEN],r=>{
       if(!r.ok)return;const form=document.getElementById('v3ProfileForm');form.replaceChildren();
       r.campos.forEach(k=>v3InputField(form,k,r.usuario[k]||''));
+      if(r.puedeOcultarCumpleanos){
+        const wrap=document.createElement('div');wrap.className='v14-birthday-privacy';
+        const label=document.createElement('label');const cb=document.createElement('input');cb.type='checkbox';cb.checked=!!r.ocultarCumpleanos;
+        label.append(cb,document.createTextNode(' Ocultar cumpleaños para usuarios de nivel 3'));
+        const hint=document.createElement('small');hint.textContent='Los niveles 1 y 2 seguirán viendo tu cumpleaños en el calendario.';
+        const msg=document.createElement('small');msg.setAttribute('role','status');
+        cb.onchange=()=>{cb.disabled=true;v3Call('v14SetBirthdayPrivacy',[TOKEN,cb.checked],resp=>{
+          cb.disabled=false;if(!resp?.ok){cb.checked=!cb.checked;msg.textContent=resp?.mensaje||'No se pudo actualizar.';return;}
+          msg.textContent='Preferencia guardada.';
+        });};
+        wrap.append(label,hint,msg);form.append(wrap);
+      }
     },'v3ProfileMsg');}
     function v3SendProfile(){
       if(!confirm('Tu información será validada por la Dirección Estatal. ¿Enviar solicitud?'))return;
@@ -2278,7 +2334,7 @@ const v4btn=(name,fn)=>{const b=v4txt('button',name);b.className='btn-primary';b
 function v4Api(name,args,cb){v3Call(name,args,r=>{if(!r.ok){alert(r.mensaje||'No se pudo completar la operación.');return;}cb&&cb(r);});}
 function v4NewUser(){v3EditUser('');}function v4CloseUser(){v4$('v4UserModal').hidden=true;}
 
-const V11_SECTION_ORDER=['Atención Ciudadana','Documentos','Personal','Herramientas','Administrador','Seguimiento'];
+let V11_SECTION_ORDER=['Atención Ciudadana','Documentos','Personal','Herramientas','Administrador','Seguimiento'];
 const V11_MODULE_DEFAULTS={
   atencionC:'Atención Ciudadana',oficinaOV:'Atención Ciudadana',buscadorTarjetas:'Atención Ciudadana',
   documentos:'Documentos',recursos:'Documentos',vacaciones:'Personal',v3Profile:'Personal',
@@ -2324,6 +2380,16 @@ function v11RebuildMenu(){
   document.getElementById('v11HomeBtn').style.display='block';
   if(!nav.querySelector('details[open]')){const first=nav.querySelector('details');if(first)first.open=true;}
 }
+function v14CreateSectionUI(){
+ const input=document.getElementById('v14NewSection'),name=input.value.trim(),status=document.getElementById('v11SectionStatus');
+ if(!name){status.textContent='Escribe el nombre de la sección.';return;}
+ v3Call('v14CreateSection',[TOKEN,name],r=>{
+   status.textContent=r?.mensaje||'No se pudo crear la sección.';
+   if(!r?.ok)return;
+   input.value='';V11_SECTION_ORDER=r.secciones||V11_SECTION_ORDER;
+   v11RenderSectionEditor();v4LoadMyAccess();
+ });
+}
 function v11RenderSectionEditor(){
   const host=document.getElementById('v11SectionEditor');if(!host||!v4CatalogData)return;
   host.replaceChildren();
@@ -2360,10 +2426,11 @@ let v10HomeNotifications=[];
 function v4LoadHome(){
   v4Api('v4Home',[TOKEN],r=>{
     v4$('v4Welcome').textContent=r.nombre||USUARIO?.nombre||'';
+    const greeting=document.getElementById('v14Greeting');if(greeting)greeting.textContent=r.genero==='M'?'Bienvenida':'Bienvenido';
     v10HomeNotifications=r.notificaciones||[];
     v10DrawHome();
     const birthdays=r.cumpleanios||[];
-    if(birthdays.length)v10Birthday(birthdays);
+    if(birthdays.length)v10Birthday(birthdays,!!r.cumpleanosPropio);
   });
 }
 function v10DrawHome(){
@@ -2407,7 +2474,7 @@ function v10ShowAllNotices(){
   });
 }
 let v131BirthdayShownFor='';
-function v10Birthday(names){
+function v10Birthday(names,animate){
   if(!Array.isArray(names)||!names.length)return;
   const host=v4$('v4HomeBody');
   if(!host)return;
@@ -2416,7 +2483,7 @@ function v10Birthday(names){
   msg.className='v131-birthday-banner';
   host.prepend(msg);
   const key=new Date().toDateString()+'|'+names.join('|');
-  if(v131BirthdayShownFor===key)return;
+  if(!animate||v131BirthdayShownFor===key)return;
   v131BirthdayShownFor=key;
   if(window.matchMedia?.('(prefers-reduced-motion: reduce)').matches)return;
   document.querySelectorAll('.v131-confetti').forEach(el=>el.remove());
@@ -2434,7 +2501,7 @@ function v10Birthday(names){
   document.body.append(confetti);
   setTimeout(()=>confetti.remove(),10500);
 }
-function v4LoadAccess(){v4Api('v4Catalog',[TOKEN],r=>{v4CatalogData=r;v4RenderAccess();v4RenderLevels();v11RenderSectionEditor();});}
+function v4LoadAccess(){v4Api('v4Catalog',[TOKEN],r=>{v4CatalogData=r;if(r.secciones?.length)V11_SECTION_ORDER=r.secciones;v4RenderAccess();v4RenderLevels();v11RenderSectionEditor();});}
 function v4RenderAccess(){
   const host=v4$('v4AccessPeople');host.replaceChildren();
   const box=document.createElement('div');box.className='v7-table-wrap';
@@ -2774,8 +2841,8 @@ function v4RenderCalendar(){
     box.append(v4txt('strong',day));
     (byDate.get(date)||[]).forEach(e=>{
       const btn=document.createElement('button');btn.className='v10-calendar-pin';btn.type='button';
-      btn.textContent='📍 '+e.actividad;btn.title='Ver detalles de '+e.actividad;
-      btn.onclick=event=>{event.stopPropagation();v10ShowCalendarDetails(e);};box.append(btn);
+      btn.textContent=(e.cumpleanos?'🎂 ':'📍 ')+e.actividad.replace(/^🎂 /,'');btn.title='Ver detalles de '+e.actividad;
+      btn.onclick=event=>{event.stopPropagation();v10ShowCalendarDetails(e);};if(e.cumpleanos)btn.classList.add('v14-birthday-event');box.append(btn);
     });
     box.onclick=()=>{v4$('v4EventDate').value=date;};host.append(box);
   }
@@ -2963,7 +3030,24 @@ function v12DrawHomeNotes(){
 }
 (function(){
  const loadAccess=v4LoadMyAccess;
- v4LoadMyAccess=function(){v4Api('v4MyModules',[TOKEN],r=>{v11AuthorizedModules=r.modulos||[];v11RebuildMenu();v12DrawQuickLinks();});};
+ let v14MenuRequest=0;
+ v4LoadMyAccess=function(){
+   const request=++v14MenuRequest;
+   const load=attempt=>{
+     const retry=()=>{
+       if(request!==v14MenuRequest)return;
+       if(attempt<3)setTimeout(()=>load(attempt+1),450*(attempt+1));
+       else console.warn('No se pudo actualizar el menú. Se conserva el último catálogo autorizado.');
+     };
+     google.script.run.withSuccessHandler(r=>{
+       if(request!==v14MenuRequest)return;
+       if(!r?.ok||!Array.isArray(r.modulos)||!r.modulos.some(m=>m.id==='inicio')){retry();return;}
+       v11AuthorizedModules=r.modulos;
+       if(r.secciones?.length)V11_SECTION_ORDER=r.secciones;
+       v11RebuildMenu();v12DrawQuickLinks();
+     }).withFailureHandler(retry).v4MyModules(TOKEN);
+   };load(0);
+ };
  const loadHome=v4LoadHome;
  v4LoadHome=function(){
   loadHome();
