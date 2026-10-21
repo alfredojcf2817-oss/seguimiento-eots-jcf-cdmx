@@ -3,12 +3,6 @@
 <head>
   
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta name="theme-color" content="#691B31">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="description" content="Sistema de Seguimiento EOT´s JCF CDMX">
-  <link rel="manifest" href="./manifest.webmanifest">
   <title>Sistema de Seguimiento EOT´s JCF - CDMX</title>
   <link rel="icon" type="image/svg+xml" href="./favicon_eots.svg">
   <link rel="alternate icon" type="image/x-icon" href="./favicon.ico">
@@ -818,62 +812,18 @@
 .jcf-about dd{margin:5px 0 0;color:#333;font-size:13px}
 @media(max-width:650px){.jcf-about dl{grid-template-columns:1fr}.jcf-institutional-footer{padding:16px 10px}}
 
-
-/* V16: WebApp responsive, identidad institucional, navegación accesible. */
-:root{--v16-wine:#691b31;--v16-olive:#838e5d;--v16-bg:#f5f6f9;--v16-stroke:#e7e9ef}
-html{scroll-behavior:smooth}
-body{background:var(--v16-bg);font-family:Arial,system-ui,sans-serif}
-button,input,select,textarea{font-family:inherit}
-button{transition:background-color .15s ease,box-shadow .15s ease}
-button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #9ba875;outline-offset:2px}
-.v16-topbar,.v16-bottom-nav{display:none}
-.sidebar{width:248px!important;padding:16px!important;box-shadow:2px 0 16px #23081312}
-.content{margin-left:248px!important;padding:26px clamp(16px,3vw,42px)!important;min-width:0}
-.card{box-shadow:0 3px 18px #2024330a;border:1px solid var(--v16-stroke);border-radius:20px}
-#inicio .v12-panel{border-radius:18px!important;box-shadow:0 2px 12px #22222209!important}
-#inicio .v12-quick{border-radius:15px!important;min-height:98px}
-#inicio .v6-home-header{border-radius:18px!important}
-#v11GroupedMenu .menu-btn{border-radius:10px!important;min-height:39px}
-#v11GroupedMenu details{border-radius:12px!important}
-input,select,textarea{max-width:100%;min-width:0}
-.modulo .grid{min-width:0}
-.v16-scrim{display:none}
-@media(min-width:851px){.app-view.v12-collapsed .content{margin-left:0!important}.app-view.v12-collapsed .sidebar{transform:translateX(-105%)}}
-@media(max-width:850px){
- html,body{max-width:100%;overflow-x:hidden}
- .app-view{padding-top:64px;padding-bottom:calc(72px + env(safe-area-inset-bottom));min-height:100dvh}
- .v16-topbar{position:fixed;z-index:1050;top:0;left:0;right:0;height:64px;display:flex;align-items:center;gap:12px;background:#fff;border-bottom:1px solid var(--v16-stroke);padding:8px 15px;box-shadow:0 2px 8px #00000008}
- .v16-heading{display:flex;flex-direction:column;min-width:0;flex:1;line-height:1.4}
- .v16-heading strong{color:var(--v16-wine);font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
- .v16-heading small{color:#777f8b;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
- .v16-icon-btn{background:#f5e9ed;color:var(--v16-wine);border:0;border-radius:12px;min-width:40px;min-height:40px;font-size:22px;display:grid;place-items:center;padding:6px}
- .sidebar{position:fixed!important;top:0!important;left:0!important;bottom:0!important;height:100dvh!important;width:min(86vw,320px)!important;max-width:320px!important;z-index:1201!important;overflow-y:auto!important;transform:translateX(-110%)!important;transition:transform .23s ease!important;visibility:hidden;pointer-events:none}
- .app-view.v16-drawer-open .sidebar{transform:translateX(0)!important;visibility:visible;pointer-events:auto}
- .v16-scrim:not([hidden]){display:block;position:fixed;inset:0;z-index:1200;background:#15111ab3}
- .content,.app-view.v12-collapsed .content{margin-left:0!important;padding:16px 12px 24px!important;width:100%!important;min-width:0!important}
- .v16-bottom-nav{position:fixed;display:flex;bottom:0;left:0;right:0;z-index:1090;background:#fff;border-top:1px solid var(--v16-stroke);min-height:65px;padding:6px 4px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -3px 18px #0000000a;justify-content:space-around;gap:1px}
- .v16-bottom-nav button{background:transparent;color:#7b8089;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;min-width:0;padding:4px 0;border-radius:10px;font-weight:500;gap:2px}
- .v16-bottom-nav button.v16-active{color:var(--v16-wine);background:#f9eef2;font-weight:700}
- .v16-bottom-nav button[hidden]{display:none!important}
- .v16-bottom-nav small{font-size:10px;white-space:nowrap}
- .v16-nav-icon{font-size:23px;line-height:25px}
- #v12OpenSidebar{display:none!important}
- .card{padding:17px!important;border-radius:17px!important}
- .v12-dashboard{grid-template-columns:minmax(0,1fr)!important;gap:12px!important}
- #inicio .v12-panel{min-width:0!important;padding:14px!important}
- #inicio .v12-quick-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
- .v4-dialog{max-width:calc(100vw - 18px)!important;max-height:calc(100dvh - 26px)!important;padding:16px!important;overflow:auto}
- .v4-modal{padding:9px!important}
- .modulo .grid{grid-template-columns:1fr!important}
- .modulo table{font-size:12px}
- .modulo .card{overflow-wrap:anywhere}
- input,select,textarea{font-size:16px!important}
- button{touch-action:manipulation}
- .v16-bottom-nav button{min-height:47px}
-}
-@media(max-width:400px){.v16-heading strong{font-size:13px}.v16-heading small{font-size:9px}.content{padding:12px 9px!important}.v16-bottom-nav small{font-size:9px}}
-@media(prefers-reduced-motion:reduce){.sidebar,button{transition:none!important}}
-
+/* V16.1: sintaxis — carpeta y extensiones, responsive */
+.v161-syntax-folder,.v161-ext-fieldset{margin:18px 0;padding:16px;border:1px solid #e4e5e8;border-radius:14px;background:#fafafa;min-width:0}
+.v161-syntax-folder h3{margin:0 0 6px;color:#691b31;font-size:1rem}
+.v161-hint{font-size:.84rem;color:#59616b;line-height:1.5;margin:6px 0 12px}
+.v161-folder-actions{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}
+.v161-folder-actions button{width:auto;min-height:42px}
+.v161-syntax-folder input,.v161-syntax-folder select{width:100%;max-width:100%;box-sizing:border-box;min-height:44px}
+.v161-ext-fieldset legend{font-weight:700;color:#691b31;padding:0 6px}
+.v161-ext-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(95px,1fr));gap:9px}
+.v161-ext-grid label{display:flex;align-items:center;gap:8px;background:white;border:1px solid #e0e0e0;border-radius:10px;padding:10px;cursor:pointer;margin:0;min-height:42px}
+.v161-ext-grid input{width:18px;height:18px;accent-color:#691b31;flex-shrink:0}
+@media(max-width:600px){.v161-syntax-folder,.v161-ext-fieldset{padding:12px}.v161-folder-actions button{width:100%}.v161-ext-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 </style>
 <style>
 .v4-modal[hidden],.v4-busy[hidden]{display:none!important}.v4-modal{position:fixed;inset:0;z-index:9998;background:#0009;display:flex;align-items:center;justify-content:center;padding:16px}.v4-dialog{background:#fff;border-radius:16px;padding:24px;max-width:850px;width:100%;max-height:90vh;overflow:auto;box-shadow:0 20px 60px #0004}.v4-busy{position:fixed;inset:0;z-index:99999;background:#1119;display:grid;place-items:center}.v4-busy-card{background:white;border-radius:16px;padding:30px;display:flex;align-items:center;gap:18px;color:#701a36}.v4-spinner{display:inline-block;width:34px;height:34px;border:4px solid #ddd;border-top-color:#9d2449;border-radius:50%;animation:v4spin .8s linear infinite}@keyframes v4spin{to{transform:rotate(360deg)}}.v4-tags{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}.v4-tag{background:#f2dfe6;border:1px solid #b8768d;padding:5px 8px;border-radius:16px}.v4-tag button{border:0;background:transparent;cursor:pointer;margin-left:4px}.v4-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}.v4-day{border:1px solid #ddd;border-radius:7px;min-height:86px;padding:5px;cursor:pointer;overflow-wrap:anywhere}.v4-day strong{display:block}.v4-day small{display:block;background:#f1e4e8;margin:2px 0;border-radius:4px;padding:2px}.v4-section{margin:15px 0;border-bottom:1px solid #ddd;padding-bottom:15px}.v4-dialog input,.v4-dialog select,.v4-dialog textarea{max-width:100%}@media(max-width:700px){.v4-calendar{gap:2px}.v4-day{min-height:70px;font-size:11px}.v4-day small{font-size:9px}}
@@ -901,12 +851,6 @@ input,select,textarea{max-width:100%;min-width:0}
 
   <div id="appView" class="app-view">
 
-    <header id="v16Topbar" class="v16-topbar" aria-label="Barra de navegación">
-      <button type="button" class="v16-icon-btn v16-hamburger" onclick="v16Drawer(true)" aria-label="Abrir menú">☰</button>
-      <div class="v16-heading"><strong>Seguimiento EOT´s</strong><small>Jóvenes Construyendo el Futuro · CDMX</small></div>
-      <button type="button" class="v16-icon-btn" onclick="v16Navigate('inicio')" aria-label="Ir al inicio">⌂</button>
-    </header>
-    <div id="v16Scrim" class="v16-scrim" onclick="v16Drawer(false)" hidden></div>
     <div class="sidebar" id="v11Sidebar">
       <div class="v12-brand v141-brand">
         <button type="button" class="v12-close" onclick="v12ToggleSidebar(false)" aria-label="Contraer menú" title="Contraer menú">×</button>
@@ -954,7 +898,7 @@ input,select,textarea{max-width:100%;min-width:0}
     </div>
 
     <button type="button" id="v12OpenSidebar" onclick="v12ToggleSidebar(true)" aria-label="Mostrar menú" title="Mostrar menú" hidden>❯</button>
-    <div class="content" id="v16Content">
+    <div class="content">
 
       <div id="inicio" class="modulo active">
         <div class="card v5-home-card">
@@ -1169,7 +1113,19 @@ input,select,textarea{max-width:100%;min-width:0}
 </div></div>
 <div id="v3Admin" class="modulo"><div class="card"><h2>Administración de usuarios</h2><p>Usuarios y solicitudes pendientes de validación.</p><button class="btn-primary" onclick="v4NewUser()">Agregar usuario</button><div id="v3AdminMsg"></div><h3>Solicitudes pendientes</h3><div id="v3Pending"></div><h3>Usuarios registrados</h3><input id="v3UserSearch" placeholder="Buscar por nombre o CURP" oninput="v3RenderUsers()"><div id="v3UserTable" style="overflow:auto"></div><div id="v4UserModal" class="v4-modal" hidden><div class="v4-dialog"><button onclick="v4CloseUser()" style="float:right">✕</button><h3 id="v3UserFormTitle">Agregar usuario</h3><div id="v3UserForm"></div><button class="btn-primary" onclick="v3SaveAdminUser()">Guardar usuario</button></div></div></div></div>
       <div id="v3Profile" class="modulo"><div class="card"><h2>Mi información personal</h2><p>Los cambios se envían a validación de la Dirección Estatal; no se aplican inmediatamente.</p><div id="v3ProfileForm"></div><button class="btn-primary" onclick="v3SendProfile()">Enviar para validación</button><div id="v3ProfileMsg"></div></div></div>
-      <div id="v3Syntax" class="modulo"><div class="card"><h2>Sintaxis de documentos de carga EOTs</h2><div class="v4-tags"><button class="btn-primary" onclick="v4SyntaxTab('nuevo')">Agregar sintaxis nuevo documento</button><button class="btn-primary" onclick="v4SyntaxTab('lista')">Visualizador de sintaxis existentes</button></div><div id="v4SyntaxNew"><label>Nombre del documento a cargar</label><input id="v3DocName" placeholder="Ej. Acuse de entrega"><label>Variable de la hoja usuarios</label><select id="v3SyntaxVariable"></select><button class="btn-primary" onclick="v3AddVariable()">Agregar variable</button><button class="btn-primary" onclick="v3AddText('_')">Agregar _</button><button class="btn-primary" onclick="v3AddText(' ')">Agregar espacio</button><label>Sintaxis resultante (puedes editarla)</label><textarea id="v3SyntaxText" rows="3" placeholder="{{Nombre}}_{{Apellido Paterno}}"></textarea><label>Extensión</label><select id="v3Ext"><option>.pdf</option><option>.png</option><option>.jpeg</option><option>.jpg</option><option>.xlsx</option><option>.xls</option><option>.docx</option><option>.doc</option><option>.csv</option><option>.txt</option></select><button class="btn-primary" onclick="v3SaveSyntaxUI()">Guardar sintaxis</button><div id="v3SyntaxMsg"></div></div><div id="v4SyntaxExisting" hidden><h3>Visualizador de sintaxis existentes</h3><button class="btn-primary" onclick="v4ListSyntax()">Actualizar listado</button><div id="v4SyntaxList"></div></div></div></div>
+      <div id="v3Syntax" class="modulo"><div class="card"><h2>Sintaxis de documentos de carga EOTs</h2><div class="v4-tags"><button class="btn-primary" onclick="v4SyntaxTab('nuevo')">Agregar sintaxis nuevo documento</button><button class="btn-primary" onclick="v4SyntaxTab('lista')">Visualizador de sintaxis existentes</button></div><div id="v4SyntaxNew"><label>Nombre del documento a cargar</label><input id="v3DocName" placeholder="Ej. Acuse de entrega"><label>Variable de la hoja usuarios</label><select id="v3SyntaxVariable"></select><button class="btn-primary" onclick="v3AddVariable()">Agregar variable</button><button class="btn-primary" onclick="v3AddText('_')">Agregar _</button><button class="btn-primary" onclick="v3AddText(' ')">Agregar espacio</button><label>Sintaxis resultante (puedes editarla)</label><textarea id="v3SyntaxText" rows="3" placeholder="{{Nombre}}_{{Apellido Paterno}}"></textarea><div class="v161-syntax-folder">
+  <h3>Carpeta de destino (Drive)</h3>
+  <p class="v161-hint">Selecciona una carpeta existente o escribe una ruta con subcarpetas. Al guardar la sintaxis se crearán automáticamente las carpetas que falten en el entorno activo.</p>
+  <div class="v161-folder-actions"><button type="button" class="btn-primary" onclick="v161RefreshFolders()">↻ Ver carpetas existentes</button><button type="button" class="btn-primary" onclick="v161CreateFolder()">+ Crear carpeta / subcarpeta</button></div>
+  <label for="v161ExistingFolder">Carpetas existentes en el entorno activo</label>
+  <select id="v161ExistingFolder" onchange="v161SelectFolder(this.value)"><option value="">Seleccionar carpeta...</option></select>
+  <label for="v161FolderPath">Ruta de carpeta (separa niveles con /)</label>
+  <input id="v161FolderPath" placeholder="Ej. Curso Inteligencia artificial/Inscripción al curso" autocomplete="off">
+  <div id="v161FolderStatus" class="v161-hint" role="status" aria-live="polite"></div>
+</div>
+<fieldset class="v161-ext-fieldset"><legend>Extensiones permitidas (selecciona una o varias)</legend>
+  <div class="v161-ext-grid"><label><input type="checkbox" class="v161-ext" value=".pdf" checked> .pdf</label><label><input type="checkbox" class="v161-ext" value=".jpg"> .jpg</label><label><input type="checkbox" class="v161-ext" value=".jpeg"> .jpeg</label><label><input type="checkbox" class="v161-ext" value=".peg"> .peg</label><label><input type="checkbox" class="v161-ext" value=".png"> .png</label><label><input type="checkbox" class="v161-ext" value=".xlsx"> .xlsx</label><label><input type="checkbox" class="v161-ext" value=".xls"> .xls</label><label><input type="checkbox" class="v161-ext" value=".docx"> .docx</label><label><input type="checkbox" class="v161-ext" value=".doc"> .doc</label><label><input type="checkbox" class="v161-ext" value=".csv"> .csv</label><label><input type="checkbox" class="v161-ext" value=".txt"> .txt</label></div>
+</fieldset><button class="btn-primary" onclick="v3SaveSyntaxUI()">Guardar sintaxis</button><div id="v3SyntaxMsg"></div></div><div id="v4SyntaxExisting" hidden><h3>Visualizador de sintaxis existentes</h3><button class="btn-primary" onclick="v4ListSyntax()">Actualizar listado</button><div id="v4SyntaxList"></div></div></div></div>
       <div id="v3Dynamic" class="modulo"><div class="card"><h2 id="v3DynamicTitle">Módulo</h2><input id="v3DynamicSearch" placeholder="Buscar registros" onkeydown="if(event.key==='Enter')v3LoadDynamic(1)"><button class="btn-primary" onclick="v3LoadDynamic(1)">Buscar</button><div id="v3DynamicBody" style="overflow:auto"></div><div id="v3DynamicPager"></div></div></div>
 
 <div id="v4Role" class="modulo"><div class="card">
@@ -1347,18 +1303,10 @@ input,select,textarea{max-width:100%;min-width:0}
       <footer class="jcf-institutional-footer" aria-label="Créditos institucionales">
         <strong>Sistema de Seguimiento EOT´s</strong>
         <span>Desarrollado por la Oficina Estatal del Programa Jóvenes Construyendo el Futuro en la Ciudad de México</span>
-        <small>© 2026 · Versión 16.0</small>
+        <small>© 2026 · Versión 14.5</small>
       </footer>
-<nav id="v16BottomNav" class="v16-bottom-nav" aria-label="Navegación principal">
-  <button type="button" data-v16="inicio" onclick="v16Navigate('inicio')"><span class="v16-nav-icon">⌂</span><small>Inicio</small></button>
-  <button type="button" data-v16="documentos" onclick="v16Navigate('documentos')"><span class="v16-nav-icon">▣</span><small>Documentos</small></button>
-  <button type="button" data-v16="v4Calendar" onclick="v16Navigate('v4Calendar')"><span class="v16-nav-icon">▦</span><small>Actividades</small></button>
-  <button type="button" data-v16="v4Notes" onclick="v16Navigate('v4Notes')"><span class="v16-nav-icon">▤</span><small>Mis notas</small></button>
-  <button type="button" data-v16="menu" onclick="v16Drawer(true)"><span class="v16-nav-icon">☷</span><small>Menú</small></button>
-</nav>
     </div>
   </div>
-
 
 <script>
   // URL pública del proxy Cloudflare Worker, NO URL de Apps Script.
@@ -2421,12 +2369,19 @@ input,select,textarea{max-width:100%;min-width:0}
     }
     function v3OpenSyntax(btn){abrirModulo('v3Syntax',btn);v3Call('v3SyntaxFields',[TOKEN],r=>{
       if(!r.ok)return;const s=document.getElementById('v3SyntaxVariable');s.replaceChildren();r.campos.forEach(k=>s.appendChild(v3El('option',{value:k},k)));
-    },'v3SyntaxMsg');v4ListSyntax();}
+    },'v3SyntaxMsg');v4ListSyntax();v161RefreshFolders();}
     function v3AddVariable(){document.getElementById('v3SyntaxText').value+='{{'+document.getElementById('v3SyntaxVariable').value+'}}';}
     function v3AddText(s){document.getElementById('v3SyntaxText').value+=s;}
     function v3SaveSyntaxUI(){
-      const name=document.getElementById('v3DocName').value,template=document.getElementById('v3SyntaxText').value,ext=document.getElementById('v3Ext').value;
-      v3Call('v3SaveSyntax',[TOKEN,name,template,ext],r=>{if(r.ok){alert(r.mensaje);document.getElementById('v3DocName').value='';document.getElementById('v3SyntaxText').value='';v4ListSyntax();}},'v3SyntaxMsg');
+      const name=document.getElementById('v3DocName').value.trim(),template=document.getElementById('v3SyntaxText').value.trim();
+      const exts=[...document.querySelectorAll('.v161-ext:checked')].map(e=>e.value);
+      const ruta=document.getElementById('v161FolderPath').value.trim()||name;
+      if(!name){alert('Ingresa el nombre del documento.');return;}
+      if(!exts.length){alert('Selecciona al menos una extensión.');return;}
+      if(!v161ValidPath(ruta)){alert('Ruta inválida: máximo 6 niveles; usa / para separar carpetas.');return;}
+      v3Call('v3SaveSyntax',[TOKEN,name,template,exts.join(','),ruta],r=>{
+        if(r.ok){alert(r.mensaje);document.getElementById('v3DocName').value='';document.getElementById('v3SyntaxText').value='';document.getElementById('v161FolderPath').value='';v161RefreshFolders();v4ListSyntax();}
+      },'v3SyntaxMsg');
     }
     function v3SaveModuleUI(){
       const g=id=>document.getElementById(id).value.trim();
@@ -2712,7 +2667,7 @@ function v4RenderLevels(){
   });
   table.append(body);wrap.append(table);host.append(wrap);
 }
-function v4ListSyntax(){v4Api('v4ListSyntax',[TOKEN],r=>{const host=v4$('v4SyntaxList');host.replaceChildren();const table=document.createElement('table'),head=document.createElement('tr');['Documento','Sintaxis','Registrado por','Nivel','Fecha'].forEach(k=>head.append(v4txt('th',k)));table.append(head);r.registros.forEach(s=>{const tr=document.createElement('tr');[s.documento,s.sintaxis,s.creadoPor,s.nivel,s.fecha].forEach(v=>tr.append(v4txt('td',v)));table.append(tr);});host.append(table);});}
+function v4ListSyntax(){v4Api('v4ListSyntax',[TOKEN],r=>{const host=v4$('v4SyntaxList');host.replaceChildren();const table=document.createElement('table'),head=document.createElement('tr');['Documento','Sintaxis','Carpeta de destino','Extensiones','Registrado por','Nivel','Fecha'].forEach(k=>head.append(v4txt('th',k)));table.append(head);r.registros.forEach(s=>{const tr=document.createElement('tr');[s.documento,s.sintaxis,s.ruta||s.documento,s.extensiones||'—',s.creadoPor,s.nivel,s.fecha].forEach(v=>tr.append(v4txt('td',v)));table.append(tr);});host.append(table);});}
 
 /* V8: borrador local en memoria; ninguna edición llama a Apps Script antes de Guardar todas. */
 let v8Draft=[],v8Deleted=[],v8Templates=[],v8Context='',v8Loading=false,v8Busy=false,v8Seq=0;
@@ -3270,72 +3225,34 @@ function v13ChangeFolder(key,inputId){
     if(r?.ok)v13Refresh();
   });
 }
-</script>
 
-<script>
-/* V16 navigation shell: reuse original module buttons and permission checks. */
-(function(){
-  const app=()=>document.getElementById('appView');
-  const isMobile=()=>window.matchMedia('(max-width:850px)').matches;
-  window.v16Drawer=function(open){
-    if(!app())return;
-    const show=!!open&&isMobile();
-    app().classList.toggle('v16-drawer-open',show);
-    const scrim=document.getElementById('v16Scrim');if(scrim)scrim.hidden=!show;
-    document.body.style.overflow=show?'hidden':'';
-    const trigger=document.querySelector('.v16-hamburger');if(trigger)trigger.setAttribute('aria-expanded',String(show));
-  };
-  function authorized(id){
-    if(id==='inicio')return true;
-    return Array.isArray(window.v11AuthorizedModules)?window.v11AuthorizedModules.some(m=>m.id===id):
-      (typeof v11AuthorizedModules!=='undefined'&&Array.isArray(v11AuthorizedModules)&&v11AuthorizedModules.some(m=>m.id===id));
-  }
-  function syncNav(){
-    const bar=document.getElementById('v16BottomNav');if(!bar)return;
-    bar.querySelectorAll('button[data-v16]').forEach(btn=>{
-      const id=btn.dataset.v16;
-      btn.hidden=id!=='inicio'&&id!=='menu'&&!authorized(id);
-    });
-    const current=document.querySelector('.modulo.active')?.id||'inicio';
-    bar.querySelectorAll('button').forEach(b=>{
-      const active=b.dataset.v16===current;
-      b.classList.toggle('v16-active',active);
-      if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
-    });
-  }
-  window.v16Navigate=function(id){
-    if(id==='menu'){v16Drawer(true);return;}
-    if(!authorized(id)){v16Drawer(true);return;}
-    if(id==='inicio'){
-      const home=document.getElementById('v11HomeBtn');if(home)home.click();else if(typeof abrirModulo==='function')abrirModulo('inicio');
-    }else if(typeof v12GoModule==='function')v12GoModule(id);
-    v16Drawer(false);syncNav();
-    window.scrollTo({top:0,behavior:'instant'});
-  };
-  document.addEventListener('click',e=>{
-    if(e.target.closest('#v11GroupedMenu .menu-btn, #v11HomeBtn, #v12SearchResults .v12-result')){
-      if(isMobile())v16Drawer(false);
-      setTimeout(syncNav,0);
-    }
-  });
-  document.addEventListener('keydown',e=>{if(e.key==='Escape')v16Drawer(false)});
-  window.addEventListener('resize',()=>{if(!isMobile())v16Drawer(false);syncNav()});
-  const boot=()=>{
-    const menu=document.getElementById('v11GroupedMenu');
-    if(menu)new MutationObserver(syncNav).observe(menu,{childList:true,subtree:true});
-    const content=document.querySelector('.content');
-    if(content)new MutationObserver(syncNav).observe(content,{attributes:true,attributeFilter:['class'],subtree:true});
-    const appView=app();if(appView)new MutationObserver(()=>{
-      if(getComputedStyle(appView).display==='none')v16Drawer(false);
-      syncNav();
-    }).observe(appView,{attributes:true,attributeFilter:['style']});
-    syncNav();
-  };
-  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
-  if('serviceWorker' in navigator&&location.protocol==='https:'){
-    window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(()=>{}));
-  }
-})();
+/* V16.1 — Explorador de carpetas de carga, limitado al entorno activo y nivel 1/2. */
+function v161ValidPath(path){
+  const parts=String(path||'').split('/').map(p=>p.trim());
+  return parts.length>0&&parts.length<=6&&parts.every(p=>p&&p!=='.'&&p!=='..'&&p.length<=100&&!/[\\:*?"<>|]/.test(p));
+}
+function v161FolderStatus(message){const e=document.getElementById('v161FolderStatus');if(e)e.textContent=message;}
+function v161SelectFolder(path){if(path)document.getElementById('v161FolderPath').value=path;}
+function v161RefreshFolders(){
+  const select=document.getElementById('v161ExistingFolder');if(!select)return;
+  v161FolderStatus('Consultando carpetas de Google Drive...');
+  v3Call('v15Folders',[TOKEN,'Upload'],r=>{
+    if(!r.ok){v161FolderStatus(r.mensaje||'No fue posible consultar las carpetas.');return;}
+    select.replaceChildren();const base=document.createElement('option');base.value='';base.textContent='Seleccionar carpeta existente...';select.append(base);
+    (r.carpetas||[]).forEach(f=>{const option=document.createElement('option');option.value=f.ruta;option.textContent='  '.repeat(Math.max(0,(f.nivel||1)-1))+'📁 '+f.ruta;select.append(option);});
+    v161FolderStatus('Entorno: '+r.entorno+' · '+(r.carpetas||[]).length+' carpetas encontradas. Puedes crear nuevas rutas debajo.');
+  },'v161FolderStatus');
+}
+function v161CreateFolder(){
+  const path=document.getElementById('v161FolderPath').value.trim();
+  if(!v161ValidPath(path)){alert('Escribe una ruta válida. Ejemplo: Curso Inteligencia artificial/Constancia');return;}
+  if(!confirm('¿Crear o localizar la carpeta «'+path+'» en el entorno activo?'))return;
+  v161FolderStatus('Creando carpetas...');
+  v3Call('v15CreateFolder',[TOKEN,'Upload',path],r=>{
+    if(!r.ok){v161FolderStatus(r.mensaje||'No se pudo crear la carpeta.');return;}
+    v161RefreshFolders();
+  },'v161FolderStatus');
+}
 </script>
 </body>
 </html>
