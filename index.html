@@ -695,6 +695,29 @@
  #inicio .v6-home-header h2:nth-child(2){font-size:21px}
  #inicio .v12-notices,#inicio .v12-shortcuts,#inicio .v12-upcoming,#inicio .v12-notes{min-height:0}
 }
+
+/* V13 — Configuración nivel 1 */
+.v13-settings{max-width:1120px;margin:auto}
+.v13-intro,.v13-hint{color:#596071;line-height:1.55}
+.v13-setting-row{display:flex;align-items:center;justify-content:space-between;gap:25px;padding:20px 4px;border-bottom:1px solid #e7e0e4}
+.v13-setting-row h3,.v13-environment h3{margin:0 0 8px;color:#7b1e3d}
+.v13-setting-row p{max-width:720px;margin:0;color:#5b6470}
+.v13-switch{display:flex;align-items:center;gap:12px;cursor:pointer;flex-shrink:0}
+.v13-switch input{position:absolute;opacity:0;width:1px;height:1px}
+.v13-track{position:relative;width:54px;height:30px;border-radius:30px;background:#c9cbd1;transition:background .15s}
+.v13-track:after{content:'';position:absolute;left:4px;top:4px;width:22px;height:22px;border-radius:50%;background:white;box-shadow:0 1px 4px #0002;transition:transform .15s}
+.v13-switch input:checked+.v13-track{background:#838E5D}
+.v13-switch input:checked+.v13-track:after{transform:translateX(24px)}
+.v13-switch input:focus-visible+.v13-track{outline:3px solid #9D2449;outline-offset:3px}
+.v13-switch-label{font-weight:700;color:#7b1e3d;min-width:28px}
+.v13-environments{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:25px}
+.v13-environment{padding:19px;border:1px solid #e8dce2;border-radius:14px;background:#fcfafb}
+.v13-environment label{display:block;margin:15px 0 6px;font-weight:600;font-size:13px}
+.v13-url-row{display:flex;gap:8px;align-items:center}
+.v13-url-row input{flex:1;min-width:0;width:100%;font-size:13px}
+.v13-url-row button{white-space:nowrap;padding:10px;border-radius:8px;background:#9D2449;color:#fff;border:0;cursor:pointer}
+#v13Status{margin-top:14px;min-height:24px;color:#7b1e3d}
+@media(max-width:900px){.v13-environments{grid-template-columns:1fr}.v13-url-row{flex-wrap:wrap}.v13-setting-row{align-items:flex-start}}
 </style>
 <style>
 .v4-modal[hidden],.v4-busy[hidden]{display:none!important}.v4-modal{position:fixed;inset:0;z-index:9998;background:#0009;display:flex;align-items:center;justify-content:center;padding:16px}.v4-dialog{background:#fff;border-radius:16px;padding:24px;max-width:850px;width:100%;max-height:90vh;overflow:auto;box-shadow:0 20px 60px #0004}.v4-busy{position:fixed;inset:0;z-index:99999;background:#1119;display:grid;place-items:center}.v4-busy-card{background:white;border-radius:16px;padding:30px;display:flex;align-items:center;gap:18px;color:#701a36}.v4-spinner{display:inline-block;width:34px;height:34px;border:4px solid #ddd;border-top-color:#9d2449;border-radius:50%;animation:v4spin .8s linear infinite}@keyframes v4spin{to{transform:rotate(360deg)}}.v4-tags{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}.v4-tag{background:#f2dfe6;border:1px solid #b8768d;padding:5px 8px;border-radius:16px}.v4-tag button{border:0;background:transparent;cursor:pointer;margin-left:4px}.v4-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}.v4-day{border:1px solid #ddd;border-radius:7px;min-height:86px;padding:5px;cursor:pointer;overflow-wrap:anywhere}.v4-day strong{display:block}.v4-day small{display:block;background:#f1e4e8;margin:2px 0;border-radius:4px;padding:2px}.v4-section{margin:15px 0;border-bottom:1px solid #ddd;padding-bottom:15px}.v4-dialog input,.v4-dialog select,.v4-dialog textarea{max-width:100%}@media(max-width:700px){.v4-calendar{gap:2px}.v4-day{min-height:70px;font-size:11px}.v4-day small{font-size:9px}}
@@ -747,6 +770,7 @@
 
       <button id="btnBabien" class="menu-btn" style="display:none" onclick="abrirBaBien(this)">BaBien</button>
       <button id="btnGestionModulos" class="menu-btn" style="display:none" onclick="abrirGestionModulos(this)">Administrador de módulos</button>
+      <button id="btnV13Settings" class="menu-btn" style="display:none" onclick="v13OpenSettings(this)">Configuración</button>
       <button id="btnUsuariosAdmin" class="menu-btn" style="display:none" onclick="v3OpenAdmin(this)">Administración de usuarios</button>
       <button id="btnV4Role" class="menu-btn" style="display:none" onclick="v4OpenRole(this)">Rol de actividades</button>
       <button id="btnV4Calendar" class="menu-btn" onclick="v4OpenCalendar(this)">Actividades</button>
@@ -948,7 +972,22 @@
         <div id="gestionModulosMsg" aria-live="polite"></div>
         <hr><h3>Crear módulo interno</h3><label>Nombre</label><input id="v3ModuleName" placeholder="Nombre del módulo"><label>Tipo</label><select id="v3ModuleType"><option value="tabla">Tabla de datos</option><option value="dashboard">Dashboard</option><option value="buscador">Buscador</option><option value="documentos">Documentos / enlaces</option><option value="formulario">Formulario</option><option value="enlace">Enlace externo</option></select><label>Ubicación en menú (nombre del módulo padre, opcional)</label><input id="v3ModuleParent" placeholder="BaBien"><label>URL HTTPS (solo para enlaces)</label><input id="v3ModuleUrl" placeholder="https://..."><label>ID de Google Sheets</label><input id="v3ModuleSpreadsheet" placeholder="ID del archivo"><label>Nombre de la hoja</label><input id="v3ModuleSheet" placeholder="Nombre exacto de pestaña"><label>Columnas a mostrar (separadas por comas, opcional)</label><input id="v3ModuleColumns" placeholder="CURP, Estatus, Fecha"><label>Niveles permitidos</label><div style="display:flex;gap:12px;flex-wrap:wrap"><label><input class="v3ModuleLevel" type="checkbox" value="1" checked>1</label><label><input class="v3ModuleLevel" type="checkbox" value="2" checked>2</label><label><input class="v3ModuleLevel" type="checkbox" value="3">3</label><label><input class="v3ModuleLevel" type="checkbox" value="4">4</label></div><button class="btn-primary" onclick="v3SaveModuleUI()">Crear módulo interno</button><div id="v3ModuleMsg"></div></div><div id="v4PeopleSection"><h3>Personal activo y módulos asignados</h3><div id="v4AccessPeople"></div></div><div id="v4LevelsSection" hidden><h3>Niveles de módulos</h3><div id="v4ModuleLevels"></div></div>
       </div></div>
-      <div id="v3Admin" class="modulo"><div class="card"><h2>Administración de usuarios</h2><p>Usuarios y solicitudes pendientes de validación.</p><button class="btn-primary" onclick="v4NewUser()">Agregar usuario</button><div id="v3AdminMsg"></div><h3>Solicitudes pendientes</h3><div id="v3Pending"></div><h3>Usuarios registrados</h3><input id="v3UserSearch" placeholder="Buscar por nombre o CURP" oninput="v3RenderUsers()"><div id="v3UserTable" style="overflow:auto"></div><div id="v4UserModal" class="v4-modal" hidden><div class="v4-dialog"><button onclick="v4CloseUser()" style="float:right">✕</button><h3 id="v3UserFormTitle">Agregar usuario</h3><div id="v3UserForm"></div><button class="btn-primary" onclick="v3SaveAdminUser()">Guardar usuario</button></div></div></div></div>
+      <div id="v13Settings" class="modulo"><div class="card v13-settings">
+  <h2>Configuración</h2><p class="v13-intro">Administración exclusiva del nivel 1. Los cambios se aplican a todo el sistema.</p>
+  <section class="v13-setting-row"><div><h3>Acceso a plataforma</h3><p>Al desactivar, se bloquea el acceso de usuarios nivel 3, incluso si tenían una sesión iniciada. Niveles 1 y 2 continúan.</p></div>
+    <label class="v13-switch"><input type="checkbox" id="v13Access" onchange="v13SetFlag('acceso',this)"><span class="v13-track"></span><span class="v13-switch-label" id="v13AccessText">—</span></label></section>
+  <section class="v13-setting-row"><div><h3>Habilitar Modo desarrollo</h3><p>ON utiliza las carpetas actuales de desarrollo. OFF utiliza las carpetas alternativas del entorno principal.</p></div>
+    <label class="v13-switch"><input type="checkbox" id="v13Development" onchange="v13SetFlag('desarrollo',this)"><span class="v13-track"></span><span class="v13-switch-label" id="v13DevelopmentText">—</span></label></section>
+  <div class="v13-environments"><div class="v13-environment"><h3>Carpetas de Desarrollo (ON)</h3>
+    <label for="v13DevUpload">Link para carga de documentos</label><div class="v13-url-row"><input type="url" id="v13DevUpload" placeholder="https://drive.google.com/drive/folders/..."><button onclick="v13ChangeFolder('devUpload','v13DevUpload')">Sustituir enlace</button></div>
+    <label for="v13DevDownload">Link para descarga de documentos</label><div class="v13-url-row"><input type="url" id="v13DevDownload" placeholder="https://drive.google.com/drive/folders/..."><button onclick="v13ChangeFolder('devDownload','v13DevDownload')">Sustituir enlace</button></div></div>
+    <div class="v13-environment"><h3>Carpetas del entorno principal (OFF)</h3>
+    <label for="v13ProdUpload">Link para carga de documentos</label><div class="v13-url-row"><input type="url" id="v13ProdUpload" placeholder="Configura la carpeta alternativa"><button onclick="v13ChangeFolder('prodUpload','v13ProdUpload')">Sustituir enlace</button></div>
+    <label for="v13ProdDownload">Link para descarga de documentos</label><div class="v13-url-row"><input type="url" id="v13ProdDownload" placeholder="Configura la carpeta alternativa"><button onclick="v13ChangeFolder('prodDownload','v13ProdDownload')">Sustituir enlace</button></div></div></div>
+  <p class="v13-hint">Por seguridad, cada sustitución solicita una clave. Solo se admiten enlaces a carpetas de Google Drive accesibles para Apps Script.</p>
+  <div id="v13Status" role="status" aria-live="polite"></div>
+</div></div>
+<div id="v3Admin" class="modulo"><div class="card"><h2>Administración de usuarios</h2><p>Usuarios y solicitudes pendientes de validación.</p><button class="btn-primary" onclick="v4NewUser()">Agregar usuario</button><div id="v3AdminMsg"></div><h3>Solicitudes pendientes</h3><div id="v3Pending"></div><h3>Usuarios registrados</h3><input id="v3UserSearch" placeholder="Buscar por nombre o CURP" oninput="v3RenderUsers()"><div id="v3UserTable" style="overflow:auto"></div><div id="v4UserModal" class="v4-modal" hidden><div class="v4-dialog"><button onclick="v4CloseUser()" style="float:right">✕</button><h3 id="v3UserFormTitle">Agregar usuario</h3><div id="v3UserForm"></div><button class="btn-primary" onclick="v3SaveAdminUser()">Guardar usuario</button></div></div></div></div>
       <div id="v3Profile" class="modulo"><div class="card"><h2>Mi información personal</h2><p>Los cambios se envían a validación de la Dirección Estatal; no se aplican inmediatamente.</p><div id="v3ProfileForm"></div><button class="btn-primary" onclick="v3SendProfile()">Enviar para validación</button><div id="v3ProfileMsg"></div></div></div>
       <div id="v3Syntax" class="modulo"><div class="card"><h2>Sintaxis de documentos de carga EOTs</h2><div class="v4-tags"><button class="btn-primary" onclick="v4SyntaxTab('nuevo')">Agregar sintaxis nuevo documento</button><button class="btn-primary" onclick="v4SyntaxTab('lista')">Visualizador de sintaxis existentes</button></div><div id="v4SyntaxNew"><label>Nombre del documento a cargar</label><input id="v3DocName" placeholder="Ej. Acuse de entrega"><label>Variable de la hoja usuarios</label><select id="v3SyntaxVariable"></select><button class="btn-primary" onclick="v3AddVariable()">Agregar variable</button><button class="btn-primary" onclick="v3AddText('_')">Agregar _</button><button class="btn-primary" onclick="v3AddText(' ')">Agregar espacio</button><label>Sintaxis resultante (puedes editarla)</label><textarea id="v3SyntaxText" rows="3" placeholder="{{Nombre}}_{{Apellido Paterno}}"></textarea><label>Extensión</label><select id="v3Ext"><option>.pdf</option><option>.png</option><option>.jpeg</option><option>.jpg</option><option>.xlsx</option><option>.xls</option><option>.docx</option><option>.doc</option><option>.csv</option><option>.txt</option></select><button class="btn-primary" onclick="v3SaveSyntaxUI()">Guardar sintaxis</button><div id="v3SyntaxMsg"></div></div><div id="v4SyntaxExisting" hidden><h3>Visualizador de sintaxis existentes</h3><button class="btn-primary" onclick="v4ListSyntax()">Actualizar listado</button><div id="v4SyntaxList"></div></div></div></div>
       <div id="v3Dynamic" class="modulo"><div class="card"><h2 id="v3DynamicTitle">Módulo</h2><input id="v3DynamicSearch" placeholder="Buscar registros" onkeydown="if(event.key==='Enter')v3LoadDynamic(1)"><button class="btn-primary" onclick="v3LoadDynamic(1)">Buscar</button><div id="v3DynamicBody" style="overflow:auto"></div><div id="v3DynamicPager"></div></div></div>
@@ -2232,7 +2271,7 @@ const V11_MODULE_DEFAULTS={
   atencionC:'Atención Ciudadana',oficinaOV:'Atención Ciudadana',buscadorTarjetas:'Atención Ciudadana',
   documentos:'Documentos',recursos:'Documentos',vacaciones:'Personal',v3Profile:'Personal',
   babien:'Herramientas',v4Notes:'Herramientas',directorioDrives:'Herramientas',
-  v4Role:'Herramientas',v4Calendar:'Herramientas',gestionModulos:'Administrador',
+  v4Role:'Herramientas',v4Calendar:'Herramientas',gestionModulos:'Administrador',v13Settings:'Administrador',
   v3Admin:'Administrador',v3Syntax:'Administrador',adminVacaciones:'Seguimiento',v9DriveControl:'Seguimiento'
 };
 const V11_FUNCTION_IDS={
@@ -2240,7 +2279,7 @@ const V11_FUNCTION_IDS={
   abrirDocumentos:'documentos',abrirRecursos:'recursos',abrirVacaciones:'vacaciones',
   v3OpenProfile:'v3Profile',abrirBaBien:'babien',v4OpenNotes:'v4Notes',
   abrirDirectorioDrives:'directorioDrives',v4OpenRole:'v4Role',v4OpenCalendar:'v4Calendar',
-  abrirGestionModulos:'gestionModulos',v3OpenAdmin:'v3Admin',v3OpenSyntax:'v3Syntax',
+  abrirGestionModulos:'gestionModulos',v13OpenSettings:'v13Settings',v3OpenAdmin:'v3Admin',v3OpenSyntax:'v3Syntax',
   abrirAdminVacaciones:'adminVacaciones',v10OpenDriveAudit:'v9DriveControl'
 };
 let v11AuthorizedModules=null;
@@ -2934,6 +2973,58 @@ function v12RenderNotes(){
   card.append(row,body,date);grid.append(card);
  });
  if(!notes.length)grid.textContent='No hay notas para este filtro.';
+}
+</script>
+<script>
+/* V13: panel de configuración. La autorización real se verifica en Apps Script. */
+let v13Snapshot=null,v13Loading=false;
+function v13OpenSettings(btn){
+  if(String(USUARIO?.nivel)!=='1'){alert('Solo el nivel 1 puede abrir Configuración.');return;}
+  abrirModulo('v13Settings',btn);v13Refresh();
+}
+function v13Refresh(){
+  const status=document.getElementById('v13Status');status.textContent='Cargando configuración…';
+  v3Call('v13ConfigRead',[TOKEN],r=>{
+    if(!r?.ok){status.textContent=r?.mensaje||'No se pudo consultar la configuración.';return;}
+    v13Snapshot=r;document.getElementById('v13Access').checked=r.acceso;
+    document.getElementById('v13Development').checked=r.desarrollo;
+    v13UpdateLabels();
+    const fields={devUpload:'v13DevUpload',devDownload:'v13DevDownload',prodUpload:'v13ProdUpload',prodDownload:'v13ProdDownload'};
+    Object.entries(fields).forEach(([key,id])=>document.getElementById(id).value=r.enlaces[key]||'');
+    status.textContent='Configuración actualizada.';
+  });
+}
+function v13UpdateLabels(){
+  document.getElementById('v13AccessText').textContent=document.getElementById('v13Access').checked?'ON':'OFF';
+  document.getElementById('v13DevelopmentText').textContent=document.getElementById('v13Development').checked?'ON':'OFF';
+}
+function v13SetFlag(key,checkbox){
+  if(v13Loading||!v13Snapshot){checkbox.checked=!!v13Snapshot?.[key];return;}
+  const old=key==='acceso'?v13Snapshot.acceso:v13Snapshot.desarrollo;
+  const label=key==='acceso'?'acceso de usuarios nivel 3':'modo desarrollo';
+  if(!confirm('¿Confirmas cambiar '+label+' a '+(checkbox.checked?'ON':'OFF')+'?')){checkbox.checked=old;return;}
+  v13Loading=true;checkbox.disabled=true;v13UpdateLabels();
+  v3Call('v13ConfigFlag',[TOKEN,key,checkbox.checked],r=>{
+    v13Loading=false;checkbox.disabled=false;
+    if(!r?.ok){checkbox.checked=old;document.getElementById('v13Status').textContent=r?.mensaje||'No se pudo actualizar.';}
+    else{v13Snapshot[key]=checkbox.checked;document.getElementById('v13Status').textContent=r.mensaje;}
+    v13UpdateLabels();
+  });
+}
+function v13ChangeFolder(key,inputId){
+  if(v13Loading||!v13Snapshot)return;
+  const input=document.getElementById(inputId),url=input.value.trim();
+  if(!/^https:\/\/drive\.google\.com\/drive\/folders\/[\w-]{10,}/i.test(url)){
+    alert('Ingresa un enlace válido de carpeta de Google Drive.');return;
+  }
+  const secret=prompt('Clave de acceso para sustituir el enlace:');
+  if(secret===null)return;
+  if(!confirm('¿Sustituir el enlace de esta carpeta? El cambio afectará las próximas operaciones de carga o descarga del entorno correspondiente.'))return;
+  v13Loading=true;
+  v3Call('v13ConfigFolder',[TOKEN,key,url,secret],r=>{
+    v13Loading=false;document.getElementById('v13Status').textContent=r?.mensaje||'No se pudo cambiar el enlace.';
+    if(r?.ok)v13Refresh();
+  });
 }
 </script>
 </body>
