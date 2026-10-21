@@ -798,6 +798,19 @@
   max-width:78px!important;max-height:66px!important;margin:0!important;
   object-fit:contain!important;filter:brightness(0) invert(1)!important;
 }
+
+/* V14.5 · Créditos institucionales en todos los módulos */
+.jcf-institutional-footer{display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;padding:20px 14px 24px;margin:26px 0 0;border-top:1px solid #e8dfe3;background:#f9f6f7;border-radius:12px;color:#691b31;font-size:12px;line-height:1.5}
+.jcf-institutional-footer strong{font-size:13px}
+.jcf-institutional-footer span{color:#555;max-width:700px}
+.jcf-institutional-footer small{color:#777;font-size:11px}
+.jcf-about{margin-top:28px;border-top:1px solid #e8dfe3;padding-top:17px}
+.jcf-about h3{color:#691b31}
+.jcf-about dl{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0}
+.jcf-about dl>div{background:#faf7f8;border:1px solid #eee4e8;border-radius:9px;padding:12px}
+.jcf-about dt{font-size:12px;font-weight:700;color:#691b31}
+.jcf-about dd{margin:5px 0 0;color:#333;font-size:13px}
+@media(max-width:650px){.jcf-about dl{grid-template-columns:1fr}.jcf-institutional-footer{padding:16px 10px}}
 </style>
 <style>
 .v4-modal[hidden],.v4-busy[hidden]{display:none!important}.v4-modal{position:fixed;inset:0;z-index:9998;background:#0009;display:flex;align-items:center;justify-content:center;padding:16px}.v4-dialog{background:#fff;border-radius:16px;padding:24px;max-width:850px;width:100%;max-height:90vh;overflow:auto;box-shadow:0 20px 60px #0004}.v4-busy{position:fixed;inset:0;z-index:99999;background:#1119;display:grid;place-items:center}.v4-busy-card{background:white;border-radius:16px;padding:30px;display:flex;align-items:center;gap:18px;color:#701a36}.v4-spinner{display:inline-block;width:34px;height:34px;border:4px solid #ddd;border-top-color:#9d2449;border-radius:50%;animation:v4spin .8s linear infinite}@keyframes v4spin{to{transform:rotate(360deg)}}.v4-tags{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}.v4-tag{background:#f2dfe6;border:1px solid #b8768d;padding:5px 8px;border-radius:16px}.v4-tag button{border:0;background:transparent;cursor:pointer;margin-left:4px}.v4-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}.v4-day{border:1px solid #ddd;border-radius:7px;min-height:86px;padding:5px;cursor:pointer;overflow-wrap:anywhere}.v4-day strong{display:block}.v4-day small{display:block;background:#f1e4e8;margin:2px 0;border-radius:4px;padding:2px}.v4-section{margin:15px 0;border-bottom:1px solid #ddd;padding-bottom:15px}.v4-dialog input,.v4-dialog select,.v4-dialog textarea{max-width:100%}@media(max-width:700px){.v4-calendar{gap:2px}.v4-day{min-height:70px;font-size:11px}.v4-day small{font-size:9px}}
@@ -1075,6 +1088,15 @@
     <label for="v13ProdDownload">Link para descarga de documentos</label><div class="v13-url-row"><input type="url" id="v13ProdDownload" placeholder="Configura la carpeta alternativa"><button onclick="v13ChangeFolder('prodDownload','v13ProdDownload')">Sustituir enlace</button></div></div></div>
   <p class="v13-hint">Por seguridad, cada sustitución solicita una clave. Solo se admiten enlaces a carpetas de Google Drive accesibles para Apps Script.</p>
   <div id="v13Status" role="status" aria-live="polite"></div>
+  <section class="jcf-about" aria-labelledby="jcfAboutHeading">
+    <h3 id="jcfAboutHeading">Acerca del sistema</h3>
+    <dl>
+      <div><dt>Sistema</dt><dd>Sistema de Seguimiento EOT´s</dd></div>
+      <div><dt>Desarrollado por</dt><dd>Oficina Estatal del Programa Jóvenes Construyendo el Futuro en la Ciudad de México</dd></div>
+      <div><dt>Versión</dt><dd>14.5</dd></div>
+      <div><dt>Año</dt><dd>2026</dd></div>
+    </dl>
+  </section>
 </div></div>
 <div id="v3Admin" class="modulo"><div class="card"><h2>Administración de usuarios</h2><p>Usuarios y solicitudes pendientes de validación.</p><button class="btn-primary" onclick="v4NewUser()">Agregar usuario</button><div id="v3AdminMsg"></div><h3>Solicitudes pendientes</h3><div id="v3Pending"></div><h3>Usuarios registrados</h3><input id="v3UserSearch" placeholder="Buscar por nombre o CURP" oninput="v3RenderUsers()"><div id="v3UserTable" style="overflow:auto"></div><div id="v4UserModal" class="v4-modal" hidden><div class="v4-dialog"><button onclick="v4CloseUser()" style="float:right">✕</button><h3 id="v3UserFormTitle">Agregar usuario</h3><div id="v3UserForm"></div><button class="btn-primary" onclick="v3SaveAdminUser()">Guardar usuario</button></div></div></div></div>
       <div id="v3Profile" class="modulo"><div class="card"><h2>Mi información personal</h2><p>Los cambios se envían a validación de la Dirección Estatal; no se aplican inmediatamente.</p><div id="v3ProfileForm"></div><button class="btn-primary" onclick="v3SendProfile()">Enviar para validación</button><div id="v3ProfileMsg"></div></div></div>
@@ -1253,6 +1275,11 @@
         </div>
       </div>
 
+      <footer class="jcf-institutional-footer" aria-label="Créditos institucionales">
+        <strong>Sistema de Seguimiento EOT´s</strong>
+        <span>Desarrollado por la Oficina Estatal del Programa Jóvenes Construyendo el Futuro en la Ciudad de México</span>
+        <small>© 2026 · Versión 14.5</small>
+      </footer>
     </div>
   </div>
 
