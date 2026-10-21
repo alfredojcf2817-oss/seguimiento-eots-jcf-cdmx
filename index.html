@@ -3,6 +3,12 @@
 <head>
   
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#691B31">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="description" content="Sistema de Seguimiento EOT´s JCF CDMX">
+  <link rel="manifest" href="./manifest.webmanifest">
   <title>Sistema de Seguimiento EOT´s JCF - CDMX</title>
   <link rel="icon" type="image/svg+xml" href="./favicon_eots.svg">
   <link rel="alternate icon" type="image/x-icon" href="./favicon.ico">
@@ -811,6 +817,63 @@
 .jcf-about dt{font-size:12px;font-weight:700;color:#691b31}
 .jcf-about dd{margin:5px 0 0;color:#333;font-size:13px}
 @media(max-width:650px){.jcf-about dl{grid-template-columns:1fr}.jcf-institutional-footer{padding:16px 10px}}
+
+
+/* V16: WebApp responsive, identidad institucional, navegación accesible. */
+:root{--v16-wine:#691b31;--v16-olive:#838e5d;--v16-bg:#f5f6f9;--v16-stroke:#e7e9ef}
+html{scroll-behavior:smooth}
+body{background:var(--v16-bg);font-family:Arial,system-ui,sans-serif}
+button,input,select,textarea{font-family:inherit}
+button{transition:background-color .15s ease,box-shadow .15s ease}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #9ba875;outline-offset:2px}
+.v16-topbar,.v16-bottom-nav{display:none}
+.sidebar{width:248px!important;padding:16px!important;box-shadow:2px 0 16px #23081312}
+.content{margin-left:248px!important;padding:26px clamp(16px,3vw,42px)!important;min-width:0}
+.card{box-shadow:0 3px 18px #2024330a;border:1px solid var(--v16-stroke);border-radius:20px}
+#inicio .v12-panel{border-radius:18px!important;box-shadow:0 2px 12px #22222209!important}
+#inicio .v12-quick{border-radius:15px!important;min-height:98px}
+#inicio .v6-home-header{border-radius:18px!important}
+#v11GroupedMenu .menu-btn{border-radius:10px!important;min-height:39px}
+#v11GroupedMenu details{border-radius:12px!important}
+input,select,textarea{max-width:100%;min-width:0}
+.modulo .grid{min-width:0}
+.v16-scrim{display:none}
+@media(min-width:851px){.app-view.v12-collapsed .content{margin-left:0!important}.app-view.v12-collapsed .sidebar{transform:translateX(-105%)}}
+@media(max-width:850px){
+ html,body{max-width:100%;overflow-x:hidden}
+ .app-view{padding-top:64px;padding-bottom:calc(72px + env(safe-area-inset-bottom));min-height:100dvh}
+ .v16-topbar{position:fixed;z-index:1050;top:0;left:0;right:0;height:64px;display:flex;align-items:center;gap:12px;background:#fff;border-bottom:1px solid var(--v16-stroke);padding:8px 15px;box-shadow:0 2px 8px #00000008}
+ .v16-heading{display:flex;flex-direction:column;min-width:0;flex:1;line-height:1.4}
+ .v16-heading strong{color:var(--v16-wine);font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .v16-heading small{color:#777f8b;font-size:10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .v16-icon-btn{background:#f5e9ed;color:var(--v16-wine);border:0;border-radius:12px;min-width:40px;min-height:40px;font-size:22px;display:grid;place-items:center;padding:6px}
+ .sidebar{position:fixed!important;top:0!important;left:0!important;bottom:0!important;height:100dvh!important;width:min(86vw,320px)!important;max-width:320px!important;z-index:1201!important;overflow-y:auto!important;transform:translateX(-110%)!important;transition:transform .23s ease!important;visibility:hidden;pointer-events:none}
+ .app-view.v16-drawer-open .sidebar{transform:translateX(0)!important;visibility:visible;pointer-events:auto}
+ .v16-scrim:not([hidden]){display:block;position:fixed;inset:0;z-index:1200;background:#15111ab3}
+ .content,.app-view.v12-collapsed .content{margin-left:0!important;padding:16px 12px 24px!important;width:100%!important;min-width:0!important}
+ .v16-bottom-nav{position:fixed;display:flex;bottom:0;left:0;right:0;z-index:1090;background:#fff;border-top:1px solid var(--v16-stroke);min-height:65px;padding:6px 4px calc(6px + env(safe-area-inset-bottom));box-shadow:0 -3px 18px #0000000a;justify-content:space-around;gap:1px}
+ .v16-bottom-nav button{background:transparent;color:#7b8089;display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;min-width:0;padding:4px 0;border-radius:10px;font-weight:500;gap:2px}
+ .v16-bottom-nav button.v16-active{color:var(--v16-wine);background:#f9eef2;font-weight:700}
+ .v16-bottom-nav button[hidden]{display:none!important}
+ .v16-bottom-nav small{font-size:10px;white-space:nowrap}
+ .v16-nav-icon{font-size:23px;line-height:25px}
+ #v12OpenSidebar{display:none!important}
+ .card{padding:17px!important;border-radius:17px!important}
+ .v12-dashboard{grid-template-columns:minmax(0,1fr)!important;gap:12px!important}
+ #inicio .v12-panel{min-width:0!important;padding:14px!important}
+ #inicio .v12-quick-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .v4-dialog{max-width:calc(100vw - 18px)!important;max-height:calc(100dvh - 26px)!important;padding:16px!important;overflow:auto}
+ .v4-modal{padding:9px!important}
+ .modulo .grid{grid-template-columns:1fr!important}
+ .modulo table{font-size:12px}
+ .modulo .card{overflow-wrap:anywhere}
+ input,select,textarea{font-size:16px!important}
+ button{touch-action:manipulation}
+ .v16-bottom-nav button{min-height:47px}
+}
+@media(max-width:400px){.v16-heading strong{font-size:13px}.v16-heading small{font-size:9px}.content{padding:12px 9px!important}.v16-bottom-nav small{font-size:9px}}
+@media(prefers-reduced-motion:reduce){.sidebar,button{transition:none!important}}
+
 </style>
 <style>
 .v4-modal[hidden],.v4-busy[hidden]{display:none!important}.v4-modal{position:fixed;inset:0;z-index:9998;background:#0009;display:flex;align-items:center;justify-content:center;padding:16px}.v4-dialog{background:#fff;border-radius:16px;padding:24px;max-width:850px;width:100%;max-height:90vh;overflow:auto;box-shadow:0 20px 60px #0004}.v4-busy{position:fixed;inset:0;z-index:99999;background:#1119;display:grid;place-items:center}.v4-busy-card{background:white;border-radius:16px;padding:30px;display:flex;align-items:center;gap:18px;color:#701a36}.v4-spinner{display:inline-block;width:34px;height:34px;border:4px solid #ddd;border-top-color:#9d2449;border-radius:50%;animation:v4spin .8s linear infinite}@keyframes v4spin{to{transform:rotate(360deg)}}.v4-tags{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}.v4-tag{background:#f2dfe6;border:1px solid #b8768d;padding:5px 8px;border-radius:16px}.v4-tag button{border:0;background:transparent;cursor:pointer;margin-left:4px}.v4-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}.v4-day{border:1px solid #ddd;border-radius:7px;min-height:86px;padding:5px;cursor:pointer;overflow-wrap:anywhere}.v4-day strong{display:block}.v4-day small{display:block;background:#f1e4e8;margin:2px 0;border-radius:4px;padding:2px}.v4-section{margin:15px 0;border-bottom:1px solid #ddd;padding-bottom:15px}.v4-dialog input,.v4-dialog select,.v4-dialog textarea{max-width:100%}@media(max-width:700px){.v4-calendar{gap:2px}.v4-day{min-height:70px;font-size:11px}.v4-day small{font-size:9px}}
@@ -838,6 +901,12 @@
 
   <div id="appView" class="app-view">
 
+    <header id="v16Topbar" class="v16-topbar" aria-label="Barra de navegación">
+      <button type="button" class="v16-icon-btn v16-hamburger" onclick="v16Drawer(true)" aria-label="Abrir menú">☰</button>
+      <div class="v16-heading"><strong>Seguimiento EOT´s</strong><small>Jóvenes Construyendo el Futuro · CDMX</small></div>
+      <button type="button" class="v16-icon-btn" onclick="v16Navigate('inicio')" aria-label="Ir al inicio">⌂</button>
+    </header>
+    <div id="v16Scrim" class="v16-scrim" onclick="v16Drawer(false)" hidden></div>
     <div class="sidebar" id="v11Sidebar">
       <div class="v12-brand v141-brand">
         <button type="button" class="v12-close" onclick="v12ToggleSidebar(false)" aria-label="Contraer menú" title="Contraer menú">×</button>
@@ -885,7 +954,7 @@
     </div>
 
     <button type="button" id="v12OpenSidebar" onclick="v12ToggleSidebar(true)" aria-label="Mostrar menú" title="Mostrar menú" hidden>❯</button>
-    <div class="content">
+    <div class="content" id="v16Content">
 
       <div id="inicio" class="modulo active">
         <div class="card v5-home-card">
@@ -1278,10 +1347,18 @@
       <footer class="jcf-institutional-footer" aria-label="Créditos institucionales">
         <strong>Sistema de Seguimiento EOT´s</strong>
         <span>Desarrollado por la Oficina Estatal del Programa Jóvenes Construyendo el Futuro en la Ciudad de México</span>
-        <small>© 2026 · Versión 14.5</small>
+        <small>© 2026 · Versión 16.0</small>
       </footer>
+<nav id="v16BottomNav" class="v16-bottom-nav" aria-label="Navegación principal">
+  <button type="button" data-v16="inicio" onclick="v16Navigate('inicio')"><span class="v16-nav-icon">⌂</span><small>Inicio</small></button>
+  <button type="button" data-v16="documentos" onclick="v16Navigate('documentos')"><span class="v16-nav-icon">▣</span><small>Documentos</small></button>
+  <button type="button" data-v16="v4Calendar" onclick="v16Navigate('v4Calendar')"><span class="v16-nav-icon">▦</span><small>Actividades</small></button>
+  <button type="button" data-v16="v4Notes" onclick="v16Navigate('v4Notes')"><span class="v16-nav-icon">▤</span><small>Mis notas</small></button>
+  <button type="button" data-v16="menu" onclick="v16Drawer(true)"><span class="v16-nav-icon">☷</span><small>Menú</small></button>
+</nav>
     </div>
   </div>
+
 
 <script>
   // URL pública del proxy Cloudflare Worker, NO URL de Apps Script.
@@ -3193,6 +3270,72 @@ function v13ChangeFolder(key,inputId){
     if(r?.ok)v13Refresh();
   });
 }
+</script>
+
+<script>
+/* V16 navigation shell: reuse original module buttons and permission checks. */
+(function(){
+  const app=()=>document.getElementById('appView');
+  const isMobile=()=>window.matchMedia('(max-width:850px)').matches;
+  window.v16Drawer=function(open){
+    if(!app())return;
+    const show=!!open&&isMobile();
+    app().classList.toggle('v16-drawer-open',show);
+    const scrim=document.getElementById('v16Scrim');if(scrim)scrim.hidden=!show;
+    document.body.style.overflow=show?'hidden':'';
+    const trigger=document.querySelector('.v16-hamburger');if(trigger)trigger.setAttribute('aria-expanded',String(show));
+  };
+  function authorized(id){
+    if(id==='inicio')return true;
+    return Array.isArray(window.v11AuthorizedModules)?window.v11AuthorizedModules.some(m=>m.id===id):
+      (typeof v11AuthorizedModules!=='undefined'&&Array.isArray(v11AuthorizedModules)&&v11AuthorizedModules.some(m=>m.id===id));
+  }
+  function syncNav(){
+    const bar=document.getElementById('v16BottomNav');if(!bar)return;
+    bar.querySelectorAll('button[data-v16]').forEach(btn=>{
+      const id=btn.dataset.v16;
+      btn.hidden=id!=='inicio'&&id!=='menu'&&!authorized(id);
+    });
+    const current=document.querySelector('.modulo.active')?.id||'inicio';
+    bar.querySelectorAll('button').forEach(b=>{
+      const active=b.dataset.v16===current;
+      b.classList.toggle('v16-active',active);
+      if(active)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current');
+    });
+  }
+  window.v16Navigate=function(id){
+    if(id==='menu'){v16Drawer(true);return;}
+    if(!authorized(id)){v16Drawer(true);return;}
+    if(id==='inicio'){
+      const home=document.getElementById('v11HomeBtn');if(home)home.click();else if(typeof abrirModulo==='function')abrirModulo('inicio');
+    }else if(typeof v12GoModule==='function')v12GoModule(id);
+    v16Drawer(false);syncNav();
+    window.scrollTo({top:0,behavior:'instant'});
+  };
+  document.addEventListener('click',e=>{
+    if(e.target.closest('#v11GroupedMenu .menu-btn, #v11HomeBtn, #v12SearchResults .v12-result')){
+      if(isMobile())v16Drawer(false);
+      setTimeout(syncNav,0);
+    }
+  });
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')v16Drawer(false)});
+  window.addEventListener('resize',()=>{if(!isMobile())v16Drawer(false);syncNav()});
+  const boot=()=>{
+    const menu=document.getElementById('v11GroupedMenu');
+    if(menu)new MutationObserver(syncNav).observe(menu,{childList:true,subtree:true});
+    const content=document.querySelector('.content');
+    if(content)new MutationObserver(syncNav).observe(content,{attributes:true,attributeFilter:['class'],subtree:true});
+    const appView=app();if(appView)new MutationObserver(()=>{
+      if(getComputedStyle(appView).display==='none')v16Drawer(false);
+      syncNav();
+    }).observe(appView,{attributes:true,attributeFilter:['style']});
+    syncNav();
+  };
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot);else boot();
+  if('serviceWorker' in navigator&&location.protocol==='https:'){
+    window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js',{scope:'./'}).catch(()=>{}));
+  }
+})();
 </script>
 </body>
 </html>
