@@ -3,6 +3,11 @@
 <head>
   
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#691b31">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="manifest" href="./manifest.webmanifest?v=16-2">
   <title>Sistema de Seguimiento EOT´s JCF - CDMX</title>
   <link rel="icon" type="image/svg+xml" href="./favicon_eots.svg">
   <link rel="alternate icon" type="image/x-icon" href="./favicon.ico">
@@ -824,6 +829,40 @@
 .v161-ext-grid label{display:flex;align-items:center;gap:8px;background:white;border:1px solid #e0e0e0;border-radius:10px;padding:10px;cursor:pointer;margin:0;min-height:42px}
 .v161-ext-grid input{width:18px;height:18px;accent-color:#691b31;flex-shrink:0}
 @media(max-width:600px){.v161-syntax-folder,.v161-ext-fieldset{padding:12px}.v161-folder-actions button{width:100%}.v161-ext-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+
+/* V16.2 — responsive iPhone-first navigation, without changing existing modules */
+.v162-mobile-header,.v162-bottom-nav,.v162-backdrop{display:none}
+@media(max-width:850px){
+ html{width:100%;overflow-x:hidden;-webkit-text-size-adjust:100%}
+ body{max-width:100%;overflow-x:hidden}
+ #appView{width:100%;min-width:0;overflow-x:clip}
+ #appView .content{margin-left:0!important;width:100%!important;min-width:0!important;padding:15px 12px calc(90px + env(safe-area-inset-bottom))!important;overflow-wrap:anywhere}
+ #appView .content .card{max-width:100%;min-width:0}
+ #appView .sidebar{position:fixed!important;top:0!important;bottom:0!important;left:0!important;width:min(86vw,330px)!important;height:100dvh!important;max-height:100dvh!important;z-index:1502!important;transform:translateX(-110%)!important;visibility:hidden!important;pointer-events:none!important;overflow-y:auto!important;padding-bottom:calc(24px + env(safe-area-inset-bottom))!important}
+ #appView.v162-menu-open .sidebar{transform:translateX(0)!important;visibility:visible!important;pointer-events:auto!important}
+ #appView .v162-backdrop{display:none;position:fixed;inset:0;background:rgba(15,17,25,.53);z-index:1501}
+ #appView.v162-menu-open .v162-backdrop{display:block}
+ #appView .v162-mobile-header{display:flex;position:sticky;top:0;z-index:1100;align-items:center;gap:12px;min-height:64px;padding:calc(9px + env(safe-area-inset-top)) 13px 9px;background:#fff;border-bottom:1px solid #e8e8ec;box-shadow:0 2px 12px #00000008}
+ .v162-mobile-header span{flex:1;min-width:0;display:grid;gap:2px;color:#691b31}
+ .v162-mobile-header strong{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+ .v162-mobile-header small{font-size:10px;color:#66717b}
+ .v162-mobile-header button{width:42px;height:42px;flex:0 0 42px;display:grid;place-items:center;border:0;border-radius:12px;background:#f6eaee;color:#691b31;font-size:24px;cursor:pointer;padding:0}
+ #appView .v162-bottom-nav{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:1100;min-height:65px;padding:7px 4px calc(6px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #e8e8ec;box-shadow:0 -4px 18px #0000000b;justify-content:space-around;align-items:center}
+ .v162-bottom-nav button{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;flex:1;min-width:0;width:auto!important;min-height:48px;border:0!important;background:transparent!important;color:#7b818a!important;font-size:10px!important;padding:3px 0!important;cursor:pointer}
+ .v162-bottom-nav button span{font-size:22px;line-height:25px}
+ .v162-bottom-nav button.v162-active{color:#691b31!important;font-weight:700}
+ .v162-bottom-nav button[hidden]{display:none!important}
+ #v12OpenSidebar{display:none!important}
+ .v12-dashboard,.v12-quick-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}
+ .v12-dashboard{grid-template-columns:1fr!important}
+ .v12-panel,.v4-dialog{max-width:100%}
+ .v4-modal{padding:8px!important}
+ .v4-dialog{padding:16px!important;max-height:calc(100dvh - 16px)!important}
+ input,select,textarea{max-width:100%;font-size:16px}
+ button{touch-action:manipulation}
+}
+@media(max-width:390px){#appView .content{padding-left:9px!important;padding-right:9px!important}.v12-quick-grid{gap:8px!important}.v162-bottom-nav button{font-size:9px!important}}
+
 </style>
 <style>
 .v4-modal[hidden],.v4-busy[hidden]{display:none!important}.v4-modal{position:fixed;inset:0;z-index:9998;background:#0009;display:flex;align-items:center;justify-content:center;padding:16px}.v4-dialog{background:#fff;border-radius:16px;padding:24px;max-width:850px;width:100%;max-height:90vh;overflow:auto;box-shadow:0 20px 60px #0004}.v4-busy{position:fixed;inset:0;z-index:99999;background:#1119;display:grid;place-items:center}.v4-busy-card{background:white;border-radius:16px;padding:30px;display:flex;align-items:center;gap:18px;color:#701a36}.v4-spinner{display:inline-block;width:34px;height:34px;border:4px solid #ddd;border-top-color:#9d2449;border-radius:50%;animation:v4spin .8s linear infinite}@keyframes v4spin{to{transform:rotate(360deg)}}.v4-tags{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}.v4-tag{background:#f2dfe6;border:1px solid #b8768d;padding:5px 8px;border-radius:16px}.v4-tag button{border:0;background:transparent;cursor:pointer;margin-left:4px}.v4-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}.v4-day{border:1px solid #ddd;border-radius:7px;min-height:86px;padding:5px;cursor:pointer;overflow-wrap:anywhere}.v4-day strong{display:block}.v4-day small{display:block;background:#f1e4e8;margin:2px 0;border-radius:4px;padding:2px}.v4-section{margin:15px 0;border-bottom:1px solid #ddd;padding-bottom:15px}.v4-dialog input,.v4-dialog select,.v4-dialog textarea{max-width:100%}@media(max-width:700px){.v4-calendar{gap:2px}.v4-day{min-height:70px;font-size:11px}.v4-day small{font-size:9px}}
@@ -851,6 +890,8 @@
 
   <div id="appView" class="app-view">
 
+    <header class="v162-mobile-header"><button type="button" class="v162-menu-toggle" aria-label="Abrir menú" onclick="v162ToggleMenu(true)">☰</button><span><strong>Seguimiento EOT´s</strong><small>Jóvenes Construyendo el Futuro</small></span><button type="button" aria-label="Ir al inicio" onclick="v162Go('inicio')">⌂</button></header>
+    <div class="v162-backdrop" onclick="v162ToggleMenu(false)" aria-hidden="true"></div>
     <div class="sidebar" id="v11Sidebar">
       <div class="v12-brand v141-brand">
         <button type="button" class="v12-close" onclick="v12ToggleSidebar(false)" aria-label="Contraer menú" title="Contraer menú">×</button>
@@ -898,6 +939,7 @@
     </div>
 
     <button type="button" id="v12OpenSidebar" onclick="v12ToggleSidebar(true)" aria-label="Mostrar menú" title="Mostrar menú" hidden>❯</button>
+    <nav class="v162-bottom-nav" aria-label="Navegación móvil"><button type="button" data-go="inicio" onclick="v162Go('inicio')"><span>⌂</span>Inicio</button><button type="button" data-go="documentos" onclick="v162Go('documentos')"><span>▣</span>Documentos</button><button type="button" data-go="v4Calendar" onclick="v162Go('v4Calendar')"><span>▦</span>Actividades</button><button type="button" data-go="v4Notes" onclick="v162Go('v4Notes')"><span>▤</span>Mis notas</button><button type="button" onclick="v162ToggleMenu(true)"><span>☷</span>Menú</button></nav>
     <div class="content">
 
       <div id="inicio" class="modulo active">
@@ -3253,6 +3295,50 @@ function v161CreateFolder(){
     v161RefreshFolders();
   },'v161FolderStatus');
 }
+</script>
+<script>
+/* V16.2 — mobile navigation delegates to original, permission-aware menu. */
+function v162ToggleMenu(open){
+ const app=document.getElementById('appView');if(!app)return;
+ app.classList.toggle('v162-menu-open',!!open);
+ const toggle=document.querySelector('.v162-menu-toggle');if(toggle)toggle.setAttribute('aria-expanded',String(!!open));
+}
+function v162Go(id){
+ if(id==='inicio'){
+  const btn=document.getElementById('v11HomeBtn');if(btn)btn.click();else abrirModulo('inicio');
+ }else{
+  const nav=document.getElementById('v11GroupedMenu');
+  const btn=nav&&[...nav.querySelectorAll('button.menu-btn')].find(b=>{
+   const fn=(b.getAttribute('onclick')||'').match(/^\s*([A-Za-z0-9_]+)\s*\(/)?.[1];
+   return (b.dataset.moduleId||(typeof V11_FUNCTION_IDS!=='undefined'&&V11_FUNCTION_IDS[fn]))===id;
+  });
+  if(!btn||btn.hidden||btn.style.display==='none'){v162ToggleMenu(true);return;}
+  btn.click();
+ }
+ v162ToggleMenu(false);
+ v162RefreshNav();
+}
+function v162RefreshNav(){
+ const app=document.getElementById('appView');if(!app)return;
+ const allowed=typeof v11AuthorizedModules!=='undefined'&&Array.isArray(v11AuthorizedModules)?new Set(v11AuthorizedModules.map(m=>m.id)):null;
+ document.querySelectorAll('.v162-bottom-nav [data-go]').forEach(btn=>{
+  const id=btn.dataset.go;
+  btn.hidden=id!=='inicio'&&!!allowed&&!allowed.has(id);
+  btn.classList.toggle('v162-active',id==='inicio'?!!document.getElementById('inicio')?.classList.contains('active'):!!document.getElementById(id)?.classList.contains('active'));
+ });
+}
+document.addEventListener('click',e=>{
+ if(e.target.closest('#v11GroupedMenu button.menu-btn,#v11HomeBtn')){
+  if(window.innerWidth<=850)v162ToggleMenu(false);
+  setTimeout(v162RefreshNav,0);
+ }
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')v162ToggleMenu(false)});
+new MutationObserver(v162RefreshNav).observe(document.getElementById('appView'),{attributes:true,attributeFilter:['style']});
+new MutationObserver(v162RefreshNav).observe(document.getElementById('v11GroupedMenu'),{childList:true,subtree:true});
+new MutationObserver(v162RefreshNav).observe(document.querySelector('.content'),{attributes:true,subtree:true,attributeFilter:['class']});
+v162RefreshNav();
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}
 </script>
 </body>
 </html>
