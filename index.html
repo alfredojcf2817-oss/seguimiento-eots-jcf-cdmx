@@ -599,6 +599,27 @@
 .v10-notice .v11-dismiss:hover{background:#f7e8ee!important}
 .v11-history-label{color:#777;font-size:12px}
 @media(prefers-reduced-motion:reduce){.v10-notice{transition:none}}
+
+/* V11.2 — Tablero de notas adhesivas */
+.v112-notes-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.v112-notes-head h2{margin:0}.v112-notes-head p{margin:5px 0}
+.v112-filters,.v112-colors{display:flex;gap:9px;align-items:center;flex-wrap:wrap;margin:12px 0 20px}
+.v112-filter-all{border:1px solid #9d2449;background:transparent;color:#9d2449;border-radius:20px;padding:7px 14px;cursor:pointer}
+.v112-filter-all.selected{background:#9d2449;color:#fff}
+.v112-color-dot{display:inline-block;width:27px;height:27px;min-width:27px;border:1px solid #999;border-radius:50%;cursor:pointer;box-sizing:border-box;padding:0}
+.v112-color-dot.selected{outline:3px solid #9d2449;outline-offset:2px}
+.v112-notes-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,245px),1fr));gap:18px;align-items:stretch}
+.v112-postit{color:#3d3435;min-height:185px;padding:18px 17px 12px;display:flex;flex-direction:column;gap:12px;box-shadow:2px 5px 9px rgba(0,0,0,.14);border-radius:3px;overflow-wrap:anywhere}
+.v112-postit-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;border-bottom:1px solid #0002;padding-bottom:10px}
+.v112-postit h3{font-size:16px;margin:0;line-height:1.3;color:#392b31;flex:1}
+.v112-postit-actions{display:flex;gap:3px;flex-shrink:0}
+.v112-postit-actions button{background:transparent!important;border:0!important;color:#9d2449!important;box-shadow:none!important;width:30px;height:30px;padding:3px;font-size:19px;cursor:pointer;border-radius:6px}
+.v112-postit-actions button:hover{background:#ffffff77!important}
+.v112-postit-text{white-space:pre-wrap;line-height:1.5;font-size:14px;margin:0;flex:1;max-height:280px;overflow:auto}
+.v112-postit-date{font-size:11px;color:#6b6263}
+.v112-note-dialog{max-width:540px!important}.v112-picker-dot{width:35px;height:35px;min-width:35px;border-radius:8px}
+.v112-note-footer{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}
+@media(max-width:540px){.v112-notes-grid{grid-template-columns:repeat(auto-fill,minmax(min(100%,170px),1fr));gap:12px}.v112-postit{padding:13px 10px}}
 </style>
 <style>
 .v4-modal[hidden],.v4-busy[hidden]{display:none!important}.v4-modal{position:fixed;inset:0;z-index:9998;background:#0009;display:flex;align-items:center;justify-content:center;padding:16px}.v4-dialog{background:#fff;border-radius:16px;padding:24px;max-width:850px;width:100%;max-height:90vh;overflow:auto;box-shadow:0 20px 60px #0004}.v4-busy{position:fixed;inset:0;z-index:99999;background:#1119;display:grid;place-items:center}.v4-busy-card{background:white;border-radius:16px;padding:30px;display:flex;align-items:center;gap:18px;color:#701a36}.v4-spinner{display:inline-block;width:34px;height:34px;border:4px solid #ddd;border-top-color:#9d2449;border-radius:50%;animation:v4spin .8s linear infinite}@keyframes v4spin{to{transform:rotate(360deg)}}.v4-tags{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}.v4-tag{background:#f2dfe6;border:1px solid #b8768d;padding:5px 8px;border-radius:16px}.v4-tag button{border:0;background:transparent;cursor:pointer;margin-left:4px}.v4-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}.v4-day{border:1px solid #ddd;border-radius:7px;min-height:86px;padding:5px;cursor:pointer;overflow-wrap:anywhere}.v4-day strong{display:block}.v4-day small{display:block;background:#f1e4e8;margin:2px 0;border-radius:4px;padding:2px}.v4-section{margin:15px 0;border-bottom:1px solid #ddd;padding-bottom:15px}.v4-dialog input,.v4-dialog select,.v4-dialog textarea{max-width:100%}@media(max-width:700px){.v4-calendar{gap:2px}.v4-day{min-height:70px;font-size:11px}.v4-day small{font-size:9px}}
@@ -890,7 +911,18 @@
   <div id="v10AuditMessage" role="status"></div>
   <div id="v10AuditContent"></div>
 </div></div>
-<div id="v4Notes" class="modulo"><div class="card"><h2>Notas personales</h2><button class="btn-primary" onclick="v4NewNote()">Agregar nota</button><div id="v4NotesList"></div><div id="v4NoteModal" class="v4-modal" hidden><div class="v4-dialog"><button onclick="document.getElementById('v4NoteModal').hidden=true" style="float:right">✕</button><h3>Nota</h3><input id="v4NoteId" type="hidden"><label>Título</label><input id="v4NoteTitle"><label>Observaciones</label><textarea id="v4NoteBody" rows="9"></textarea><button class="btn-primary" onclick="v4SaveNoteUI()">Guardar nota</button></div></div></div></div>
+<div id="v4Notes" class="modulo"><div class="card">
+<div class="v112-notes-head"><div><h2>Mis notas</h2><p id="v112NotesCount" class="v7-hint">Notas personales</p></div><button class="btn-primary" onclick="v4NewNote()">+ Nueva nota</button></div>
+<div id="v112NotesFilters" class="v112-filters" aria-label="Filtrar notas por color"></div>
+<div id="v4NotesList" class="v112-notes-grid"></div>
+<div id="v4NoteModal" class="v4-modal" hidden><div class="v4-dialog v112-note-dialog">
+<button type="button" onclick="v4$('v4NoteModal').hidden=true" style="float:right" aria-label="Cerrar">✕</button>
+<h3 id="v112NoteModalTitle">Nota</h3><input id="v4NoteId" type="hidden">
+<label for="v4NoteTitle">Título</label><input id="v4NoteTitle" maxlength="150">
+<label for="v4NoteBody">Contenido</label><textarea id="v4NoteBody" rows="7" maxlength="10000"></textarea>
+<label>Color de la nota</label><div id="v112NoteColors" class="v112-colors"></div>
+<div class="v112-note-footer"><button type="button" onclick="v4$('v4NoteModal').hidden=true">Cancelar</button><button class="btn-primary" onclick="v4SaveNoteUI()">Guardar nota</button></div>
+</div></div></div></div>
 <div id="v10NoticeModal" class="v4-modal" hidden><div class="v4-dialog">
 <button type="button" style="float:right" onclick="v4$('v10NoticeModal').hidden=true" aria-label="Cerrar">✕</button>
 <h2>Todas las notificaciones</h2><div id="v10NoticeAll"></div></div></div>
@@ -2612,10 +2644,38 @@ function v4AddShare(){const q=v4$('v4ShareSearch').value.trim().toLowerCase(),u=
 function v4DrawShares(){const host=v4$('v4Shares');host.replaceChildren();v4Shares.forEach(curp=>{const u=v4Users.find(x=>x.curp===curp),tag=v4txt('span',u?.nombre||curp);tag.className='v4-tag';const b=v4txt('button','×');b.onclick=()=>{v4Shares=v4Shares.filter(x=>x!==curp);v4DrawShares();};tag.append(b);host.append(tag);});}
 function v4SaveEventUI(){const d={fecha:v4$('v4EventDate').value,actividad:v4$('v4EventTitle').value,inicio:v4$('v4EventStart').value,fin:v4$('v4EventEnd').value,observaciones:v4$('v4EventObs').value,compartir:v4Shares};v4Api('v4SaveActivity',[TOKEN,d],r=>{v4$('v4EventMsg').textContent=r.mensaje;v4Shares=[];v4DrawShares();v4LoadCalendar();v4LoadHome();});}
 function v4OpenNotes(btn){abrirModulo('v4Notes',btn);v4LoadNotes();}
-function v4LoadNotes(){v4Api('v4Notes',[TOKEN],r=>{v4NotesData=r.notas;const host=v4$('v4NotesList');host.replaceChildren();r.notas.forEach(n=>{const wrap=document.createElement('div');wrap.className='v4-section';wrap.append(v4txt('h3',n.titulo),v4txt('p',n.texto.slice(0,250)),v4btn('Editar',()=>v4EditNote(n)),v4btn('Eliminar',()=>{if(confirm('¿Eliminar nota?'))v4Api('v4DeleteNote',[TOKEN,n.id],v4LoadNotes);}));host.append(wrap);});});}
-function v4NewNote(){v4EditNote({id:'',titulo:'',texto:''});}
-function v4EditNote(n){v4$('v4NoteId').value=n.id;v4$('v4NoteTitle').value=n.titulo;v4$('v4NoteBody').value=n.texto;v4$('v4NoteModal').hidden=false;}
-function v4SaveNoteUI(){const d={id:v4$('v4NoteId').value,titulo:v4$('v4NoteTitle').value,texto:v4$('v4NoteBody').value};v4Api('v4SaveNote',[TOKEN,d],()=>{v4$('v4NoteModal').hidden=true;v4LoadNotes();});}
+const V112_COLORS=[{value:'#FFF1AE',name:'Amarillo'},{value:'#DDF0D4',name:'Verde'},{value:'#FADCE6',name:'Rosa'},{value:'#DCEBFA',name:'Azul'}];
+let v112NoteFilter='Todas',v112SelectedColor='#FFF1AE';
+function v4LoadNotes(){v4Api('v4Notes',[TOKEN],r=>{v4NotesData=r.notas||[];v112RenderNotes();});}
+function v112RenderNotes(){
+  const host=v4$('v4NotesList');host.replaceChildren();
+  v4$('v112NotesCount').textContent=v4NotesData.length+' notas activas';
+  const filters=v4$('v112NotesFilters');filters.replaceChildren();
+  const all=v4btn('Todas',()=>{v112NoteFilter='Todas';v112RenderNotes();});
+  all.className='v112-filter-all'+(v112NoteFilter==='Todas'?' selected':'');filters.append(all);
+  V112_COLORS.forEach(c=>{const btn=document.createElement('button');btn.type='button';btn.className='v112-color-dot'+(v112NoteFilter===c.value?' selected':'');btn.style.background=c.value;btn.title='Filtrar: '+c.name;btn.setAttribute('aria-label','Filtrar notas '+c.name);btn.onclick=()=>{v112NoteFilter=v112NoteFilter===c.value?'Todas':c.value;v112RenderNotes();};filters.append(btn);});
+  const notes=v4NotesData.filter(n=>v112NoteFilter==='Todas'||(n.color||'#FFF1AE')===v112NoteFilter);
+  notes.forEach(n=>{
+    const wrap=document.createElement('article');wrap.className='v112-postit';
+    const color=V112_COLORS.find(c=>c.value===n.color)?.value||'#FFF1AE';wrap.style.background=color;
+    const head=document.createElement('div');head.className='v112-postit-head';
+    const title=v4txt('h3',n.titulo);const buttons=document.createElement('div');buttons.className='v112-postit-actions';
+    const edit=v4btn('✎',()=>v4EditNote(n));edit.title='Editar nota';edit.setAttribute('aria-label','Editar nota '+n.titulo);
+    const del=v4btn('🗑',()=>{if(confirm('¿Estas seguro de eliminar esta nota?'))v4Api('v4DeleteNote',[TOKEN,n.id],v4LoadNotes);});del.title='Eliminar nota';del.setAttribute('aria-label','Eliminar nota '+n.titulo);
+    buttons.append(edit,del);head.append(title,buttons);
+    const body=v4txt('p',n.texto);body.className='v112-postit-text';
+    const date=v4txt('small',n.fecha||'');date.className='v112-postit-date';
+    wrap.append(head,body,date);host.append(wrap);
+  });
+  if(!notes.length){const msg=v4txt('p',v4NotesData.length?'No hay notas con este color.':'Todavía no tienes notas. Presiona «Nueva nota» para comenzar.');msg.className='v7-hint';host.append(msg);}
+}
+function v112DrawColorPicker(){
+  const host=v4$('v112NoteColors');host.replaceChildren();
+  V112_COLORS.forEach(c=>{const btn=document.createElement('button');btn.type='button';btn.className='v112-color-dot v112-picker-dot'+(v112SelectedColor===c.value?' selected':'');btn.style.background=c.value;btn.title=c.name;btn.setAttribute('aria-label','Color '+c.name);btn.setAttribute('aria-pressed',String(v112SelectedColor===c.value));btn.onclick=()=>{v112SelectedColor=c.value;v112DrawColorPicker();};host.append(btn);});
+}
+function v4NewNote(){v4EditNote({id:'',titulo:'',texto:'',color:'#FFF1AE'});}
+function v4EditNote(n){v4$('v4NoteId').value=n.id||'';v4$('v4NoteTitle').value=n.titulo||'';v4$('v4NoteBody').value=n.texto||'';v112SelectedColor=V112_COLORS.some(c=>c.value===n.color)?n.color:'#FFF1AE';v112DrawColorPicker();v4$('v112NoteModalTitle').textContent=n.id?'Editar nota':'Nueva nota';v4$('v4NoteModal').hidden=false;}
+function v4SaveNoteUI(){const d={id:v4$('v4NoteId').value,titulo:v4$('v4NoteTitle').value.trim(),texto:v4$('v4NoteBody').value,color:v112SelectedColor};if(!d.titulo||!d.texto.trim()){alert('Completa el título y el contenido de la nota.');return;}v4Api('v4SaveNote',[TOKEN,d],()=>{v4$('v4NoteModal').hidden=true;v4LoadNotes();});}
 // Spinner único para TODAS las llamadas fetch, incluido login, subida y consulta.
 (function(){const original=window.fetch.bind(window);let pending=0;window.fetch=function(...args){pending++;const overlay=v4$('v4GlobalBusy');if(overlay)overlay.hidden=false;return original(...args).finally(()=>{pending=Math.max(0,pending-1);const o=v4$('v4GlobalBusy');if(o&&pending===0)o.hidden=true;});};})();
 
