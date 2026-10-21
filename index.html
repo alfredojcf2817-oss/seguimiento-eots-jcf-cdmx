@@ -574,6 +574,31 @@
 .v10-confetti span:nth-child(3n){background:#838e5d}.v10-confetti span:nth-child(3n+1){background:#e9bb57}
 @keyframes v10-fall{to{transform:translateY(110vh) rotate(720deg);opacity:0}}
 @media(max-width:550px){.v10-notice{flex-direction:column}}
+
+/* V11: navegación y documentos desplegables */
+#v11GroupedMenu{display:grid;gap:9px;margin-top:8px}
+.v11-group{border:1px solid rgba(255,255,255,.32);border-radius:11px;overflow:hidden;background:rgba(255,255,255,.05)}
+.v11-group summary{cursor:pointer;padding:13px 12px;font-weight:650;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.v11-group summary::-webkit-details-marker{display:none}
+.v11-group summary:after{content:'+';font-size:22px;font-weight:400}
+.v11-group[open] summary:after{content:'−'}
+.v11-group[open] summary{background:rgba(0,0,0,.15)}
+.v11-group-items{padding:8px}
+#v11GroupedMenu .menu-btn{display:block!important;margin:3px 0;padding:10px 12px;font-size:13px;border-color:rgba(255,255,255,.14);border-radius:7px}
+#v11GroupedMenu .menu-btn.active{background:white;color:#9d2449}
+#v11HomeBtn{display:block!important}
+.v11-section-table select{min-width:165px;max-width:260px}
+.v10-audit-folder{padding:0;overflow:hidden}
+.v11-folder-head{display:flex;justify-content:space-between;align-items:center;width:100%;text-align:left;background:#9d2449;color:#fff;padding:16px;border:0;cursor:pointer;font-weight:700}
+.v11-folder-head:hover{background:#801a3b}
+.v11-folder-content{padding:15px}
+.v11-folder-head .v11-fold-icon{font-size:22px}
+.v10-notice{opacity:.45;transition:opacity .18s ease;position:relative;padding-right:42px}
+.v10-notice:hover,.v10-notice:focus-within{opacity:1}
+.v10-notice .v11-dismiss{position:absolute;top:7px;right:9px;background:transparent!important;color:#9d2449!important;border:0!important;padding:4px 8px;font-size:21px;line-height:1;cursor:pointer;width:auto}
+.v10-notice .v11-dismiss:hover{background:#f7e8ee!important}
+.v11-history-label{color:#777;font-size:12px}
+@media(prefers-reduced-motion:reduce){.v10-notice{transition:none}}
 </style>
 <style>
 .v4-modal[hidden],.v4-busy[hidden]{display:none!important}.v4-modal{position:fixed;inset:0;z-index:9998;background:#0009;display:flex;align-items:center;justify-content:center;padding:16px}.v4-dialog{background:#fff;border-radius:16px;padding:24px;max-width:850px;width:100%;max-height:90vh;overflow:auto;box-shadow:0 20px 60px #0004}.v4-busy{position:fixed;inset:0;z-index:99999;background:#1119;display:grid;place-items:center}.v4-busy-card{background:white;border-radius:16px;padding:30px;display:flex;align-items:center;gap:18px;color:#701a36}.v4-spinner{display:inline-block;width:34px;height:34px;border:4px solid #ddd;border-top-color:#9d2449;border-radius:50%;animation:v4spin .8s linear infinite}@keyframes v4spin{to{transform:rotate(360deg)}}.v4-tags{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}.v4-tag{background:#f2dfe6;border:1px solid #b8768d;padding:5px 8px;border-radius:16px}.v4-tag button{border:0;background:transparent;cursor:pointer;margin-left:4px}.v4-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}.v4-day{border:1px solid #ddd;border-radius:7px;min-height:86px;padding:5px;cursor:pointer;overflow-wrap:anywhere}.v4-day strong{display:block}.v4-day small{display:block;background:#f1e4e8;margin:2px 0;border-radius:4px;padding:2px}.v4-section{margin:15px 0;border-bottom:1px solid #ddd;padding-bottom:15px}.v4-dialog input,.v4-dialog select,.v4-dialog textarea{max-width:100%}@media(max-width:700px){.v4-calendar{gap:2px}.v4-day{min-height:70px;font-size:11px}.v4-day small{font-size:9px}}
@@ -601,7 +626,7 @@
 
   <div id="appView" class="app-view">
 
-    <div class="sidebar">
+    <div class="sidebar" id="v11Sidebar">
       <h2>EOT´s JCF</h2>
 
       <div class="user-box">
@@ -611,7 +636,8 @@
         Nivel: <span id="userNivel"></span>
       </div>
 
-      <button class="menu-btn active" onclick="abrirModulo('inicio', this)">Inicio</button>
+      <button id="v11HomeBtn" class="menu-btn active" onclick="abrirModulo('inicio', this)">Inicio</button>
+<div id="v11OriginalMenu" hidden>
       <button class="menu-btn" onclick="abrirAtencionC(this)">Atención Ciudadana</button>
       <button class="menu-btn" onclick="abrirOficinaOV(this)">Oficina Virtual</button>
       <button class="menu-btn" onclick="abrirDocumentos(this)">Carga de documentos</button>
@@ -630,7 +656,8 @@
       <button id="btnV10DriveAudit" class="menu-btn" style="display:none" onclick="v10OpenDriveAudit(this)">Control de documentos en Drive</button>
       <button id="btnMiPerfil" class="menu-btn" style="display:none" onclick="v3OpenProfile(this)">Mi información personal</button>
       <button id="btnSintaxis" class="menu-btn" style="display:none" onclick="v3OpenSyntax(this)">Sintaxis de documentos de carga EOTs</button>
-      <div id="modulosPersonalizadosMenu"></div>
+      <div id="modulosPersonalizadosMenu"></div></div>
+<nav id="v11GroupedMenu" aria-label="Módulos agrupados"></nav>
       <button class="logout-btn" onclick="cerrarSesion()">Cerrar sesión</button>
     </div>
 
@@ -801,7 +828,9 @@
 <option value="personas">Personal y módulos</option>
 <option value="niveles">Niveles de módulos</option>
 <option value="crear">Crear módulo</option>
+<option value="secciones">Organización de secciones</option>
 </select>
+<div id="v11SectionsSection" hidden><p>Organiza cada módulo en una sección. La visibilidad continúa dependiendo de los permisos de cada usuario.</p><div id="v11SectionEditor"></div><div id="v11SectionStatus" role="status"></div></div>
 <div id="v4CreateModuleSection" hidden>
         <label>Nombre del módulo</label><input id="nuevoModuloNombre" maxlength="65" placeholder="Nombre del módulo">
         <label>URL HTTPS</label><input id="nuevoModuloUrl" type="url" placeholder="https://...">
@@ -1115,6 +1144,7 @@
       document.getElementById('btnMiPerfil').style.display=['1','2','3'].includes(String(USUARIO.nivel))?'block':'none';
       document.getElementById('btnSintaxis').style.display=babienAutorizado?'block':'none';
       document.getElementById('btnV4Role').style.display=babienAutorizado?'block':'none';
+      v11AuthorizedModules=null;document.getElementById('v11GroupedMenu').replaceChildren();
       v4LoadHome();v4LoadMyAccess();
       cargarModulosPersonalizados();
     }
@@ -1918,11 +1948,11 @@
     }
     function cargarModulosPersonalizados() {
       google.script.run.withSuccessHandler(res=>{
-        const menu=document.getElementById('modulosPersonalizadosMenu');menu.replaceChildren();
+        const menu=document.getElementById('modulosPersonalizadosMenu');document.querySelectorAll('#v11GroupedMenu [data-module-id]').forEach(b=>b.remove());menu.replaceChildren();
         if(!res.ok)return;
         const nodes=new Map();
         (res.modulos||[]).forEach(m=>{
-          const btn=document.createElement('button');btn.className='menu-btn';btn.textContent=m.nombre;
+          const btn=document.createElement('button');btn.className='menu-btn';btn.textContent=m.nombre;btn.dataset.moduleId=m.id;
           btn.onclick=()=>{
             if(m.tipo==='enlace') {if(/^https:\/\//.test(m.url))window.open(m.url,'_blank','noopener,noreferrer');}
             else {v3CurrentModule=m.id;v3CurrentModuleType=m.tipo;abrirModulo('v3Dynamic',btn);document.getElementById('v3DynamicTitle').textContent=m.nombre;v3LoadDynamic(1);}
@@ -1936,6 +1966,7 @@
             group.appendChild(btn);
           }else menu.appendChild(btn);
         });
+        if(typeof v11RebuildMenu==='function')v11RebuildMenu();
       }).v3ListModules(TOKEN);
     }
     function guardarModuloPersonalizado() {
@@ -2081,12 +2112,90 @@ const v4txt=(tag,content)=>{const e=document.createElement(tag);e.textContent=St
 const v4btn=(name,fn)=>{const b=v4txt('button',name);b.className='btn-primary';b.onclick=fn;return b;};
 function v4Api(name,args,cb){v3Call(name,args,r=>{if(!r.ok){alert(r.mensaje||'No se pudo completar la operación.');return;}cb&&cb(r);});}
 function v4NewUser(){v3EditUser('');}function v4CloseUser(){v4$('v4UserModal').hidden=true;}
-function v4LoadMyAccess(){v4Api('v4MyModules',[TOKEN],r=>{const visible=new Set(r.ids);const buttons={atencionC:'abrirAtencionC',oficinaOV:'abrirOficinaOV',documentos:'abrirDocumentos',recursos:'abrirRecursos',directorioDrives:'abrirDirectorioDrives',buscadorTarjetas:'abrirBuscadorTarjetas',vacaciones:'abrirVacaciones',adminVacaciones:'abrirAdminVacaciones',babien:'abrirBaBien',v3Admin:'v3OpenAdmin',v3Profile:'v3OpenProfile',v3Syntax:'v3OpenSyntax',v4Role:'v4OpenRole',v4Calendar:'v4OpenCalendar',v4Notes:'v4OpenNotes',gestionModulos:'abrirGestionModulos',v9DriveControl:'v10OpenDriveAudit'};Object.entries(buttons).forEach(([id,fn])=>{const b=[...document.querySelectorAll('.sidebar button')].find(x=>x.getAttribute('onclick')?.startsWith(fn+'('));if(b)b.style.display=visible.has(id)?'block':'none';});});}
+
+const V11_SECTION_ORDER=['Atención Ciudadana','Documentos','Personal','Herramientas','Administrador','Seguimiento'];
+const V11_MODULE_DEFAULTS={
+  atencionC:'Atención Ciudadana',oficinaOV:'Atención Ciudadana',buscadorTarjetas:'Atención Ciudadana',
+  documentos:'Documentos',recursos:'Documentos',vacaciones:'Personal',v3Profile:'Personal',
+  babien:'Herramientas',v4Notes:'Herramientas',directorioDrives:'Herramientas',
+  v4Role:'Herramientas',v4Calendar:'Herramientas',gestionModulos:'Administrador',
+  v3Admin:'Administrador',v3Syntax:'Administrador',adminVacaciones:'Seguimiento',v9DriveControl:'Seguimiento'
+};
+const V11_FUNCTION_IDS={
+  abrirAtencionC:'atencionC',abrirOficinaOV:'oficinaOV',abrirBuscadorTarjetas:'buscadorTarjetas',
+  abrirDocumentos:'documentos',abrirRecursos:'recursos',abrirVacaciones:'vacaciones',
+  v3OpenProfile:'v3Profile',abrirBaBien:'babien',v4OpenNotes:'v4Notes',
+  abrirDirectorioDrives:'directorioDrives',v4OpenRole:'v4Role',v4OpenCalendar:'v4Calendar',
+  abrirGestionModulos:'gestionModulos',v3OpenAdmin:'v3Admin',v3OpenSyntax:'v3Syntax',
+  abrirAdminVacaciones:'adminVacaciones',v10OpenDriveAudit:'v9DriveControl'
+};
+let v11AuthorizedModules=null;
+function v11RebuildMenu(){
+  if(!v11AuthorizedModules)return;
+  const nav=document.getElementById('v11GroupedMenu');
+  const original=document.getElementById('v11OriginalMenu');
+  if(!nav||!original)return;
+  const open=new Set([...nav.querySelectorAll('details[open]')].map(d=>d.dataset.section));
+  const allowed=new Map(v11AuthorizedModules.map(m=>[m.id,m]));
+  const all=[...original.querySelectorAll('button.menu-btn'),...nav.querySelectorAll('button.menu-btn')];
+  const groups=new Map();
+  V11_SECTION_ORDER.forEach(section=>{
+    const details=document.createElement('details');details.className='v11-group';details.dataset.section=section;
+    details.open=open.has(section);
+    const summary=document.createElement('summary');summary.textContent=section;
+    const content=document.createElement('div');content.className='v11-group-items';
+    details.append(summary,content);groups.set(section,{details,content});
+  });
+  all.forEach(btn=>{
+    const fn=(btn.getAttribute('onclick')||'').match(/^\s*([A-Za-z0-9_]+)\s*\(/)?.[1];
+    const id=btn.dataset.moduleId||V11_FUNCTION_IDS[fn];
+    if(!id||!allowed.has(id)){btn.hidden=true;original.append(btn);return;}
+    btn.hidden=false;btn.style.removeProperty('display');
+    const sec=allowed.get(id).seccion||V11_MODULE_DEFAULTS[id]||'Herramientas';
+    (groups.get(sec)||groups.get('Herramientas')).content.append(btn);
+  });
+  nav.replaceChildren();
+  V11_SECTION_ORDER.forEach(sec=>{const g=groups.get(sec);if(g.content.children.length)nav.append(g.details);});
+  document.getElementById('v11HomeBtn').style.display='block';
+  if(!nav.querySelector('details[open]')){const first=nav.querySelector('details');if(first)first.open=true;}
+}
+function v11RenderSectionEditor(){
+  const host=document.getElementById('v11SectionEditor');if(!host||!v4CatalogData)return;
+  host.replaceChildren();
+  const wrap=document.createElement('div');wrap.className='v7-table-wrap';
+  const table=document.createElement('table');table.className='v7-table v11-section-table';
+  const head=document.createElement('tr');['Módulo','Sección actual','Acción'].forEach(t=>head.append(v4txt('th',t)));
+  const thead=document.createElement('thead');thead.append(head);table.append(thead);
+  const body=document.createElement('tbody');
+  v4CatalogData.modulos.filter(m=>m.id!=='inicio').forEach(m=>{
+    const tr=document.createElement('tr');tr.append(v4txt('td',m.nombre));
+    const cell=document.createElement('td'),select=document.createElement('select');
+    V11_SECTION_ORDER.forEach(sec=>select.add(new Option(sec,sec)));
+    select.value=m.seccion||V11_MODULE_DEFAULTS[m.id]||'Herramientas';cell.append(select);tr.append(cell);
+    const actions=document.createElement('td'),save=v4btn('Guardar sección',()=>{
+      save.disabled=true;
+      v3Call('v11SaveSection',[TOKEN,m.id,select.value],r=>{
+        save.disabled=false;
+        document.getElementById('v11SectionStatus').textContent=r?.mensaje||(r?.ok?'Sección actualizada.':'No se pudo guardar.');
+        if(r?.ok){m.seccion=select.value;v4LoadMyAccess();}
+      });
+    });
+    actions.append(save);tr.append(actions);body.append(tr);
+  });
+  table.append(body);wrap.append(table);host.append(wrap);
+}
+function v4LoadMyAccess(){
+  v4Api('v4MyModules',[TOKEN],r=>{
+    v11AuthorizedModules=r.modulos||[];
+    v11RebuildMenu();
+  });
+}
+
 let v10HomeNotifications=[];
 function v4LoadHome(){
   v4Api('v4Home',[TOKEN],r=>{
     v4$('v4Welcome').textContent=r.nombre||USUARIO?.nombre||'';
-    v10HomeNotifications=(r.notificaciones||[]).filter(x=>!x.oculta);
+    v10HomeNotifications=r.notificaciones||[];
     v10DrawHome();
     const birthdays=r.cumpleanios||[];
     if(birthdays.length)v10Birthday(birthdays);
@@ -2094,27 +2203,43 @@ function v4LoadHome(){
 }
 function v10DrawHome(){
   const host=v4$('v4HomeBody');host.replaceChildren();
-  if(!v10HomeNotifications.length)host.append(v4txt('p','No hay notificaciones pendientes.'));
-  v10HomeNotifications.slice(0,5).forEach(n=>host.append(v10Notice(n)));
+  const current=v10HomeNotifications.filter(n=>!n.oculta);
+  if(!current.length)host.append(v4txt('p','No hay notificaciones pendientes.'));
+  current.slice(0,5).forEach(n=>host.append(v10Notice(n,true)));
   const button=v4btn('Ver todas las notificaciones',v10ShowAllNotices);
   button.classList.add('btn-primary');host.append(button);
 }
-function v10Notice(n){
+function v10Notice(n,canDismiss){
   const row=document.createElement('div');row.className='v10-notice';
-  const info=document.createElement('div');info.append(v4txt('strong',n.fecha+' · '+n.tipo));
-  info.append(v4txt('p',n.texto));row.append(info);
-  const dismiss=v4btn('Quitar',()=>{
-    v4Api('v9DismissNotification',[TOKEN,n.id],()=>{
-      v10HomeNotifications=v10HomeNotifications.filter(x=>x.id!==n.id);
-      v10DrawHome();if(!v4$('v10NoticeModal').hidden)v10ShowAllNotices();
+  const info=document.createElement('div');info.append(v4txt('strong',(n.fecha||'')+' · '+(n.tipo||'Aviso')));
+  info.append(v4txt('p',n.texto||''));row.append(info);
+  if(n.oculta)row.append(v4txt('small','Ocultada de Inicio'));
+  if(canDismiss&&!n.oculta){
+    const dismiss=v4btn('×',()=>{
+      dismiss.disabled=true;
+      v3Call('v9DismissNotification',[TOKEN,n.id],r=>{
+        dismiss.disabled=false;
+        if(!r||!r.ok){alert(r?.mensaje||'No se pudo ocultar la notificación.');return;}
+        n.oculta=true;v10DrawHome();
+      });
     });
-  });dismiss.setAttribute('aria-label','Quitar notificación');row.append(dismiss);return row;
+    dismiss.classList.add('v11-dismiss');dismiss.title='Ocultar notificación';
+    dismiss.setAttribute('aria-label','Ocultar notificación');row.append(dismiss);
+  }
+  return row;
 }
 function v10ShowAllNotices(){
-  const modal=v4$('v10NoticeModal'),host=v4$('v10NoticeAll');host.replaceChildren();
-  if(!v10HomeNotifications.length)host.append(v4txt('p','No hay notificaciones pendientes.'));
-  v10HomeNotifications.forEach(n=>host.append(v10Notice(n)));
+  const modal=v4$('v10NoticeModal'),host=v4$('v10NoticeAll');
+  host.replaceChildren(v4txt('p','Consultando historial de notificaciones…'));
   modal.hidden=false;
+  v3Call('v11NotificationHistory',[TOKEN],r=>{
+    if(modal.hidden)return;
+    host.replaceChildren();
+    if(!r||!r.ok){host.append(v4txt('p',r?.mensaje||'No se pudo cargar el historial.'));return;}
+    const notices=r.notificaciones||[];
+    if(!notices.length)host.append(v4txt('p','No existen notificaciones registradas.'));
+    notices.forEach(n=>host.append(v10Notice(n,false)));
+  });
 }
 function v10Birthday(names){
   const host=v4$('v4HomeBody');
@@ -2128,7 +2253,7 @@ function v10Birthday(names){
   }
   host.append(confetti);setTimeout(()=>confetti.remove(),6000);
 }
-function v4LoadAccess(){v4Api('v4Catalog',[TOKEN],r=>{v4CatalogData=r;v4RenderAccess();v4RenderLevels();});}
+function v4LoadAccess(){v4Api('v4Catalog',[TOKEN],r=>{v4CatalogData=r;v4RenderAccess();v4RenderLevels();v11RenderSectionEditor();});}
 function v4RenderAccess(){
   const host=v4$('v4AccessPeople');host.replaceChildren();
   const box=document.createElement('div');box.className='v7-table-wrap';
@@ -2496,7 +2621,7 @@ function v4SaveNoteUI(){const d={id:v4$('v4NoteId').value,titulo:v4$('v4NoteTitl
 
 </script>
 <script>
-function v4TabModules(tab){const select=document.getElementById('v7ModuleAction');if(select)select.value=tab;['personas','niveles','crear'].forEach(k=>{const id={personas:'v4PeopleSection',niveles:'v4LevelsSection',crear:'v4CreateModuleSection'}[k];document.getElementById(id).hidden=k!==tab;});}
+function v4TabModules(tab){const select=document.getElementById('v7ModuleAction');if(select)select.value=tab;['personas','niveles','crear','secciones'].forEach(k=>{const id={personas:'v4PeopleSection',niveles:'v4LevelsSection',crear:'v4CreateModuleSection',secciones:'v11SectionsSection'}[k];document.getElementById(id).hidden=k!==tab;});}
 function v4SyntaxTab(tab){document.getElementById('v4SyntaxNew').hidden=tab!=='nuevo';document.getElementById('v4SyntaxExisting').hidden=tab!=='lista';if(tab==='lista')v4ListSyntax();}
 
 /* V10: Control documental por registro de cargas verificadas. */
@@ -2524,8 +2649,14 @@ function v10RenderAudit(){
     const matches=people.filter(p=>!term||[p.nombre,p.curp,folder.nombre,...(folder.documentos||[])].join(' ').toLocaleLowerCase('es').includes(term));
     if(!matches.length)return;
     const card=document.createElement('section');card.className='v10-audit-folder';
-    card.append(v4txt('h3',folder.nombre));
-    const sub=v4txt('p','Documentos: '+(folder.documentos||[]).join(', '));card.append(sub);
+    const head=document.createElement('button');head.type='button';head.className='v11-folder-head';
+    head.setAttribute('aria-expanded','false');
+    head.append(v4txt('span','📁 '+folder.nombre));
+    const icon=v4txt('span','+');icon.className='v11-fold-icon';head.append(icon);
+    const details=document.createElement('div');details.className='v11-folder-content';details.hidden=true;
+    head.onclick=()=>{details.hidden=!details.hidden;head.setAttribute('aria-expanded',String(!details.hidden));icon.textContent=details.hidden?'+':'−';};
+    card.append(head,details);
+    const sub=v4txt('p','Documentos: '+(folder.documentos||[]).join(', '));details.append(sub);
     const wrap=document.createElement('div');wrap.className='v7-table-wrap';
     const table=document.createElement('table');table.className='v7-table';
     const thead=document.createElement('thead'),hr=document.createElement('tr');
@@ -2550,7 +2681,7 @@ function v10RenderAudit(){
         });tr.append(td);body.append(tr);
       });
     });
-    table.append(body);wrap.append(table);card.append(wrap);host.append(card);
+    table.append(body);wrap.append(table);details.append(wrap);host.append(card);
   });
   if(!host.children.length)host.append(v4txt('p','No hay coincidencias con la búsqueda.'));
 }
