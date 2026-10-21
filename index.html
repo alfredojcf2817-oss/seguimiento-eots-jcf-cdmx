@@ -1725,7 +1725,7 @@
           .withFailureHandler(function(error) {
             msg.innerHTML = alerta(error.message, "error");
           })
-          .subirArchivoFirmado(TOKEN, documento, e.target.result, file.type);
+          .subirArchivoFirmado(TOKEN, documento, e.target.result, file.type || "application/octet-stream", file.name);
       };
 
       reader.readAsDataURL(file);
@@ -3070,7 +3070,7 @@ function v10RenderAudit(){
   const host=document.getElementById('v10AuditContent');host.replaceChildren();
   const term=document.getElementById('v10Search').value.trim().toLocaleLowerCase('es');
   const people=v10AuditData.personas||[],folders=v10AuditData.carpetas||[];
-  if(!folders.length){host.append(v4txt('p','Todavía no hay cargas registradas desde la versión V10. Los archivos anteriores no se marcan automáticamente como entregados.'));return;}
+  if(!folders.length){host.append(v4txt('p','Aún no hay cargas verificadas en la bitácora del sistema. Esto no significa que Drive esté vacío: los documentos anteriores requieren conciliación para acreditar su entrega. Las nuevas cargas realizadas desde este módulo aparecerán aquí.'));return;}
   folders.forEach(folder=>{
     const files=folder.archivos||[];
     const matches=people.filter(p=>!term||[p.nombre,p.curp,folder.nombre,...(folder.documentos||[])].join(' ').toLocaleLowerCase('es').includes(term));
