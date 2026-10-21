@@ -811,16 +811,6 @@
 .jcf-about dt{font-size:12px;font-weight:700;color:#691b31}
 .jcf-about dd{margin:5px 0 0;color:#333;font-size:13px}
 @media(max-width:650px){.jcf-about dl{grid-template-columns:1fr}.jcf-institutional-footer{padding:16px 10px}}
-
-/* V15: carpetas, sintaxis multiformato y asignaciones */
-.v15-exts{display:flex;flex-wrap:wrap;gap:8px 16px;margin:9px 0 15px}
-.v15-exts label{display:inline-flex;align-items:center;gap:5px;font-weight:500}
-.v15-two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px}
-.v15-two>div{background:#fcf9fa;border:1px solid #eadce1;border-radius:12px;padding:14px}
-.v15-personas{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;max-height:300px;overflow:auto;padding:10px;border:1px solid #eadce1;border-radius:10px;margin:10px 0}
-.v15-personas label{display:flex;align-items:center;gap:8px;font-size:13px;padding:7px;border-bottom:1px solid #f1e9ec}
-.v15-info{color:#691b31;font-weight:600;margin:12px 0}
-@media(max-width:800px){.v15-two,.v15-personas{grid-template-columns:1fr}}
 </style>
 <style>
 .v4-modal[hidden],.v4-busy[hidden]{display:none!important}.v4-modal{position:fixed;inset:0;z-index:9998;background:#0009;display:flex;align-items:center;justify-content:center;padding:16px}.v4-dialog{background:#fff;border-radius:16px;padding:24px;max-width:850px;width:100%;max-height:90vh;overflow:auto;box-shadow:0 20px 60px #0004}.v4-busy{position:fixed;inset:0;z-index:99999;background:#1119;display:grid;place-items:center}.v4-busy-card{background:white;border-radius:16px;padding:30px;display:flex;align-items:center;gap:18px;color:#701a36}.v4-spinner{display:inline-block;width:34px;height:34px;border:4px solid #ddd;border-top-color:#9d2449;border-radius:50%;animation:v4spin .8s linear infinite}@keyframes v4spin{to{transform:rotate(360deg)}}.v4-tags{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}.v4-tag{background:#f2dfe6;border:1px solid #b8768d;padding:5px 8px;border-radius:16px}.v4-tag button{border:0;background:transparent;cursor:pointer;margin-left:4px}.v4-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}.v4-day{border:1px solid #ddd;border-radius:7px;min-height:86px;padding:5px;cursor:pointer;overflow-wrap:anywhere}.v4-day strong{display:block}.v4-day small{display:block;background:#f1e4e8;margin:2px 0;border-radius:4px;padding:2px}.v4-section{margin:15px 0;border-bottom:1px solid #ddd;padding-bottom:15px}.v4-dialog input,.v4-dialog select,.v4-dialog textarea{max-width:100%}@media(max-width:700px){.v4-calendar{gap:2px}.v4-day{min-height:70px;font-size:11px}.v4-day small{font-size:9px}}
@@ -874,7 +864,6 @@
       <button class="menu-btn" onclick="abrirOficinaOV(this)">Registro Oficina Virtual</button>
       <button class="menu-btn" onclick="abrirDocumentos(this)">Carga de documentos</button>
       <button class="menu-btn" onclick="abrirRecursos(this)">Recursos para descargar</button>
-      <button class="menu-btn" data-module-id="v15ResourceManager" onclick="v15OpenResources(this)">Asignación de recursos</button>
       <button class="menu-btn" onclick="abrirDirectorioDrives(this)">Directorio de Drives</button>
       <button class="menu-btn" onclick="abrirBuscadorTarjetas(this)">Buscador de tarjetas</button>
       <button class="menu-btn" onclick="abrirVacaciones(this)">Vacaciones / Permisos</button>
@@ -1031,9 +1020,9 @@
               <h3 id="docNombreEsperado"></h3>
               <p id="docEstado"></p>
 
-              <input type="file" id="docArchivo" accept=".pdf,.png,.jpeg,.jpg,.peg,.xlsx,.xls,.docx,.doc,.csv,.txt">
+              <input type="file" id="docArchivo" accept=".pdf,.png,.jpeg,.jpg,.xlsx,.xls,.docx,.doc,.csv,.txt">
 
-              <button class="btn-primary" onclick="subirDocumento()">Subir / reemplazar archivo</button>
+              <button class="btn-primary" onclick="subirDocumento()">Subir / reemplazar PDF</button>
 
               <div id="docLinkBox"></div>
             </div>
@@ -1052,24 +1041,6 @@
         </div>
       </div>
 
-      <div id="v15ResourceManager" class="modulo"><div class="card">
-        <h2>Asignación de recursos</h2><p>Disponible para niveles 1 y 2. Los archivos se guardan en la carpeta de descarga del entorno activo y solo se muestran a los usuarios asignados.</p>
-        <div id="v15ResourceEnv" class="v15-info"></div>
-        <div class="v15-two">
-          <div><h3>1. Carpeta de destino</h3><label>Carpeta de Drive</label><select id="v15ResourceFolder"></select>
-            <label>Crear nueva carpeta o subcarpeta</label><input id="v15ResourceNewFolder" placeholder="Ej. Cursos/Inteligencia artificial">
-            <button class="btn-primary" onclick="v15CreateResourceFolder()">Crear carpeta</button>
-          </div>
-          <div><h3>2. Archivo</h3><label>Seleccionar archivo nuevo</label><input type="file" id="v15ResourceFile">
-            <button class="btn-primary" onclick="v15UploadResource()">Subir archivo a Drive</button>
-            <label>O elegir un archivo existente</label><select id="v15ExistingResource"></select>
-          </div>
-        </div>
-        <h3>3. Asignar al personal activo</h3><input id="v15PeopleSearch" placeholder="Buscar nombre o CURP" oninput="v15DrawPeople()">
-        <div id="v15PeopleList" class="v15-personas"></div>
-        <button class="btn-primary" onclick="v15AssignResource()">Guardar asignaciones</button>
-        <div id="v15ResourceMsg" aria-live="polite"></div>
-      </div></div>
       <div id="babien" class="modulo"><div class="card">
         <h2>BaBien</h2><h3>Devolución de tarjetas (Operativo)</h3>
         <p>Escanea o pega el código de barras. Si existen duplicados, selecciona la tarjeta correcta.</p>
@@ -1129,10 +1100,7 @@
 </div></div>
 <div id="v3Admin" class="modulo"><div class="card"><h2>Administración de usuarios</h2><p>Usuarios y solicitudes pendientes de validación.</p><button class="btn-primary" onclick="v4NewUser()">Agregar usuario</button><div id="v3AdminMsg"></div><h3>Solicitudes pendientes</h3><div id="v3Pending"></div><h3>Usuarios registrados</h3><input id="v3UserSearch" placeholder="Buscar por nombre o CURP" oninput="v3RenderUsers()"><div id="v3UserTable" style="overflow:auto"></div><div id="v4UserModal" class="v4-modal" hidden><div class="v4-dialog"><button onclick="v4CloseUser()" style="float:right">✕</button><h3 id="v3UserFormTitle">Agregar usuario</h3><div id="v3UserForm"></div><button class="btn-primary" onclick="v3SaveAdminUser()">Guardar usuario</button></div></div></div></div>
       <div id="v3Profile" class="modulo"><div class="card"><h2>Mi información personal</h2><p>Los cambios se envían a validación de la Dirección Estatal; no se aplican inmediatamente.</p><div id="v3ProfileForm"></div><button class="btn-primary" onclick="v3SendProfile()">Enviar para validación</button><div id="v3ProfileMsg"></div></div></div>
-      <div id="v3Syntax" class="modulo"><div class="card"><h2>Sintaxis de documentos de carga EOTs</h2><div class="v4-tags"><button class="btn-primary" onclick="v4SyntaxTab('nuevo')">Agregar sintaxis nuevo documento</button><button class="btn-primary" onclick="v4SyntaxTab('lista')">Visualizador de sintaxis existentes</button></div><div id="v4SyntaxNew"><label>Nombre del documento a cargar</label><input id="v3DocName" placeholder="Ej. Acuse de entrega"><label>Variable de la hoja usuarios</label><select id="v3SyntaxVariable"></select><button class="btn-primary" onclick="v3AddVariable()">Agregar variable</button><button class="btn-primary" onclick="v3AddText('_')">Agregar _</button><button class="btn-primary" onclick="v3AddText(' ')">Agregar espacio</button><label>Sintaxis resultante (puedes editarla)</label><textarea id="v3SyntaxText" rows="3" placeholder="{{Nombre}}_{{Apellido Paterno}}"></textarea><label>Extensiones permitidas (selecciona una o varias)</label><div class="v15-exts" id="v15Exts"><label><input type="checkbox" value=".pdf" checked> .pdf</label><label><input type="checkbox" value=".jpg"> .jpg</label><label><input type="checkbox" value=".jpeg"> .jpeg</label><label><input type="checkbox" value=".peg"> .peg</label><label><input type="checkbox" value=".png"> .png</label><label><input type="checkbox" value=".xlsx"> .xlsx</label><label><input type="checkbox" value=".xls"> .xls</label><label><input type="checkbox" value=".docx"> .docx</label><label><input type="checkbox" value=".doc"> .doc</label><label><input type="checkbox" value=".csv"> .csv</label><label><input type="checkbox" value=".txt"> .txt</label></div>
-<label>Carpeta o subcarpeta de destino</label><select id="v15SyntaxFolder"><option value="">Nueva carpeta con el nombre del documento</option></select>
-<label>O escribe una ruta nueva (se creará automáticamente)</label><input id="v15SyntaxPath" placeholder="Curso Inteligencia artificial/Inscripción al curso">
-<button type="button" class="btn-primary" onclick="v15RefreshSyntaxFolders()">Ver carpetas existentes</button><div id="v15FolderStatus"></div><button class="btn-primary" onclick="v3SaveSyntaxUI()">Guardar sintaxis</button><div id="v3SyntaxMsg"></div></div><div id="v4SyntaxExisting" hidden><h3>Visualizador de sintaxis existentes</h3><button class="btn-primary" onclick="v4ListSyntax()">Actualizar listado</button><div id="v4SyntaxList"></div></div></div></div>
+      <div id="v3Syntax" class="modulo"><div class="card"><h2>Sintaxis de documentos de carga EOTs</h2><div class="v4-tags"><button class="btn-primary" onclick="v4SyntaxTab('nuevo')">Agregar sintaxis nuevo documento</button><button class="btn-primary" onclick="v4SyntaxTab('lista')">Visualizador de sintaxis existentes</button></div><div id="v4SyntaxNew"><label>Nombre del documento a cargar</label><input id="v3DocName" placeholder="Ej. Acuse de entrega"><label>Variable de la hoja usuarios</label><select id="v3SyntaxVariable"></select><button class="btn-primary" onclick="v3AddVariable()">Agregar variable</button><button class="btn-primary" onclick="v3AddText('_')">Agregar _</button><button class="btn-primary" onclick="v3AddText(' ')">Agregar espacio</button><label>Sintaxis resultante (puedes editarla)</label><textarea id="v3SyntaxText" rows="3" placeholder="{{Nombre}}_{{Apellido Paterno}}"></textarea><label>Extensión</label><select id="v3Ext"><option>.pdf</option><option>.png</option><option>.jpeg</option><option>.jpg</option><option>.xlsx</option><option>.xls</option><option>.docx</option><option>.doc</option><option>.csv</option><option>.txt</option></select><button class="btn-primary" onclick="v3SaveSyntaxUI()">Guardar sintaxis</button><div id="v3SyntaxMsg"></div></div><div id="v4SyntaxExisting" hidden><h3>Visualizador de sintaxis existentes</h3><button class="btn-primary" onclick="v4ListSyntax()">Actualizar listado</button><div id="v4SyntaxList"></div></div></div></div>
       <div id="v3Dynamic" class="modulo"><div class="card"><h2 id="v3DynamicTitle">Módulo</h2><input id="v3DynamicSearch" placeholder="Buscar registros" onkeydown="if(event.key==='Enter')v3LoadDynamic(1)"><button class="btn-primary" onclick="v3LoadDynamic(1)">Buscar</button><div id="v3DynamicBody" style="overflow:auto"></div><div id="v3DynamicPager"></div></div></div>
 
 <div id="v4Role" class="modulo"><div class="card">
@@ -1445,7 +1413,15 @@
       document.getElementById('btnMiPerfil').style.display=['1','2','3'].includes(String(USUARIO.nivel))?'block':'none';
       document.getElementById('btnSintaxis').style.display=babienAutorizado?'block':'none';
       document.getElementById('btnV4Role').style.display=babienAutorizado?'block':'none';
-      v11AuthorizedModules=null;document.getElementById('v11GroupedMenu').replaceChildren();
+      // V15.1: conservar los botones físicos antes de vaciar el menú.
+      // Si se eliminan los nodos, los permisos posteriores no pueden reconstruirlos.
+      const v151Nav=document.getElementById('v11GroupedMenu');
+      const v151Original=document.getElementById('v11OriginalMenu');
+      if(v151Nav&&v151Original){
+        [...v151Nav.querySelectorAll('button.menu-btn')].forEach(b=>v151Original.appendChild(b));
+        v151Nav.replaceChildren();
+      }
+      v11AuthorizedModules=null;
       v4LoadHome();v4LoadMyAccess();
       cargarModulosPersonalizados();
     }
@@ -1463,6 +1439,14 @@
     }
 
     function cerrarSesionLocal() {
+      // Conservar controles del menú antes de finalizar la sesión.
+      const menuActual=document.getElementById('v11GroupedMenu');
+      const menuBase=document.getElementById('v11OriginalMenu');
+      if(menuActual&&menuBase){
+        [...menuActual.querySelectorAll('button.menu-btn')].forEach(b=>menuBase.appendChild(b));
+        menuActual.replaceChildren();
+      }
+      v11AuthorizedModules=null;
       TOKEN = "";
       USUARIO = null;
       recursosCargadosHasta = 0;
@@ -1674,7 +1658,7 @@
           .withFailureHandler(function(error) {
             msg.innerHTML = alerta(error.message, "error");
           })
-          .subirArchivoFirmado(TOKEN, documento, e.target.result, file.type, file.name);
+          .subirArchivoFirmado(TOKEN, documento, e.target.result, file.type);
       };
 
       reader.readAsDataURL(file);
@@ -2358,14 +2342,14 @@
       if(!confirm('¿Guardar cambios del usuario?'))return;
       v3Call(method,args,r=>{if(r.ok){alert(r.mensaje);v4CloseUser();v3RefreshAdmin();}},'v3AdminMsg');
     }
-    function v3OpenSyntax(btn){abrirModulo('v3Syntax',btn);v15RefreshSyntaxFolders();v3Call('v3SyntaxFields',[TOKEN],r=>{
+    function v3OpenSyntax(btn){abrirModulo('v3Syntax',btn);v3Call('v3SyntaxFields',[TOKEN],r=>{
       if(!r.ok)return;const s=document.getElementById('v3SyntaxVariable');s.replaceChildren();r.campos.forEach(k=>s.appendChild(v3El('option',{value:k},k)));
     },'v3SyntaxMsg');v4ListSyntax();}
     function v3AddVariable(){document.getElementById('v3SyntaxText').value+='{{'+document.getElementById('v3SyntaxVariable').value+'}}';}
     function v3AddText(s){document.getElementById('v3SyntaxText').value+=s;}
     function v3SaveSyntaxUI(){
-      const name=document.getElementById('v3DocName').value,template=document.getElementById('v3SyntaxText').value,ext=[...document.querySelectorAll('#v15Exts input:checked')].map(x=>x.value).join(','),ruta=document.getElementById('v15SyntaxPath').value.trim()||document.getElementById('v15SyntaxFolder').value||name;
-      v3Call('v3SaveSyntax',[TOKEN,name,template,ext,ruta],r=>{if(r.ok){alert(r.mensaje);document.getElementById('v3DocName').value='';document.getElementById('v3SyntaxText').value='';v4ListSyntax();}},'v3SyntaxMsg');
+      const name=document.getElementById('v3DocName').value,template=document.getElementById('v3SyntaxText').value,ext=document.getElementById('v3Ext').value;
+      v3Call('v3SaveSyntax',[TOKEN,name,template,ext],r=>{if(r.ok){alert(r.mensaje);document.getElementById('v3DocName').value='';document.getElementById('v3SyntaxText').value='';v4ListSyntax();}},'v3SyntaxMsg');
     }
     function v3SaveModuleUI(){
       const g=id=>document.getElementById(id).value.trim();
@@ -2429,14 +2413,14 @@ function v4NewUser(){v3EditUser('');}function v4CloseUser(){v4$('v4UserModal').h
 let V11_SECTION_ORDER=['Atención Ciudadana','Documentos','Personal','Herramientas','Administrador','Seguimiento'];
 const V11_MODULE_DEFAULTS={
   atencionC:'Atención Ciudadana',oficinaOV:'Atención Ciudadana',buscadorTarjetas:'Atención Ciudadana',
-  documentos:'Documentos',recursos:'Documentos',v15ResourceManager:'Documentos',vacaciones:'Personal',v3Profile:'Personal',
+  documentos:'Documentos',recursos:'Documentos',vacaciones:'Personal',v3Profile:'Personal',
   babien:'Herramientas',v4Notes:'Herramientas',directorioDrives:'Herramientas',
   v4Role:'Herramientas',v4Calendar:'Herramientas',gestionModulos:'Administrador',v13Settings:'Administrador',
   v3Admin:'Administrador',v3Syntax:'Administrador',adminVacaciones:'Seguimiento',v9DriveControl:'Seguimiento'
 };
 const V11_FUNCTION_IDS={
   abrirAtencionC:'atencionC',abrirOficinaOV:'oficinaOV',abrirBuscadorTarjetas:'buscadorTarjetas',
-  abrirDocumentos:'documentos',abrirRecursos:'recursos',v15OpenResources:'v15ResourceManager',abrirVacaciones:'vacaciones',
+  abrirDocumentos:'documentos',abrirRecursos:'recursos',abrirVacaciones:'vacaciones',
   v3OpenProfile:'v3Profile',abrirBaBien:'babien',v4OpenNotes:'v4Notes',
   abrirDirectorioDrives:'directorioDrives',v4OpenRole:'v4Role',v4OpenCalendar:'v4Calendar',
   abrirGestionModulos:'gestionModulos',v13OpenSettings:'v13Settings',v3OpenAdmin:'v3Admin',v3OpenSyntax:'v3Syntax',
@@ -3230,20 +3214,6 @@ function v13ChangeFolder(key,inputId){
     if(r?.ok)v13Refresh();
   });
 }
-</script>
-
-<script>
-/* V15: explorador de carpetas y asignación de recursos */
-let v15ResourceData={carpetas:[],archivos:[],personas:[]};let v15SelectedPeople=new Set();
-function v15Message(message,ok=false){const el=document.getElementById('v15ResourceMsg');if(el){el.textContent=message;el.style.color=ok?'#486536':'#9d2449';}}
-function v15FillOptions(id,rows,key,label,placeholder){const el=document.getElementById(id);el.replaceChildren();const first=document.createElement('option');first.value='';first.textContent=placeholder;el.append(first);rows.forEach(r=>{const o=document.createElement('option');o.value=r[key];o.textContent=label(r);el.append(o);});}
-function v15RefreshSyntaxFolders(){v3Call('v15Folders',[TOKEN,'Upload'],r=>{const el=document.getElementById('v15FolderStatus');if(!r.ok){el.textContent=r.mensaje;return;}el.textContent='Entorno: '+r.entorno+' · '+r.carpetas.length+' carpetas existentes.';v15FillOptions('v15SyntaxFolder',r.carpetas,'ruta',x=>x.ruta,'Crear carpeta con el nombre del documento');});}
-function v15OpenResources(btn){abrirModulo('v15ResourceManager',btn);v15LoadResources();}
-function v15LoadResources(selectFileId){v15Message('Cargando carpetas y usuarios...',true);v3Call('v15ResourceCatalog',[TOKEN],r=>{if(!r.ok){v15Message(r.mensaje);return;}v15ResourceData=r;document.getElementById('v15ResourceEnv').textContent='Entorno activo: '+r.entorno+' · '+r.carpetas.length+' carpetas · '+r.archivos.length+' archivos';v15FillOptions('v15ResourceFolder',r.carpetas,'ruta',x=>x.ruta,'Selecciona carpeta');v15FillOptions('v15ExistingResource',r.archivos,'id',x=>x.ruta+' / '+x.nombre,'Selecciona un archivo existente');v15DrawPeople();if(selectFileId)document.getElementById('v15ExistingResource').value=selectFileId;v15Message('Selecciona una carpeta, un archivo y los usuarios.',true);});}
-function v15CreateResourceFolder(){const path=document.getElementById('v15ResourceNewFolder').value.trim();if(!path){v15Message('Escribe una ruta.');return;}v3Call('v15CreateFolder',[TOKEN,'Download',path],r=>{if(!r.ok){v15Message(r.mensaje);return;}v15LoadResources();});}
-function v15DrawPeople(){const host=document.getElementById('v15PeopleList'),query=(document.getElementById('v15PeopleSearch').value||'').toLowerCase();host.replaceChildren();(v15ResourceData.personas||[]).filter(p=>(p.nombre+' '+p.curp).toLowerCase().includes(query)).forEach(p=>{const label=document.createElement('label'),check=document.createElement('input');check.type='checkbox';check.value=p.curp;check.checked=v15SelectedPeople.has(p.curp);check.onchange=()=>{if(check.checked)v15SelectedPeople.add(p.curp);else v15SelectedPeople.delete(p.curp);};label.append(check,document.createTextNode(' '+p.nombre+' · '+p.curp));host.append(label);});}
-function v15UploadResource(){const folder=document.getElementById('v15ResourceFolder').value,file=document.getElementById('v15ResourceFile').files[0];if(!folder||!file){v15Message('Selecciona carpeta y archivo.');return;}if(file.size>13*1024*1024){v15Message('Archivo demasiado grande. Máximo 13 MB.');return;}v15Message('Subiendo archivo...',true);const reader=new FileReader();reader.onload=()=>v3Call('v15ResourceUpload',[TOKEN,folder,file.name,reader.result,file.type],r=>{if(!r.ok){v15Message(r.mensaje);return;}v15Message('Archivo subido. Selecciona usuarios y guarda asignaciones.',true);v15LoadResources(r.id);});reader.readAsDataURL(file);}
-function v15AssignResource(){const file=document.getElementById('v15ExistingResource').value,people=[...v15SelectedPeople];if(!file||!people.length){v15Message('Selecciona un archivo y al menos una persona.');return;}v15Message('Guardando asignaciones...',true);v3Call('v15ResourceAssign',[TOKEN,file,people],r=>{v15Message(r.mensaje,r.ok);if(r.ok){recursosCargadosHasta=0;v15SelectedPeople.clear();v15DrawPeople();}});}
 </script>
 </body>
 </html>
