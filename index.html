@@ -551,7 +551,8 @@
 .v8-edit-fields{display:grid;gap:7px}
 .v8-edit-fields select,.v8-edit-fields input,.v8-edit-fields textarea{width:100%;box-sizing:border-box}
 .v8-footer{display:flex;justify-content:space-between;align-items:center;gap:15px;padding:15px 0;margin-top:14px;border-top:2px solid #9d2449}
-.v8-footer button{max-width:330px}\n.v7-role-table td:last-child select{min-width:170px;max-width:260px}
+.v8-footer button{max-width:330px}
+.v7-role-table td:last-child select{min-width:170px;max-width:260px}
 @media(max-width:680px){.v8-assignment{display:block}.v8-assignment-actions{margin-top:10px}.v8-footer{flex-direction:column;align-items:stretch}.v8-footer button{max-width:none}}
 
 /* V10: seguimiento de documentos */
@@ -626,7 +627,7 @@
 .v12-brand img{display:block;width:100%;max-width:200px;max-height:105px;object-fit:contain;margin:auto}
 .v12-brand strong{font-size:15px;line-height:1.3;color:white}
 .v12-close{position:absolute;right:-8px;top:-7px;background:transparent;border:0;color:white;font-size:28px;cursor:pointer;padding:0 6px}
-.v12-search{position:relative;margin:12px 0}.v12-search label{font-size:11px;display:block;margin-bottom:4px;color:#ffe6ee}
+.v12-search{position:relative;margin:15px 0 18px}.v12-search label{font-size:11px;display:block;margin-bottom:4px;color:#ffe6ee}
 .v12-search input{width:100%;border:1px solid #ffffff5a!important;border-radius:10px!important;background:#ffffff18!important;color:white!important;padding:11px!important;box-sizing:border-box}
 .v12-search input::placeholder{color:#fff9}.v12-search input:focus{outline:2px solid #fff8}
 #v12SearchResults{background:#70172f;border-radius:10px;padding:7px;max-height:310px;overflow:auto;margin-top:7px}
@@ -723,7 +724,6 @@
 
     <div class="sidebar" id="v11Sidebar">
       <div class="v12-brand"><button type="button" class="v12-close" onclick="v12ToggleSidebar(false)" aria-label="Contraer menú" title="Contraer menú">×</button><img src="logo_jcf_blanco.svg" alt="Jóvenes Construyendo el Futuro"><strong>Sistema de Seguimiento JCF</strong></div>
-      <div class="v12-search"><label for="v12ModuleSearch">Buscar módulo</label><input id="v12ModuleSearch" type="search" placeholder="⌕ Buscar módulo…" autocomplete="off" oninput="v12SearchMenu(this.value)"><div id="v12SearchResults" aria-live="polite" hidden></div></div>
 
       <div class="user-box">
         <strong id="userNombre"></strong><br>
@@ -731,6 +731,8 @@
         Puesto: <span id="userPuesto"></span><br>
         Nivel: <span id="userNivel"></span>
       </div>
+
+      <div class="v12-search"><label for="v12ModuleSearch">Buscar módulo</label><input id="v12ModuleSearch" type="search" placeholder="⌕ Buscar módulo…" autocomplete="off" oninput="v12SearchMenu(this.value)"><div id="v12SearchResults" aria-live="polite" hidden></div></div>
 
       <button id="v11HomeBtn" class="menu-btn active" onclick="abrirModulo('inicio', this)">Inicio</button>
 <div id="v11OriginalMenu" hidden>
@@ -764,7 +766,8 @@
         <div class="card v5-home-card">
           <div class="v6-home-header">
             <h2>Bienvenido</h2>
-            <h2 id="v4Welcome"></h2>\n            <p class="v121-welcome-subtitle">Sistema de Seguimiento JCF</p>
+            <h2 id="v4Welcome"></h2>
+            <p class="v121-welcome-subtitle">Sistema de Seguimiento JCF</p>
           </div>
           <div class="v12-dashboard">
           <section class="v12-panel v12-notices" aria-label="Notificaciones recientes"><div class="v12-panel-head"><h3>🔔 Notificaciones recientes</h3></div>
