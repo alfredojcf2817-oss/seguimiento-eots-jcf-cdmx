@@ -921,6 +921,7 @@
       <button class="menu-btn" onclick="abrirDirectorioDrives(this)">Directorio de Drives</button>
       <button class="menu-btn" onclick="abrirBuscadorTarjetas(this)">Buscador de tarjetas</button>
       <button class="menu-btn" onclick="abrirVacaciones(this)">Vacaciones / Permisos</button>
+      <button class="menu-btn" data-module-id="v166Viewer" onclick="v166OpenViewer(this)" style="display:none">Visor de actividades</button>
       <button id="btnAdminVacaciones" class="menu-btn" style="display:none;" onclick="abrirAdminVacaciones(this)">Administrador vacaciones</button>
 
       <button id="btnBabien" class="menu-btn" style="display:none" onclick="abrirBaBien(this)">BaBien</button>
@@ -1201,7 +1202,13 @@
 <button class="btn-primary" type="button" onclick="v8AddTemplate()">Guardar actividad</button>
 </div></div>
 </div></div>
-<div id="v4Calendar" class="modulo"><div class="card"><h2>Actividades</h2><div style="display:flex;gap:12px;align-items:center"><button onclick="v4ShiftMonth(-1)">‹</button><h3 id="v4MonthTitle"></h3><button onclick="v4ShiftMonth(1)">›</button></div><div id="v4CalendarGrid" class="v4-calendar"></div><hr><h3>Agregar actividad personal o compartida</h3><label>Fecha</label><input id="v4EventDate" type="date"><label>Actividad</label><input id="v4EventTitle" placeholder="Descripción de la actividad"><label>Hora de inicio</label><input id="v4EventStart" type="time"><label>Hora de fin</label><input id="v4EventEnd" type="time"><label>Compartir con personal (escribe nombre y selecciona)</label><input id="v4ShareSearch" list="v4ShareOptions" placeholder="Buscar nombre" oninput="v4SuggestShare()"><datalist id="v4ShareOptions"></datalist><button onclick="v4AddShare()">Agregar persona</button><div id="v4Shares"></div><label>Observaciones</label><textarea id="v4EventObs"></textarea><button class="btn-primary" onclick="v4SaveEventUI()">Guardar actividad</button><div id="v4EventMsg"></div></div></div>
+<div id="v4Calendar" class="modulo"><div class="card"><h2>Actividades</h2>
+<section id="v166ExportArea" class="v166-panel"><h3>Exportar actividades a Excel</h3>
+<label for="v166ExportMonth">Mes de actividades</label><input type="month" id="v166ExportMonth">
+<div id="v166ExportPersonWrap"><label for="v166ExportPerson">Usuario para exportación individual</label><select id="v166ExportPerson"></select></div>
+<div class="v166-actions"><button type="button" class="btn-primary" onclick="v166Export(false)">Descargar actividades individuales (.xlsx)</button>
+<button type="button" class="btn-primary" id="v166GroupExport" onclick="v166Export(true)">Descargar actividades grupales (.xlsx)</button></div>
+<p id="v166ExportStatus" role="status"></p></section><div style="display:flex;gap:12px;align-items:center"><button onclick="v4ShiftMonth(-1)">‹</button><h3 id="v4MonthTitle"></h3><button onclick="v4ShiftMonth(1)">›</button></div><div id="v4CalendarGrid" class="v4-calendar"></div><hr><h3>Agregar actividad personal o compartida</h3><label>Fecha</label><input id="v4EventDate" type="date"><label>Actividad</label><input id="v4EventTitle" placeholder="Descripción de la actividad"><label>Hora de inicio</label><input id="v4EventStart" type="time"><label>Hora de fin</label><input id="v4EventEnd" type="time"><label>Compartir con personal (escribe nombre y selecciona)</label><input id="v4ShareSearch" list="v4ShareOptions" placeholder="Buscar nombre" oninput="v4SuggestShare()"><datalist id="v4ShareOptions"></datalist><button onclick="v4AddShare()">Agregar persona</button><div id="v4Shares"></div><label>Observaciones</label><textarea id="v4EventObs"></textarea><button class="btn-primary" onclick="v4SaveEventUI()">Guardar actividad</button><div id="v4EventMsg"></div></div></div>
 <div id="v9DriveControl" class="modulo"><div class="card">
   <h2>Control de documentos en Drive</h2>
   <p>Consulta las cargas realizadas desde este sistema. Cada registro incluye la persona, documento, fecha y archivo de Drive.</p>
@@ -1326,7 +1333,14 @@
 
           <button class="btn-primary" onclick="enviarPermiso()">Enviar solicitud de permiso</button>
 
-          <div id="vacacionesMsg"></div>
+          <section class="v166-panel"><h3>Solicitar incapacidad</h3>
+<p>Selecciona uno o varios días y adjunta un soporte documental PDF (máximo 5 MB). Requiere autorización de nivel 1.</p>
+<div class="v166-actions"><div><label for="v166IncStart">Desde</label><input type="date" id="v166IncStart"></div><div><label for="v166IncEnd">Hasta</label><input type="date" id="v166IncEnd"></div></div>
+<p>Una fecha: indica el mismo día en ambos campos. Para varios días, selecciona el intervalo.</p>
+<label for="v166IncapacityJustification">Observaciones</label><textarea id="v166IncapacityJustification"></textarea>
+<label for="v166IncapacityFile">Constancia de incapacidad (PDF)</label><input id="v166IncapacityFile" type="file" accept=".pdf,application/pdf">
+<button class="btn-primary" type="button" onclick="v166SendIncapacity()">Enviar incapacidad</button><p id="v166IncapacityStatus" role="status"></p>
+</section><div id="vacacionesMsg"></div>
 
           <h3>Mis solicitudes</h3>
           <div id="misSolicitudes"></div>
@@ -1343,7 +1357,15 @@
         </div>
       </div>
 
-      <footer class="jcf-institutional-footer" aria-label="Créditos institucionales">
+      <div id="v166Viewer" class="modulo"><div class="card"><h2>Visor de actividades</h2>
+<p>Consulta las actividades del personal activo, por fecha o durante todo el mes.</p>
+<div class="v166-actions"><button type="button" onclick="v166ShiftMonth(-1)">‹</button><h3 id="v166ViewerTitle"></h3><button type="button" onclick="v166ShiftMonth(1)">›</button></div>
+<div id="v166ViewerCalendar" class="v166-calendar"></div>
+<div class="v166-actions"><button type="button" class="btn-primary" onclick="v166SetMode('dia')">Ver día seleccionado</button><button type="button" class="btn-primary" onclick="v166SetMode('mes')">Ver actividades mensuales</button></div>
+<label for="v166ViewerSearch">Buscar nombre, apellidos, CURP o actividad</label><input id="v166ViewerSearch" type="search" placeholder="Buscar personal o actividad..." oninput="v166RenderViewerTable()">
+<p id="v166ViewerStatus" role="status"></p><p id="v166ViewerCount"></p><div class="v7-table-wrap" id="v166ViewerTable"></div>
+</div></div>
+<footer class="jcf-institutional-footer" aria-label="Créditos institucionales">
         <strong>Sistema de Seguimiento EOT´s</strong>
         <span>Desarrollado por la Oficina Estatal del Programa Jóvenes Construyendo el Futuro en la Ciudad de México</span>
         <small>© 2026 · Versión 14.5</small>
@@ -2495,14 +2517,14 @@ const V11_MODULE_DEFAULTS={
   documentos:'Documentos',recursos:'Documentos',vacaciones:'Personal',v3Profile:'Personal',
   babien:'Herramientas',v4Notes:'Herramientas',directorioDrives:'Herramientas',
   v4Role:'Herramientas',v4Calendar:'Herramientas',gestionModulos:'Administrador',v13Settings:'Administrador',
-  v3Admin:'Administrador',v3Syntax:'Administrador',v164Sessions:'Administrador',adminVacaciones:'Seguimiento',v9DriveControl:'Seguimiento'
+  v3Admin:'Administrador',v3Syntax:'Administrador',v164Sessions:'Administrador',v166Viewer:'Seguimiento',adminVacaciones:'Seguimiento',v9DriveControl:'Seguimiento'
 };
 const V11_FUNCTION_IDS={
   abrirAtencionC:'atencionC',abrirOficinaOV:'oficinaOV',abrirBuscadorTarjetas:'buscadorTarjetas',
   abrirDocumentos:'documentos',abrirRecursos:'recursos',abrirVacaciones:'vacaciones',
   v3OpenProfile:'v3Profile',abrirBaBien:'babien',v4OpenNotes:'v4Notes',
   abrirDirectorioDrives:'directorioDrives',v4OpenRole:'v4Role',v4OpenCalendar:'v4Calendar',
-  abrirGestionModulos:'gestionModulos',v13OpenSettings:'v13Settings',v3OpenAdmin:'v3Admin',v3OpenSyntax:'v3Syntax',v164OpenSessions:'v164Sessions',
+  abrirGestionModulos:'gestionModulos',v13OpenSettings:'v13Settings',v3OpenAdmin:'v3Admin',v3OpenSyntax:'v3Syntax',v164OpenSessions:'v164Sessions',v166OpenViewer:'v166Viewer',
   abrirAdminVacaciones:'adminVacaciones',v10OpenDriveAudit:'v9DriveControl'
 };
 let v11AuthorizedModules=null;
@@ -2981,7 +3003,7 @@ function v4DownloadRole(){
     document.body.append(link);link.click();link.remove();
   });
 }
-function v4OpenCalendar(btn){abrirModulo('v4Calendar',btn);v4Month=new Date();v4Shares=[];v4LoadCalendar();}
+function v4OpenCalendar(btn){abrirModulo('v4Calendar',btn);v4Month=new Date();v4Shares=[];v4LoadCalendar();v166InitControls();v166LoadExportPeople();}
 function v4ShiftMonth(n){v4Month.setMonth(v4Month.getMonth()+n);v4LoadCalendar();}
 function v4ISO(d){return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');}
 function v4LoadCalendar(){const first=new Date(v4Month.getFullYear(),v4Month.getMonth(),1),last=new Date(v4Month.getFullYear(),v4Month.getMonth()+1,0);v4$('v4MonthTitle').textContent=first.toLocaleDateString('es-MX',{month:'long',year:'numeric'});v4Api('v4Activities',[TOKEN,v4ISO(first),v4ISO(last)],r=>{v4Events=r.eventos;v4Users=r.usuarios;v4RenderCalendar();});}
@@ -3011,7 +3033,7 @@ function v10ShowCalendarDetails(e){
   v4$('v10CalendarModal').hidden=false;
 }
 function v4SuggestShare(){const q=v4$('v4ShareSearch').value.toLowerCase(),list=v4$('v4ShareOptions');list.replaceChildren();v4Users.filter(u=>u.nombre.toLowerCase().includes(q)&&q).slice(0,15).forEach(u=>{const opt=document.createElement('option');opt.value=u.nombre;list.append(opt);});}
-function v4AddShare(){const q=v4$('v4ShareSearch').value.trim().toLowerCase(),u=v4Users.find(u=>u.nombre.toLowerCase()===q);if(u&&!v4Shares.includes(u.curp))v4Shares.push(u.curp);v4$('v4ShareSearch').value='';v4DrawShares();}
+function v4AddShare(){const q=v4$('v4ShareSearch').value.trim().toLowerCase(),u=v4Users.find(u=>u.nombre.toLowerCase()===q);if(u&&!v4Shares.includes(u.curp))v4Shares.push(u.curp);v4$('v4ShareSearch').value='';v4DrawShares();v166CheckShared();}
 function v4DrawShares(){const host=v4$('v4Shares');host.replaceChildren();v4Shares.forEach(curp=>{const u=v4Users.find(x=>x.curp===curp),tag=v4txt('span',u?.nombre||curp);tag.className='v4-tag';const b=v4txt('button','×');b.onclick=()=>{v4Shares=v4Shares.filter(x=>x!==curp);v4DrawShares();};tag.append(b);host.append(tag);});}
 function v4SaveEventUI(){const d={fecha:v4$('v4EventDate').value,actividad:v4$('v4EventTitle').value,inicio:v4$('v4EventStart').value,fin:v4$('v4EventEnd').value,observaciones:v4$('v4EventObs').value,compartir:v4Shares};v4Api('v4SaveActivity',[TOKEN,d],r=>{v4$('v4EventMsg').textContent=r.mensaje;v4Shares=[];v4DrawShares();v4LoadCalendar();v4LoadHome();});}
 function v4OpenNotes(btn){abrirModulo('v4Notes',btn);v4LoadNotes();}
@@ -3049,7 +3071,7 @@ function v4NewNote(){v4EditNote({id:'',titulo:'',texto:'',color:'#FFF1AE'});}
 function v4EditNote(n){v4$('v4NoteId').value=n.id||'';v4$('v4NoteTitle').value=n.titulo||'';v4$('v4NoteBody').value=n.texto||'';v112SelectedColor=V112_COLORS.some(c=>c.value===n.color)?n.color:'#FFF1AE';v112DrawColorPicker();v4$('v112NoteModalTitle').textContent=n.id?'Editar nota':'Nueva nota';v4$('v4NoteModal').hidden=false;}
 function v4SaveNoteUI(){const d={id:v4$('v4NoteId').value,titulo:v4$('v4NoteTitle').value.trim(),texto:v4$('v4NoteBody').value,color:v112SelectedColor};if(!d.titulo||!d.texto.trim()){alert('Completa el título y el contenido de la nota.');return;}v4Api('v4SaveNote',[TOKEN,d],()=>{v4$('v4NoteModal').hidden=true;v4LoadNotes();});}
 // Spinner único para TODAS las llamadas fetch, incluido login, subida y consulta.
-(function(){const original=window.fetch.bind(window);let pending=0;window.fetch=function(...args){pending++;const overlay=v4$('v4GlobalBusy');if(overlay)overlay.hidden=false;return original(...args).finally(()=>{pending=Math.max(0,pending-1);const o=v4$('v4GlobalBusy');if(o&&pending===0)o.hidden=true;});};})();
+/* V16.6: Spinner gestionado al final del documento. */
 
 </script>
 <script>
@@ -3423,5 +3445,126 @@ function v164Save(curps,time,button){
 }
 </script>
 
+<style>
+.v166-panel{margin:16px 0;padding:16px;border:1px solid #e3d7dc;border-radius:14px;background:#fffafb}
+.v166-panel input,.v166-panel select,.v166-panel textarea{max-width:100%;box-sizing:border-box}
+.v166-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:12px 0}
+.v166-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:5px;margin:12px 0}
+.v166-calendar>strong{text-align:center;font-size:12px}
+.v166-date{min-height:38px;padding:5px;border:1px solid #ddd;border-radius:8px;background:white;color:#691b31;cursor:pointer}
+.v166-date.has-events{border-bottom:3px solid #838e5d}.v166-date.active{background:#691b31;color:white}
+#v166ViewerTable{overflow-x:auto}#v166ViewerTable table{min-width:750px}
+@media(max-width:640px){.v166-panel{padding:12px}.v166-actions>*{max-width:100%}.v166-date{min-height:34px}}
+</style>
+<script>
+/* V16.6 — Extensión visual sin sustituir los módulos existentes. */
+const v166El=id=>document.getElementById(id);
+let v166ViewDate=new Date(),v166ViewRows=[],v166ViewPeople=[],v166ViewMode='dia';
+function v166Call(method,args){return new Promise((resolve,reject)=>{
+ google.script.run.withSuccessHandler(r=>r&&r.ok?resolve(r):reject(Error(r?.mensaje||'No se pudo consultar.')))
+ .withFailureHandler(e=>reject(Error(e?.message||String(e))))[method](...args);
+});}
+function v166Month(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');}
+function v166Day(d){return v166Month(d)+'-'+String(d.getDate()).padStart(2,'0');}
+function v166IsAdmin(){return USUARIO&&['1','2'].includes(String(USUARIO.nivel));}
+function v166InitControls(){
+ const host=v166El('v166ExportArea');if(!host)return;
+ const month=v166El('v166ExportMonth');month.value=v166Month(new Date());
+ v166El('v166GroupExport').hidden=!v166IsAdmin();
+ v166El('v166ExportPersonWrap').hidden=!v166IsAdmin();
+}
+async function v166Export(group){
+ const month=v166El('v166ExportMonth').value,status=v166El('v166ExportStatus');status.textContent='Preparando archivo Excel...';
+ try{
+  const r=await v166Call('v166MonthData',[TOKEN,month,group?'grupo':'individual',v166IsAdmin()?v166El('v166ExportPerson').value:'']);
+  if(!window.XLSX)await new Promise((resolve,reject)=>{
+   const script=document.createElement('script');script.src='https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js';script.onload=resolve;script.onerror=()=>reject(Error('No fue posible cargar el generador de Excel. Comprueba tu conexión.'));document.head.append(script);
+  });
+  const days=new Date(Number(month.slice(0,4)),Number(month.slice(5,7)),0).getDate();
+  const labels=['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+  const dates=Array.from({length:days},(_,i)=>{const d=new Date(+month.slice(0,4),+month.slice(5,7)-1,i+1);return {key:v166Day(d),label:labels[d.getDay()]+' '+String(i+1).padStart(2,'0')+'/'+month.slice(5)+'/'+month.slice(0,4)};});
+  const header=['#','Nombre completo','CURP','Puesto','Número empleado',...dates.map(x=>x.label)];
+  const users=r.personas||[];
+  const data=[header,...users.map((u,i)=>[i+1,u.nombre,u.curp,u.puesto||'',u.numeroEmpleado||'',...dates.map(d=>(r.registros||[]).filter(a=>a.curp===u.curp&&a.fecha===d.key).map(a=>{
+   const time=[a.inicio,a.fin].filter(Boolean).join('–');const shares=a.compartida?'Compartida por: '+a.comparte+' | Participantes: '+(a.participantes||[]).join(', '):'';
+   return [a.actividad,time,shares,a.conflicto?'CONFLICTO POR INCIDENCIA CONFIRMADA':'',a.observaciones].filter(Boolean).join('\n');
+  }).join('\n────────\n'))])];
+  const wb=XLSX.utils.book_new(),ws=XLSX.utils.aoa_to_sheet(data);
+  ws['!cols']=[{wch:6},{wch:35},{wch:21},{wch:25},{wch:18},...dates.map(()=>({wch:34}))];
+  ws['!rows']=data.map((row,i)=>({hpt:i?Math.min(180,Math.max(28,((row.slice(5).join(' ').match(/\n/g)||[]).length+1)*16)):32}));
+  ws['!autofilter']={ref:'A1:'+XLSX.utils.encode_col(header.length-1)+Math.max(1,data.length)};
+  XLSX.utils.book_append_sheet(wb,ws,'Actividades');
+  XLSX.writeFile(wb,'Actividades_'+(group?'grupales':'individuales')+'_'+month+'.xlsx');status.textContent='Archivo descargado.';
+ }catch(e){status.textContent=e.message;}
+}
+async function v166LoadExportPeople(){
+ if(!v166IsAdmin())return;
+ try{const r=await v166Call('v166ViewMonth',[TOKEN,v166Month(new Date())]);const select=v166El('v166ExportPerson');select.replaceChildren();
+ (r.personas||[]).forEach(u=>select.add(new Option(u.nombre+' · '+u.curp,u.curp)));
+ }catch(e){v166El('v166ExportStatus').textContent=e.message;}
+}
+function v166OpenViewer(btn){if(!v166IsAdmin())return;abrirModulo('v166Viewer',btn);v166LoadViewer();}
+async function v166LoadViewer(){
+ const month=v166Month(v166ViewDate),status=v166El('v166ViewerStatus');status.textContent='Consultando actividades...';
+ try{const r=await v166Call('v166ViewMonth',[TOKEN,month]);v166ViewRows=r.registros||[];v166ViewPeople=r.personas||[];status.textContent='';v166RenderViewer();}
+ catch(e){status.textContent=e.message;}
+}
+function v166ShiftMonth(n){v166ViewDate=new Date(v166ViewDate.getFullYear(),v166ViewDate.getMonth()+n,1);v166LoadViewer();}
+function v166SetMode(mode){v166ViewMode=mode;v166RenderViewer();}
+function v166RenderViewer(){
+ const month=v166Month(v166ViewDate),host=v166El('v166ViewerCalendar');if(!host)return;
+ v166El('v166ViewerTitle').textContent=v166ViewDate.toLocaleDateString('es-MX',{month:'long',year:'numeric'});
+ host.replaceChildren();['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'].forEach(s=>{const el=document.createElement('strong');el.textContent=s;host.append(el);});
+ const start=new Date(v166ViewDate.getFullYear(),v166ViewDate.getMonth(),1).getDay();
+ for(let i=0;i<start;i++)host.append(document.createElement('span'));
+ const count=new Date(v166ViewDate.getFullYear(),v166ViewDate.getMonth()+1,0).getDate();
+ for(let i=1;i<=count;i++){const date=month+'-'+String(i).padStart(2,'0'),btn=document.createElement('button');btn.type='button';btn.textContent=i;
+ btn.className='v166-date'+(v166Day(v166ViewDate)===date&&v166ViewMode==='dia'?' active':'');
+ if(v166ViewRows.some(r=>r.fecha===date))btn.classList.add('has-events');
+ btn.onclick=()=>{v166ViewDate=new Date(v166ViewDate.getFullYear(),v166ViewDate.getMonth(),i);v166ViewMode='dia';v166RenderViewer();};host.append(btn);}
+ v166RenderViewerTable();
+}
+function v166RenderViewerTable(){
+ const q=v166El('v166ViewerSearch').value.trim().toLocaleLowerCase('es-MX'),day=v166Day(v166ViewDate),host=v166El('v166ViewerTable');host.replaceChildren();
+ const people=new Map(v166ViewPeople.map(p=>[p.curp,p]));
+ const rows=v166ViewRows.filter(a=>(v166ViewMode==='mes'||a.fecha===day)&&[
+ a.nombre,a.curp,a.actividad,a.comparte,people.get(a.curp)?.apellidos||'',a.observaciones].join(' ').toLocaleLowerCase('es-MX').includes(q));
+ v166El('v166ViewerCount').textContent=rows.length+' registros · '+(v166ViewMode==='mes'?'Todo el mes':day);
+ if(!rows.length){host.textContent='No se encontraron actividades para la selección.';return;}
+ const table=document.createElement('table');table.className='v7-table';
+ const head=document.createElement('tr');['Fecha','Nombre completo','CURP','Actividad','Tipo','Compartida por','Disponibilidad'].forEach(x=>{const th=document.createElement('th');th.textContent=x;head.append(th);});table.append(head);
+ rows.forEach(r=>{const tr=document.createElement('tr');[r.fecha,r.nombre,r.curp,r.actividad,r.tipo,r.compartida?r.comparte:'—',r.conflicto?'Conflicto por incidencia':'—'].forEach(v=>{const td=document.createElement('td');td.textContent=v;tr.append(td);});table.append(tr);});host.append(table);
+}
+async function v166SendIncapacity(){
+ const file=v166El('v166IncapacityFile').files[0],status=v166El('v166IncapacityStatus');
+ const start=v166El('v166IncStart').value,end=v166El('v166IncEnd').value||start,dates=[];
+ if(start&&end&&end>=start){const d=new Date(start+'T12:00:00'),last=new Date(end+'T12:00:00');while(d<=last&&dates.length<91){dates.push(v166Day(d));d.setDate(d.getDate()+1);}}
+ if(!file||file.type!=='application/pdf'||!file.name.toLowerCase().endsWith('.pdf')){status.textContent='Selecciona un archivo PDF.';return;}
+ if(file.size>5*1024*1024){status.textContent='Máximo 5 MB.';return;}
+ if(!dates.length||dates.length>90){status.textContent='Selecciona un intervalo válido de máximo 90 días.';return;}
+ status.textContent='Enviando incapacidad...';
+ try{const data=await new Promise((resolve,reject)=>{const reader=new FileReader();reader.onload=()=>resolve(reader.result);reader.onerror=reject;reader.readAsDataURL(file);});
+ const r=await v166Call('v166Incapacity',[TOKEN,dates,data,file.name,v166El('v166IncapacityJustification').value]);status.textContent=r.mensaje;v166El('v166IncapacityFile').value='';cargarInfoVacaciones();
+ }catch(e){status.textContent=e.message;}
+}
+// La comprobación anticipada ayuda a la experiencia; el servidor vuelve a verificar al guardar.
+async function v166CheckShared(){
+ const date=v166El('v4EventDate')?.value;if(!date||!v4Shares.length)return;
+ try{const r=await v166Call('v166Availability',[TOKEN,v4Shares,[date]]);
+ if(r.conflictos?.length)alert('No disponible: '+r.conflictos.map(x=>x.nombre+' — '+x.tipo+' ('+x.fechas.join(', ')+')').join('; '));
+ }catch(e){console.warn('Disponibilidad:',e.message);}
+}
+// El spinner global se reserva para solicitudes iniciadas por el usuario y visibles > 350 ms.
+(function(){
+ const original=window.fetch.bind(window);let pending=0,timer=null;
+ const silent=new Set(['validarSesion','v4Activities','v4Home','v4Notes','v4MyModules','v166ViewMonth','v166Availability','v164SessionList','v11NotificationHistory','v9DismissNotification']);
+ window.fetch=function(input,init){
+  let method='';try{const body=init?.body;if(typeof body==='string')method=JSON.parse(body).method||'';}catch(e){}
+  const show=!silent.has(method);if(show){pending++;if(!timer)timer=setTimeout(()=>{timer=null;if(pending){const el=v166El('v4GlobalBusy');if(el)el.hidden=false;}},350);}
+  return original(input,init).finally(()=>{if(show){pending=Math.max(0,pending-1);if(!pending){clearTimeout(timer);timer=null;const el=v166El('v4GlobalBusy');if(el)el.hidden=true;}}});
+ };
+})();
+
+</script>
 </body>
 </html>
