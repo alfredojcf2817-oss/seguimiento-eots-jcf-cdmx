@@ -876,7 +876,7 @@
       <p>Ingresa con tu CURP y clave de acceso.</p>
 
       <label>CURP</label>
-      <input type="text" id="curpLogin" placeholder="INGRESA TU CURP">
+      <input type="text" id="curpLogin" maxlength="18" autocapitalize="characters" oninput="this.value=this.value.toLocaleUpperCase('es-MX')" placeholder="INGRESA TU CURP">
 
       <label>Clave</label>
       <input type="password" id="claveLogin" placeholder="Ingresa tu clave">
@@ -933,7 +933,7 @@
       <button id="btnV10DriveAudit" class="menu-btn" style="display:none" onclick="v10OpenDriveAudit(this)">Control de documentos en Drive</button>
       <button id="btnMiPerfil" class="menu-btn" style="display:none" onclick="v3OpenProfile(this)">Mi información personal</button>
       <button id="btnSintaxis" class="menu-btn" style="display:none" onclick="v3OpenSyntax(this)">Sintaxis de documentos de carga EOTs</button>
-      <div id="modulosPersonalizadosMenu"></div></div>
+      <button id="btnV164Sessions" class="menu-btn" style="display:none" onclick="v164OpenSessions(this)">Tiempo de sesión</button><div id="modulosPersonalizadosMenu"></div></div>
 <nav id="v11GroupedMenu" aria-label="Módulos agrupados"></nav>
       <button class="logout-btn" onclick="cerrarSesion()">Cerrar sesión</button>
     </div>
@@ -1153,6 +1153,7 @@
     </dl>
   </section>
 </div></div>
+<div id="v164Sessions" class="modulo"><div class="card"><h2>Tiempo de sesión</h2><p>Administra la duración de las sesiones del personal activo. Al guardar un cambio, se invalidarán las sesiones actuales de los usuarios afectados.</p><label class="v164-check"><input type="checkbox" id="v164Homologado" onchange="v164RenderSessions()"> Tiempo de sesión homologado</label><div id="v164Bulk" hidden><label>Duración para todo el personal activo</label><select id="v164BulkDuration"></select><button class="btn-primary" onclick="v164SaveBulk()">Aplicar a todos</button></div><div id="v164SessionStatus" role="status"></div><div id="v164SessionList" style="overflow-x:auto"></div><div id="v165Actions" style="margin-top:16px;display:flex;align-items:center;gap:12px;flex-wrap:wrap"><button class="btn-primary" id="v165SaveAll" onclick="v165SavePending()" disabled>Guardar cambios</button><span id="v165PendingCount" aria-live="polite">Sin cambios pendientes</span></div></div></div>
 <div id="v3Admin" class="modulo"><div class="card"><h2>Administración de usuarios</h2><p>Usuarios y solicitudes pendientes de validación.</p><button class="btn-primary" onclick="v4NewUser()">Agregar usuario</button><div id="v3AdminMsg"></div><h3>Solicitudes pendientes</h3><div id="v3Pending"></div><h3>Usuarios registrados</h3><input id="v3UserSearch" placeholder="Buscar por nombre o CURP" oninput="v3RenderUsers()"><div id="v3UserTable" style="overflow:auto"></div><div id="v4UserModal" class="v4-modal" hidden><div class="v4-dialog"><button onclick="v4CloseUser()" style="float:right">✕</button><h3 id="v3UserFormTitle">Agregar usuario</h3><div id="v3UserForm"></div><button class="btn-primary" onclick="v3SaveAdminUser()">Guardar usuario</button></div></div></div></div>
       <div id="v3Profile" class="modulo"><div class="card"><h2>Mi información personal</h2><p>Los cambios se envían a validación de la Dirección Estatal; no se aplican inmediatamente.</p><div id="v3ProfileForm"></div><button class="btn-primary" onclick="v3SendProfile()">Enviar para validación</button><div id="v3ProfileMsg"></div></div></div>
       <div id="v3Syntax" class="modulo"><div class="card"><h2>Sintaxis de documentos de carga EOTs</h2><div class="v4-tags"><button class="btn-primary" onclick="v4SyntaxTab('nuevo')">Agregar sintaxis nuevo documento</button><button class="btn-primary" onclick="v4SyntaxTab('lista')">Visualizador de sintaxis existentes</button></div><div id="v4SyntaxNew"><label>Nombre del documento a cargar</label><input id="v3DocName" placeholder="Ej. Acuse de entrega"><label>Variable de la hoja usuarios</label><select id="v3SyntaxVariable"></select><button class="btn-primary" onclick="v3AddVariable()">Agregar variable</button><button class="btn-primary" onclick="v3AddText('_')">Agregar _</button><button class="btn-primary" onclick="v3AddText(' ')">Agregar espacio</button><label>Sintaxis resultante (puedes editarla)</label><textarea id="v3SyntaxText" rows="3" placeholder="{{Nombre}}_{{Apellido Paterno}}"></textarea><div class="v161-syntax-folder">
@@ -1436,6 +1437,7 @@
           localStorage.setItem("TOKEN_EOTS", TOKEN);
           localStorage.setItem("USUARIO_EOTS", JSON.stringify(USUARIO));
 
+          v164StartGuard();
           mostrarApp();
         })
         .withFailureHandler(function(error) {
@@ -1455,6 +1457,7 @@
 
           USUARIO = res.usuario;
           localStorage.setItem("USUARIO_EOTS", JSON.stringify(USUARIO));
+          v164StartGuard();
           mostrarApp();
         })
         .withFailureHandler(function() {
@@ -1475,6 +1478,7 @@
       const babienAutorizado = USUARIO.nivel === '1' || USUARIO.nivel === '2';
       document.getElementById('btnBabien').style.display = babienAutorizado ? 'block' : 'none';
       document.getElementById('btnGestionModulos').style.display = USUARIO.nivel === '1' ? 'block' : 'none';
+      document.getElementById('btnV164Sessions').style.display = String(USUARIO.nivel)==='1' ? 'block' : 'none';
       document.getElementById('btnAdminVacaciones').style.display = babienAutorizado ? 'block' : 'none';
       document.getElementById('btnUsuariosAdmin').style.display=babienAutorizado?'block':'none';
       document.getElementById('btnMiPerfil').style.display=['1','2','3'].includes(String(USUARIO.nivel))?'block':'none';
@@ -1520,6 +1524,7 @@
 
       localStorage.removeItem("TOKEN_EOTS");
       localStorage.removeItem("USUARIO_EOTS");
+      v164StopGuard();
 
       document.getElementById("appView").style.display = "none";
       document.getElementById("loginView").style.display = "flex";
@@ -2490,14 +2495,14 @@ const V11_MODULE_DEFAULTS={
   documentos:'Documentos',recursos:'Documentos',vacaciones:'Personal',v3Profile:'Personal',
   babien:'Herramientas',v4Notes:'Herramientas',directorioDrives:'Herramientas',
   v4Role:'Herramientas',v4Calendar:'Herramientas',gestionModulos:'Administrador',v13Settings:'Administrador',
-  v3Admin:'Administrador',v3Syntax:'Administrador',adminVacaciones:'Seguimiento',v9DriveControl:'Seguimiento'
+  v3Admin:'Administrador',v3Syntax:'Administrador',v164Sessions:'Administrador',adminVacaciones:'Seguimiento',v9DriveControl:'Seguimiento'
 };
 const V11_FUNCTION_IDS={
   abrirAtencionC:'atencionC',abrirOficinaOV:'oficinaOV',abrirBuscadorTarjetas:'buscadorTarjetas',
   abrirDocumentos:'documentos',abrirRecursos:'recursos',abrirVacaciones:'vacaciones',
   v3OpenProfile:'v3Profile',abrirBaBien:'babien',v4OpenNotes:'v4Notes',
   abrirDirectorioDrives:'directorioDrives',v4OpenRole:'v4Role',v4OpenCalendar:'v4Calendar',
-  abrirGestionModulos:'gestionModulos',v13OpenSettings:'v13Settings',v3OpenAdmin:'v3Admin',v3OpenSyntax:'v3Syntax',
+  abrirGestionModulos:'gestionModulos',v13OpenSettings:'v13Settings',v3OpenAdmin:'v3Admin',v3OpenSyntax:'v3Syntax',v164OpenSessions:'v164Sessions',
   abrirAdminVacaciones:'adminVacaciones',v10OpenDriveAudit:'v9DriveControl'
 };
 let v11AuthorizedModules=null;
@@ -3340,5 +3345,83 @@ new MutationObserver(v162RefreshNav).observe(document.querySelector('.content'),
 v162RefreshNav();
 if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}
 </script>
+
+<script>
+/* V16.4 — Administración de vigencia. Sin cambios en módulos anteriores. */
+const V164_TIMES=[['60','60 min'],['120','2 hrs'],['180','3 hrs'],['240','4 hrs'],['480','8 hrs'],['1440','24 hrs'],['indeterminado','Indeterminado']];
+let v164People=[],v164GuardTimer=null,v164Checking=false;
+let v165Pending=new Map();
+function v164StopGuard(){if(v164GuardTimer)clearInterval(v164GuardTimer);v164GuardTimer=null;}
+function v164Expire(){v164StopGuard();localStorage.removeItem('TOKEN_EOTS');localStorage.removeItem('USUARIO_EOTS');TOKEN='';USUARIO=null;window.location.reload();}
+function v164CheckSession(){
+ if(!TOKEN||v164Checking||document.hidden)return;
+ v164Checking=true;
+ google.script.run.withSuccessHandler(r=>{v164Checking=false;if(!r||!r.ok){v164Expire();return;}if(r.expiraEn&&Date.now()>=r.expiraEn)v164Expire();})
+ .withFailureHandler(()=>{v164Checking=false;/* Error de red no significa sesión vencida. */}).validarSesion(TOKEN);
+}
+function v164StartGuard(){v164StopGuard();v164GuardTimer=setInterval(v164CheckSession,30000);}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&TOKEN)v164CheckSession();});
+window.addEventListener('pageshow',()=>{if(TOKEN)v164CheckSession();});
+function v164Options(select,value){select.replaceChildren();V164_TIMES.forEach(([v,label])=>{const o=document.createElement('option');o.value=v;o.textContent=label;select.append(o);});select.value=value||'360';if(!select.value)select.value='240';}
+function v164OpenSessions(btn){if(String(USUARIO?.nivel)!=='1')return;abrirModulo('v164Sessions',btn);v164LoadSessions();}
+function v164LoadSessions(){
+ const status=document.getElementById('v164SessionStatus');status.textContent='Cargando personal activo...';
+ google.script.run.withSuccessHandler(r=>{if(!r?.ok){status.textContent=r?.mensaje||'Error de consulta';return;}v164People=r.usuarios||[];v165Pending.clear();status.textContent='';v164RenderSessions();})
+ .withFailureHandler(e=>{status.textContent=e.message||'No fue posible consultar.';}).v164SessionList(TOKEN);
+}
+function v165UpdateCount(){
+ const count=v165Pending.size;
+ const button=document.getElementById('v165SaveAll');
+ button.disabled=!count||document.getElementById('v164Homologado').checked;
+ document.getElementById('v165PendingCount').textContent=count?`${count} cambio(s) pendiente(s) de guardar`:'Sin cambios pendientes';
+ document.getElementById('v165Actions').hidden=document.getElementById('v164Homologado').checked;
+}
+function v165Change(curp,value){
+ const person=v164People.find(p=>p.curp===curp);if(!person)return;
+ if(value===person.tiempo)v165Pending.delete(curp);else v165Pending.set(curp,value);
+ v165UpdateCount();
+}
+function v164RenderSessions(){
+ const bulk=document.getElementById('v164Homologado').checked;
+ document.getElementById('v164Bulk').hidden=!bulk;
+ const list=document.getElementById('v164SessionList');list.replaceChildren();
+ if(bulk){v164Options(document.getElementById('v164BulkDuration'),'60');v165UpdateCount();return;}
+ const table=document.createElement('table'),head=document.createElement('tr');
+ ['Usuario','Tiempo de sesión'].forEach(x=>{const th=document.createElement('th');th.textContent=x;head.append(th);});table.append(head);
+ v164People.forEach(p=>{
+  const tr=document.createElement('tr');
+  const name=document.createElement('td');name.textContent=p.nombre||p.curp;tr.append(name);
+  const td=document.createElement('td'),select=document.createElement('select');
+  v164Options(select,v165Pending.get(p.curp)||p.tiempo);
+  if(p.tiempo==='360'){const o=document.createElement('option');o.value='360';o.textContent='6 hrs (valor anterior)';select.prepend(o);select.value=v165Pending.get(p.curp)||'360';}
+  select.setAttribute('aria-label','Tiempo de sesión de '+(p.nombre||p.curp));
+  select.onchange=()=>v165Change(p.curp,select.value);
+  td.append(select);tr.append(td);table.append(tr);
+ });list.append(table);v165UpdateCount();
+}
+function v165SavePending(){
+ if(!v165Pending.size)return;
+ const changes=[...v165Pending].map(([curp,tiempo])=>({curp,tiempo}));
+ if(!confirm(`¿Guardar ${changes.length} cambio(s) de duración? Se cerrarán las sesiones activas de esos usuarios.`))return;
+ const btn=document.getElementById('v165SaveAll'),status=document.getElementById('v164SessionStatus');
+ btn.disabled=true;status.textContent='Guardando cambios...';
+ google.script.run.withSuccessHandler(r=>{
+  status.textContent=r?.mensaje||'No se pudieron guardar los cambios.';
+  if(r?.ok){
+   changes.forEach(c=>{const person=v164People.find(p=>p.curp===c.curp);if(person)person.tiempo=c.tiempo;v165Pending.delete(c.curp);});
+   v164RenderSessions();if(changes.some(c=>c.curp===USUARIO?.curp))v164Expire();
+  }else v165UpdateCount();
+ }).withFailureHandler(e=>{status.textContent=e.message||'Error al guardar.';v165UpdateCount();})
+ .v165SessionSaveBatch(TOKEN,changes);
+}
+function v164SaveBulk(){if(!confirm('¿Aplicar este tiempo a TODO el personal activo? Sus sesiones actuales finalizarán.'))return;v164Save(v164People.map(p=>p.curp),document.getElementById('v164BulkDuration').value,document.querySelector('#v164Bulk button'));}
+function v164Save(curps,time,button){
+ const status=document.getElementById('v164SessionStatus');if(!curps.length){status.textContent='No hay usuarios activos.';return;}
+ button.disabled=true;status.textContent='Guardando...';
+ google.script.run.withSuccessHandler(r=>{button.disabled=false;status.textContent=r?.mensaje||'No se pudo guardar.';if(r?.ok){v164People.forEach(p=>{if(curps.includes(p.curp))p.tiempo=time;});v164RenderSessions();if(curps.includes(USUARIO?.curp))v164Expire();}})
+ .withFailureHandler(e=>{button.disabled=false;status.textContent=e.message||'Error al guardar.';}).v164SessionSave(TOKEN,curps,time);
+}
+</script>
+
 </body>
 </html>
