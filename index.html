@@ -915,6 +915,7 @@
 
       <button id="v11HomeBtn" class="menu-btn active" onclick="abrirModulo('inicio', this)">Inicio</button>
 <div id="v11OriginalMenu" hidden>
+      <button id="btnV168Visitas" class="menu-btn" data-module-id="v168Visitas" onclick="v168OpenVisitas(this)">Visitas territoriales</button>
       <button class="menu-btn" onclick="abrirAtencionC(this)">Registro Atención Ciudadana</button>
       <button class="menu-btn" onclick="abrirOficinaOV(this)">Registro Oficina Virtual</button>
       <button class="menu-btn" onclick="abrirDocumentos(this)">Carga de documentos</button>
@@ -935,7 +936,7 @@
       <button id="btnV10DriveAudit" class="menu-btn" style="display:none" onclick="v10OpenDriveAudit(this)">Control de documentos en Drive</button>
       <button id="btnMiPerfil" class="menu-btn" style="display:none" onclick="v3OpenProfile(this)">Mi información personal</button>
       <button id="btnSintaxis" class="menu-btn" style="display:none" onclick="v3OpenSyntax(this)">Sintaxis de documentos de carga EOTs</button>
-      <button id="btnV164Sessions" class="menu-btn" style="display:none" onclick="v164OpenSessions(this)">Tiempo de sesión</button><button id="btnV168Visitas" class="menu-btn" onclick="v168Visitas.show()">Visitas territoriales</button><div id="modulosPersonalizadosMenu"></div></div>
+      <button id="btnV164Sessions" class="menu-btn" style="display:none" onclick="v164OpenSessions(this)">Tiempo de sesión</button><div id="modulosPersonalizadosMenu"></div></div>
 <nav id="v11GroupedMenu" aria-label="Módulos agrupados"></nav>
       <button class="logout-btn" onclick="cerrarSesion()">Cerrar sesión</button>
     </div>
@@ -2518,7 +2519,7 @@ const V11_MODULE_DEFAULTS={
   documentos:'Documentos',recursos:'Documentos',vacaciones:'Personal',v3Profile:'Personal',
   babien:'Herramientas',v4Notes:'Herramientas',directorioDrives:'Herramientas',
   v4Role:'Herramientas',v4Calendar:'Herramientas',gestionModulos:'Administrador',v13Settings:'Administrador',
-  v3Admin:'Administrador',v3Syntax:'Administrador',v164Sessions:'Administrador',v166Viewer:'Seguimiento',adminVacaciones:'Seguimiento',v9DriveControl:'Seguimiento'
+  v3Admin:'Administrador',v3Syntax:'Administrador',v164Sessions:'Administrador',v166Viewer:'Seguimiento',adminVacaciones:'Seguimiento',v9DriveControl:'Seguimiento',v168Visitas:'Seguimiento'
 };
 const V11_FUNCTION_IDS={
   abrirAtencionC:'atencionC',abrirOficinaOV:'oficinaOV',abrirBuscadorTarjetas:'buscadorTarjetas',
@@ -2526,8 +2527,9 @@ const V11_FUNCTION_IDS={
   v3OpenProfile:'v3Profile',abrirBaBien:'babien',v4OpenNotes:'v4Notes',
   abrirDirectorioDrives:'directorioDrives',v4OpenRole:'v4Role',v4OpenCalendar:'v4Calendar',
   abrirGestionModulos:'gestionModulos',v13OpenSettings:'v13Settings',v3OpenAdmin:'v3Admin',v3OpenSyntax:'v3Syntax',v164OpenSessions:'v164Sessions',v166OpenViewer:'v166Viewer',
-  abrirAdminVacaciones:'adminVacaciones',v10OpenDriveAudit:'v9DriveControl'
+  abrirAdminVacaciones:'adminVacaciones',v10OpenDriveAudit:'v9DriveControl',v168OpenVisitas:'v168Visitas'
 };
+function v168OpenVisitas(btn){if(window.v168Visitas){window.v168Visitas.show();}else{alert('No se pudo cargar el módulo Visitas. Verifica visitas_v168.js.');}}
 let v11AuthorizedModules=null;
 function v11RebuildMenu(){
   if(!v11AuthorizedModules)return;
@@ -2555,25 +2557,6 @@ function v11RebuildMenu(){
   });
   nav.replaceChildren();
   V11_SECTION_ORDER.forEach(sec=>{const g=groups.get(sec);if(g.content.children.length)nav.append(g.details);});
-  // V16.8.1: módulo interno siempre visible para usuarios autenticados de niveles 1, 2 y 3.
-  // El catálogo de permisos heredado no incluye este módulo nuevo.
-  const visitBtn=document.getElementById('btnV168Visitas');
-  if(visitBtn){
-    const nivel=String(USUARIO?.nivel||'').trim();
-    if(['1','2','3'].includes(nivel)){
-      let group=nav.querySelector('details[data-section="Seguimiento"]');
-      if(!group){
-        group=document.createElement('details');group.className='v11-group';
-        group.dataset.section='Seguimiento';
-        const title=document.createElement('summary');title.textContent='Seguimiento';
-        const body=document.createElement('div');body.className='v11-group-items';
-        group.append(title,body);nav.append(group);
-      }
-      group.querySelector('.v11-group-items').append(visitBtn);
-      visitBtn.hidden=false;visitBtn.style.removeProperty('display');
-      group.open=true;
-    }else{visitBtn.hidden=true;original.append(visitBtn);}
-  }
   document.getElementById('v11HomeBtn').style.display='block';
   if(!nav.querySelector('details[open]')){const first=nav.querySelector('details');if(first)first.open=true;}
 }
@@ -3620,6 +3603,6 @@ function v167Offline(){const host=v167('v167Area');host.append(v167El('h3','Sinc
 </script>
 
 <script src="./v167_public_offline.js?v=1672" defer></script>
-<script src="./visitas_v168.js?v=1681" defer></script>
+<script src="./visitas_v168.js?v=1683" defer></script>
 </body>
 </html>
