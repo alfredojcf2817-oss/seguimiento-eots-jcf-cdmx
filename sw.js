@@ -1,4 +1,5 @@
-/* V16: PWA shell registration only. No cache of personal data, sessions or API responses. */
-self.addEventListener('install', event => { self.skipWaiting(); });
-self.addEventListener('activate', event => { event.waitUntil(self.clients.claim()); });
-/* Network handling is deliberately left to the browser. */
+const CACHE='eots-v1685-static';
+const ASSETS=['./','./index.html','./v167_public_offline.js','./visitas_v168.js','./manifest.webmanifest','./favicon_eots.svg','./favicon_eots.png','./logo_jcf_blanco.svg','./logo_eots.png'];
+self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting()))});
+self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('eots-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
+self.addEventListener('fetch',event=>{const r=event.request;if(r.method!=='GET'||new URL(r.url).origin!==self.location.origin)return;const u=new URL(r.url);const base=new URL('./',self.location.href).pathname;const local=u.pathname.startsWith(base)?u.pathname.slice(base.length):null;if(local===null||!(local===''||ASSETS.some(a=>a!=='./'&&local===a.slice(2))))return;event.respondWith(fetch(r).then(res=>{if(res.ok){const clone=res.clone();caches.open(CACHE).then(c=>c.put(r,clone))}return res}).catch(()=>caches.match(r).then(res=>res||caches.match('./index.html'))))});
