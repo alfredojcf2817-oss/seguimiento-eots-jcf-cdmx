@@ -804,7 +804,7 @@
   object-fit:contain!important;filter:brightness(0) invert(1)!important;
 }
 
-/* V16.8.5 · Créditos institucionales en todos los módulos */
+/* V16.8.8 · Créditos institucionales en todos los módulos */
 .jcf-institutional-footer{display:flex;flex-direction:column;align-items:center;gap:5px;text-align:center;padding:20px 14px 24px;margin:26px 0 0;border-top:1px solid #e8dfe3;background:#f9f6f7;border-radius:12px;color:#691b31;font-size:12px;line-height:1.5}
 .jcf-institutional-footer strong{font-size:13px}
 .jcf-institutional-footer span{color:#555;max-width:700px}
@@ -863,6 +863,13 @@
 }
 @media(max-width:390px){#appView .content{padding-left:9px!important;padding-right:9px!important}.v12-quick-grid{gap:8px!important}.v162-bottom-nav button{font-size:9px!important}}
 
+/* V16.8.8 - selector de vistas institucional y responsivo */
+.v168-view-tabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 16px;padding:6px;background:#f5f1f2;border:1px solid #e3d9dc;border-radius:14px}
+.v168-view-tabs button{border:0;border-radius:10px;padding:13px 10px;background:transparent;color:#691b31;font-weight:700;cursor:pointer;min-height:44px;font:inherit;font-weight:700}
+.v168-view-tabs button.is-active{background:#691b31;color:white;box-shadow:0 2px 6px #0002}
+.v168-view-tabs button:focus-visible{outline:3px solid #838e5d;outline-offset:2px}
+#v168Map{min-height:340px}
+@media(max-width:560px){.v168-view-tabs{gap:4px;padding:4px}.v168-view-tabs button{font-size:12px;padding:11px 3px}.v168-shell{max-width:100%;min-width:0}}
 </style>
 <style>
 .v4-modal[hidden],.v4-busy[hidden]{display:none!important}.v4-modal{position:fixed;inset:0;z-index:9998;background:#0009;display:flex;align-items:center;justify-content:center;padding:16px}.v4-dialog{background:#fff;border-radius:16px;padding:24px;max-width:850px;width:100%;max-height:90vh;overflow:auto;box-shadow:0 20px 60px #0004}.v4-busy{position:fixed;inset:0;z-index:99999;background:#1119;display:grid;place-items:center}.v4-busy-card{background:white;border-radius:16px;padding:30px;display:flex;align-items:center;gap:18px;color:#701a36}.v4-spinner{display:inline-block;width:34px;height:34px;border:4px solid #ddd;border-top-color:#9d2449;border-radius:50%;animation:v4spin .8s linear infinite}@keyframes v4spin{to{transform:rotate(360deg)}}.v4-tags{display:flex;gap:7px;flex-wrap:wrap;margin:8px 0}.v4-tag{background:#f2dfe6;border:1px solid #b8768d;padding:5px 8px;border-radius:16px}.v4-tag button{border:0;background:transparent;cursor:pointer;margin-left:4px}.v4-calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}.v4-day{border:1px solid #ddd;border-radius:7px;min-height:86px;padding:5px;cursor:pointer;overflow-wrap:anywhere}.v4-day strong{display:block}.v4-day small{display:block;background:#f1e4e8;margin:2px 0;border-radius:4px;padding:2px}.v4-section{margin:15px 0;border-bottom:1px solid #ddd;padding-bottom:15px}.v4-dialog input,.v4-dialog select,.v4-dialog textarea{max-width:100%}@media(max-width:700px){.v4-calendar{gap:2px}.v4-day{min-height:70px;font-size:11px}.v4-day small{font-size:9px}}
@@ -1149,7 +1156,7 @@
     <dl>
       <div><dt>Sistema</dt><dd>Sistema de Seguimiento EOT´s</dd></div>
       <div><dt>Desarrollado por</dt><dd>Oficina Estatal del Programa Jóvenes Construyendo el Futuro en la Ciudad de México</dd></div>
-      <div><dt>Versión</dt><dd>16.8.5</dd></div>
+      <div><dt>Versión</dt><dd>16.8.6</dd></div>
       <div><dt>Año</dt><dd>2026</dd></div>
     </dl>
   </section>
@@ -1365,11 +1372,11 @@
 <label for="v166ViewerSearch">Buscar nombre, apellidos, CURP o actividad</label><input id="v166ViewerSearch" type="search" placeholder="Buscar personal o actividad..." oninput="v166RenderViewerTable()">
 <p id="v166ViewerStatus" role="status"></p><p id="v166ViewerCount"></p><div class="v7-table-wrap" id="v166ViewerTable"></div>
 </div></div>
-<section id="v168Visitas" class="modulo"><div class="v168-shell"><div class="v168-heading"><div><h2>Visitas territoriales</h2><p class="v168-subtitle">Seguimiento y cuestionarios de centros de trabajo</p></div><span class="v168-badge">V16.8.5</span></div><p id="v168Status" role="status" aria-live="polite"></p><div id="v168Area"></div></div></section>
+<section id="v168Visitas" class="modulo"><div class="v168-shell"><div class="v168-heading"><div><h2>Visitas territoriales</h2><p class="v168-subtitle">Seguimiento y cuestionarios de centros de trabajo</p></div><span class="v168-badge">V16.8.8</span></div><p id="v168Status" role="status" aria-live="polite"></p><div id="v168Area"></div></div></section>
 <footer class="jcf-institutional-footer" aria-label="Créditos institucionales">
         <strong>Sistema de Seguimiento EOT´s</strong>
         <span>Desarrollado por la Oficina Estatal del Programa Jóvenes Construyendo el Futuro en la Ciudad de México</span>
-        <small>© 2026 · Versión 16.8.5</small>
+        <small>© 2026 · Versión 16.8.6</small>
       </footer>
     </div>
   </div>
@@ -3573,7 +3580,7 @@ async function v166CheckShared(){
 .v167-nav{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.v167-nav button{background:#f3e7ec;color:#691b31;border:1px solid #e2cad3}.v167-nav button.active{background:#691b31;color:white}.v167-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}.v167-panel{background:white;border:1px solid #e8dce2;border-radius:12px;padding:16px;margin:12px 0}.v167-table{overflow:auto;max-height:480px}.v167-table table{min-width:600px}.v167-muted{font-size:13px;color:#62666b}.v167-actions{display:flex;gap:8px;flex-wrap:wrap}.v167-actions button{background:#691b31;color:white}.v167-warn{background:#fff4df;border-radius:10px;padding:10px;color:#684b15}
 </style>
 <style id="v168Style">
-/* V16.8.5: interfaz institucional, adaptativa, dentro de .content */
+/* V16.8.8: interfaz institucional, adaptativa, dentro de .content */
 #v168Visitas{width:100%;max-width:100%;box-sizing:border-box;margin:0;padding:0;min-height:0;}
 #v168Visitas .v168-shell{max-width:1200px;margin:0 auto;padding:22px clamp(14px,2vw,28px) 26px;min-width:0;background:#fff;border:1px solid #eee5e8;border-radius:16px;box-shadow:0 4px 18px rgba(65,24,39,.05);}
 #v168Visitas .v168-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
@@ -3641,6 +3648,6 @@ function v167Offline(){const host=v167('v167Area');host.append(v167El('h3','Sinc
 </script>
 
 <script src="./v167_public_offline.js?v=1672" defer></script>
-<script src="./visitas_v168.js?v=1685" defer></script>
+<script src="./visitas_v168.js?v=1688" defer></script>
 </body>
 </html>
