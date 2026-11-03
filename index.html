@@ -935,7 +935,7 @@
       <button id="btnV10DriveAudit" class="menu-btn" style="display:none" onclick="v10OpenDriveAudit(this)">Control de documentos en Drive</button>
       <button id="btnMiPerfil" class="menu-btn" style="display:none" onclick="v3OpenProfile(this)">Mi información personal</button>
       <button id="btnSintaxis" class="menu-btn" style="display:none" onclick="v3OpenSyntax(this)">Sintaxis de documentos de carga EOTs</button>
-      <button id="btnV164Sessions" class="menu-btn" style="display:none" onclick="v164OpenSessions(this)">Tiempo de sesión</button><div id="modulosPersonalizadosMenu"></div></div>
+      <button id="btnV164Sessions" class="menu-btn" style="display:none" onclick="v164OpenSessions(this)">Tiempo de sesión</button><button id="btnV168Visitas" class="menu-btn" onclick="v168Visitas.show()">Visitas territoriales</button><div id="modulosPersonalizadosMenu"></div></div>
 <nav id="v11GroupedMenu" aria-label="Módulos agrupados"></nav>
       <button class="logout-btn" onclick="cerrarSesion()">Cerrar sesión</button>
     </div>
@@ -3571,6 +3571,8 @@ async function v166CheckShared(){
 <style>
 .v167-nav{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0}.v167-nav button{background:#f3e7ec;color:#691b31;border:1px solid #e2cad3}.v167-nav button.active{background:#691b31;color:white}.v167-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}.v167-panel{background:white;border:1px solid #e8dce2;border-radius:12px;padding:16px;margin:12px 0}.v167-table{overflow:auto;max-height:480px}.v167-table table{min-width:600px}.v167-muted{font-size:13px;color:#62666b}.v167-actions{display:flex;gap:8px;flex-wrap:wrap}.v167-actions button{background:#691b31;color:white}.v167-warn{background:#fff4df;border-radius:10px;padding:10px;color:#684b15}
 </style>
+<section id="v168Visitas" class="modulo"><div class="card"><h2>Visitas territoriales</h2><p id="v168Status" aria-live="polite"></p><div id="v168Area"></div></div></section>
+<style>.v168-card{border:1px solid #ddd;border-radius:10px;padding:14px;margin:12px 0;background:white}.v168-toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}.v168-toolbar a{padding:10px}.v168-field{display:block;margin:14px 0}.v168-field input,.v168-field textarea{display:block;width:100%;padding:10px;margin-top:5px}.v168-person{display:flex;gap:8px;margin:8px 0}.v168-person input{flex:1;min-width:0}#v168Form fieldset{margin:12px 0;border:1px solid #ddd;border-radius:8px}#v168Form fieldset label{display:block;padding:7px}</style>
 <section id="v167Module" class="modulo"><div class="card">
 <h2>V16.7 · Formularios, Spreadsheets y Dashboard</h2><p class="v167-warn">Entorno de desarrollo: la publicación pública, los archivos adjuntos y la sincronización fragmentada aún no están habilitados. No usar con datos reales hasta completar pruebas.</p>
 <div class="v167-nav"><button onclick="v167Tab('forms',this)">Formularios</button><button onclick="v167Tab('sheets',this)">Spreadsheets</button><button onclick="v167Tab('dash',this)">Dashboard</button><button onclick="v167Tab('attention',this)">Visor de atenciones</button><button onclick="v167Tab('offline',this)">Sin conexión</button></div>
@@ -3598,5 +3600,6 @@ function v167Attention(){const host=v167('v167Area');host.append(v167El('h3','Vi
 function v167Offline(){const host=v167('v167Area');host.append(v167El('h3','Sincronización offline'));host.append(v167El('p','Diseño aprobado: IndexedDB, identificador único, carga fragmentada reanudable, verificación de integridad y confirmación final.'));host.append(v167El('p','La carga offline de archivos NO está activada en este piloto. Se implementará tras completar el protocolo del servidor y las pruebas de reconexión.'))}
 </script>
 
+<script src="./v167_public_offline.js?v=1672" defer></script>
 </body>
 </html>
