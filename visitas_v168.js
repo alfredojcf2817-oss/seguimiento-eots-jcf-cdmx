@@ -1,4 +1,4 @@
-/* V16.8.11 — Visitas Territoriales: interfaz y cola local secuencial */
+/* V16.8.12 — Visitas Territoriales: interfaz y cola local secuencial */
 (()=>{'use strict';
 const $=id=>document.getElementById(id);let visits=[],current=null,syncing=false,mapInstance=null,mapLoading=null;
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -17,9 +17,55 @@ function locationOf(v){const lat=coord(v.lat,-90,90),lng=coord(v.lng,-180,180);r
 function mapsUrl(v){const pos=locationOf(v);const target=pos?pos.join(','):String(v.direccion||'').trim();return target?'https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(target)+'&travelmode=walking':''}
 function clearMap(){if(mapInstance){mapInstance.remove();mapInstance=null}}
 function leafletReady(){if(window.L)return Promise.resolve();if(mapLoading)return mapLoading;mapLoading=new Promise((resolve,reject)=>{const css=document.createElement('link');css.rel='stylesheet';css.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';css.integrity='sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoUqMMzCKvR8=';css.crossOrigin='anonymous';document.head.append(css);const js=document.createElement('script');js.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';js.integrity='sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=';js.crossOrigin='anonymous';js.onload=()=>resolve();js.onerror=()=>reject(Error('No se pudo cargar el mapa. Comprueba tu conexión a internet.'));document.head.append(js)}).catch(e=>{mapLoading=null;throw e});return mapLoading}
-async function showMap(){clearMap();const host=$('v168Area');if(!host)return;const valid=visits.map((v,i)=>({v,i,pos:locationOf(v)})).filter(x=>x.pos);host.innerHTML=tabs('map')+'<div class="v168-toolbar"><button id="v168BackList" type="button">Volver al listado</button><button class="v168-secondary" id="v168MapReload" type="button">Actualizar visitas</button></div><div class="v168-panel"><h3 class="v168-section-title">Mapa de visitas asignadas</h3><p class="v168-meta">Marcadores de las visitas de tu sesión, según latitud y longitud de la hoja Visitas. Verde: realizada · Vino: pendiente.</p><div id="v168Map" role="application" aria-label="Mapa de visitas territoriales" style="height:clamp(340px,60vh,650px);width:100%;border-radius:12px;z-index:0;background:#eee"></div><p id="v168MapNotice" class="v168-meta"></p></div>'; bindTabs();$('v168BackList').onclick=render;$('v168MapReload').onclick=load;const notice=$('v168MapNotice');if(!valid.length){notice.textContent='Ninguna visita tiene coordenadas válidas en las columnas H e I. Revisa la hoja Visitas.';return}notice.textContent=valid.length+' ubicaciones disponibles de '+visits.length+' visitas. '+(valid.length<visits.length?'Las restantes no tienen coordenadas válidas.':'');if(!navigator.onLine&&!window.L){notice.textContent+=' Para cargar el mapa por primera vez se requiere conexión.';return}try{await leafletReady();if(!$('v168Map'))return;const map=L.map('v168Map',{scrollWheelZoom:false});mapInstance=map;L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors'}).addTo(map);const bounds=[];valid.forEach(({v,pos,i})=>{const done=String(v.estatus).trim().toLowerCase()==='realizada';const marker=L.circleMarker(pos,{radius:10,color:done?'#46714a':'#691b31',weight:3,fillColor:done?'#838e5d':'#9d2449',fillOpacity:.92}).addTo(map);const content=document.createElement('div');const title=document.createElement('strong');title.textContent=(v.orden?'#'+v.orden+' · ':'')+(v.sucursal||'Sucursal');content.append(title);const detail=document.createElement('p');detail.textContent=(v.direccion||'')+' · '+(v.estatus||'Pendiente');content.append(detail);const link=document.createElement('a');link.href=mapsUrl(v);link.target='_blank';link.rel='noopener noreferrer';link.textContent='Cómo llegar en Google Maps';content.append(link);if(!done){const b=document.createElement('button');b.type='button';b.textContent='Realizar cuestionario';b.style.cssText='display:block;margin-top:9px;padding:7px';b.onclick=()=>{clearMap();form(v)};content.append(b)}marker.bindPopup(content);bounds.push(pos)});if(bounds.length===1)map.setView(bounds[0],15);else map.fitBounds(bounds,{padding:[30,30],maxZoom:15});requestAnimationFrame(()=>{if(mapInstance===map){map.invalidateSize({pan:false});requestAnimationFrame(()=>{if(mapInstance===map)map.invalidateSize({pan:false})})}});setTimeout(()=>{if(mapInstance===map)map.invalidateSize({pan:false})},300)}catch(e){if(notice)notice.textContent='Mapa no disponible: '+e.message+'. Puedes abrir cada visita en Google Maps desde el listado.'}}
-function tabs(active){return '<nav class="v168-view-tabs" aria-label="Vistas de visitas"><button type="button" data-v168-tab="list" class="'+(active==='list'?'is-active':'')+'" aria-pressed="'+(active==='list')+'">☷ Listado</button><button type="button" data-v168-tab="map" class="'+(active==='map'?'is-active':'')+'" aria-pressed="'+(active==='map')+'">⌖ Mapa</button><button type="button" data-v168-tab="route" class="'+(active==='route'?'is-active':'')+'" aria-pressed="'+(active==='route')+'">↗ Ruta inteligente</button></nav>'}
-function bindTabs(){document.querySelectorAll('[data-v168-tab]').forEach(b=>b.onclick=()=>{const k=b.dataset.v168Tab;if(k==='map')showMap();else if(k==='route')showRoute();else render()})}
+async function showMap(){
+  clearMap();
+  const host=$('v168Area');if(!host)return;
+  const valid=visits.map((v,i)=>({v,i,pos:locationOf(v)})).filter(x=>x.pos);
+  host.innerHTML=tabs('map')+'<div class="v168-toolbar"><button id="v168BackList" type="button">Volver al listado</button><button class="v168-secondary" id="v168MapReload" type="button">Actualizar visitas</button></div><div class="v168-panel"><h3 class="v168-section-title">Mapa de visitas asignadas</h3><p class="v168-meta">Marcadores de las visitas de tu sesión. Verde: realizada · Vino: pendiente.</p><div id="v168MapFrameHost"></div><p id="v168MapNotice" class="v168-meta"></p></div>';
+  bindTabs();$('v168BackList').onclick=render;$('v168MapReload').onclick=load;
+  const notice=$('v168MapNotice');
+  if(!valid.length){notice.textContent='No hay coordenadas válidas en las columnas H e I de la hoja Visitas.';return}
+  notice.textContent=valid.length+' ubicaciones disponibles de '+visits.length+' visitas.';
+  if(!navigator.onLine){notice.textContent+=' Se requiere conexión para visualizar el mapa base.';return}
+  // Aislar Leaflet en un iframe: el CSS general del sistema no puede desplazar sus mosaicos.
+  const iframe=document.createElement('iframe');
+  iframe.title='Mapa interactivo de visitas territoriales';iframe.setAttribute('loading','eager');
+  iframe.setAttribute('sandbox','allow-scripts allow-popups allow-popups-to-escape-sandbox');
+  iframe.style.cssText='display:block;width:100%;height:clamp(340px,60vh,650px);border:0;border-radius:12px;background:#eee';
+  const data=valid.map(({v,i,pos})=>({i,lat:pos[0],lng:pos[1],nombre:String(v.sucursal||'Centro de trabajo'),direccion:String(v.direccion||''),estatus:String(v.estatus||'Pendiente'),orden:String(v.orden||''),url:mapsUrl(v)}));
+  const encoded=JSON.stringify(data).replace(/</g,'\\u003c').replace(/>/g,'\\u003e').replace(/&/g,'\\u0026');
+  const html=`<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><style>html,body,#map{margin:0;width:100%;height:100%;overflow:hidden}body{font:14px system-ui,Arial,sans-serif}#error{position:absolute;inset:12px;display:none;background:#fff;padding:16px;border-radius:8px;z-index:9999}.leaflet-popup-content button{display:block;margin-top:9px;background:#691b31;color:#fff;border:0;border-radius:6px;padding:8px;cursor:pointer}.leaflet-popup-content a{color:#691b31}</style></head><body><div id="map"></div><div id="error"></div><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"><\/script><script>
+  const visits=${encoded};
+  function fail(message){const el=document.getElementById('error');el.textContent=message;el.style.display='block'}
+  try{
+    if(!window.L)throw Error('No se pudo cargar Leaflet. Comprueba tu conexión.');
+    const map=L.map('map',{scrollWheelZoom:false});
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors'}).addTo(map);
+    const bounds=[];
+    visits.forEach(v=>{
+      const done=v.estatus.trim().toLowerCase()==='realizada';
+      const marker=L.circleMarker([v.lat,v.lng],{radius:10,color:done?'#46714a':'#691b31',weight:3,fillColor:done?'#838e5d':'#9d2449',fillOpacity:.92}).addTo(map);
+      const content=document.createElement('div');const title=document.createElement('strong');title.textContent=(v.orden?'#'+v.orden+' · ':'')+v.nombre;content.append(title);
+      const detail=document.createElement('p');detail.textContent=v.direccion+' · '+v.estatus;content.append(detail);
+      if(v.url){const link=document.createElement('a');link.href=v.url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Cómo llegar en Google Maps';content.append(link)}
+      if(!done){const button=document.createElement('button');button.type='button';button.textContent='Realizar cuestionario';button.onclick=()=>parent.postMessage({type:'EOTS_V168_OPEN_VISIT',index:v.i},'*');content.append(button)}
+      marker.bindPopup(content);bounds.push([v.lat,v.lng]);
+    });
+    if(bounds.length===1)map.setView(bounds[0],15);else map.fitBounds(bounds,{padding:[30,30],maxZoom:15});
+    setTimeout(()=>map.invalidateSize(),150);
+  }catch(err){fail('Mapa no disponible: '+err.message)}
+  <\/script></body></html>`;
+  iframe.srcdoc=html;
+  const listener=event=>{
+    if(event.source!==iframe.contentWindow||!event.data||event.data.type!=='EOTS_V168_OPEN_VISIT')return;
+    const index=event.data.index;
+    if(!Number.isInteger(index)||!valid.some(item=>item.i===index)||!visits[index]||String(visits[index].estatus).trim().toLowerCase()==='realizada')return;
+    clearMap();form(visits[index]);
+  };
+  window.addEventListener('message',listener);
+  mapInstance={remove(){window.removeEventListener('message',listener);iframe.remove()}};
+  $('v168MapFrameHost').append(iframe);
+}
 function showRoute(){const ordered=[...visits].sort((a,b)=>String(a.alcaldia||'').localeCompare(String(b.alcaldia||''))||(Number(a.orden)||999999)-(Number(b.orden)||999999));panel(tabs('route')+'<div class="v168-panel"><h3 class="v168-section-title">Ruta inteligente · Orden asignado</h3><p class="v168-meta">Se respeta la secuencia de la columna D de la hoja Visitas. La navegación se abre en Google Maps.</p><div id="v168RouteList" class="v168-grid"></div></div>');bindTabs();const host=$('v168RouteList');if(!ordered.length){host.textContent='No hay visitas asignadas.';return}ordered.forEach(v=>{const row=document.createElement('article');row.className='v168-card';const h=document.createElement('h3');h.textContent=(v.orden?'#'+v.orden+' · ':'')+(v.sucursal||'Centro de trabajo');row.append(h);const d=document.createElement('p');d.className='v168-meta';d.textContent=(v.alcaldia||'')+' · '+(v.direccion||'')+' · '+(v.estatus||'Pendiente');row.append(d);const link=document.createElement('a');link.className='v168-action v168-secondary';link.textContent='Navegar en Google Maps';const url=mapsUrl(v);if(url){link.href=url;link.target='_blank';link.rel='noopener noreferrer'}else{link.textContent='Sin ubicación disponible';link.setAttribute('aria-disabled','true')}row.append(link);host.append(row)})}
 function render(){
  const pend=visits.filter(v=>String(v.estatus).toLowerCase()!=='realizada').length;
