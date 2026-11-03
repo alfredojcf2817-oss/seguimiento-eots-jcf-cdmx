@@ -1,4 +1,4 @@
-/* V16.8.12 — Visitas Territoriales: interfaz y cola local secuencial */
+/* V16.8.14 — Visitas Territoriales: interfaz y cola local secuencial */
 (()=>{'use strict';
 const $=id=>document.getElementById(id);let visits=[],current=null,syncing=false,mapInstance=null,mapLoading=null;
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -9,7 +9,7 @@ const call=(method,...args)=>new Promise(resolve=>{try{google.script.run.withSuc
 function status(s){const el=$('v168Status');if(el)el.textContent=s}
 function panel(html){clearMap();$('v168Area').innerHTML=html}
 function show(btn){if(!USUARIO){alert('Debes iniciar sesión');return}const section=$('v168Visitas');if(!section||!section.closest('#appView .content')){alert('La sección Visitas no está integrada al contenedor del sistema.');return}abrirModulo('v168Visitas',btn||$('btnV168Visitas'));window.scrollTo({top:0,behavior:'instant'});load()}
-async function load(){panel('<div class="v168-panel">Consultando visitas asignadas…</div>');const r=await call('v168VisitList');if(!r.ok){panel('<p>'+escape(r.mensaje)+'</p><button onclick="v168Visitas.local()">Ver visitas descargadas</button>');return}visits=r.visitas;try{localStorage.setItem('EOTS_VISITAS_CACHE_'+USUARIO.curp,JSON.stringify(visits))}catch(e){}render()}
+async function load(){panel('<div class="v168-panel">Consultando visitas asignadas…</div>');const r=await call('v168VisitList');if(!r.ok){panel('<p>'+escape(r.mensaje)+'</p><button onclick="v168Visitas.local()">Ver visitas descargadas</button>');return}visits=Array.isArray(r.visitas)?r.visitas:[];try{localStorage.setItem('EOTS_VISITAS_CACHE_'+USUARIO.curp,JSON.stringify(visits))}catch(e){}try{render()}catch(e){console.error('Visitas: error al dibujar interfaz',e);panel('<div class="v168-panel">No se pudo mostrar el listado: '+escape(e.message)+'<div class="v168-toolbar"><button id="v168Retry">Reintentar</button></div></div>');$('v168Retry').onclick=load}}
 function local(){try{visits=JSON.parse(localStorage.getItem('EOTS_VISITAS_CACHE_'+USUARIO.curp)||'[]')}catch(e){visits=[]}render()}
 // Coordenadas oficiales de la hoja Visitas: H (latitud), I (longitud).
 function coord(value,min,max){const n=Number(String(value??'').trim().replace(',','.'));return Number.isFinite(n)&&n>=min&&n<=max&&String(value??'').trim()!==''?n:null}
@@ -65,6 +65,17 @@ async function showMap(){
   window.addEventListener('message',listener);
   mapInstance={remove(){window.removeEventListener('message',listener);iframe.remove()}};
   $('v168MapFrameHost').append(iframe);
+}
+// Selector de vistas: requerido por render(), showMap() y showRoute().
+function tabs(active){
+ const items=[['list','☷ Listado'],['map','♦ Mapa'],['route','↗ Ruta inteligente']];
+ return '<nav class="v168-view-tabs" aria-label="Vistas de visitas territoriales">'+items.map(([id,label])=>'<button type="button" data-v168-view="'+id+'" class="'+(id===active?'is-active':'')+'" aria-pressed="'+(id===active?'true':'false')+'">'+label+'</button>').join('')+'</nav>';
+}
+function bindTabs(){
+ const root=$('v168Area');if(!root)return;
+ root.querySelectorAll('[data-v168-view]').forEach(button=>{
+  button.onclick=()=>{const view=button.getAttribute('data-v168-view');if(view==='map')showMap();else if(view==='route')showRoute();else render()};
+ });
 }
 function showRoute(){const ordered=[...visits].sort((a,b)=>String(a.alcaldia||'').localeCompare(String(b.alcaldia||''))||(Number(a.orden)||999999)-(Number(b.orden)||999999));panel(tabs('route')+'<div class="v168-panel"><h3 class="v168-section-title">Ruta inteligente · Orden asignado</h3><p class="v168-meta">Se respeta la secuencia de la columna D de la hoja Visitas. La navegación se abre en Google Maps.</p><div id="v168RouteList" class="v168-grid"></div></div>');bindTabs();const host=$('v168RouteList');if(!ordered.length){host.textContent='No hay visitas asignadas.';return}ordered.forEach(v=>{const row=document.createElement('article');row.className='v168-card';const h=document.createElement('h3');h.textContent=(v.orden?'#'+v.orden+' · ':'')+(v.sucursal||'Centro de trabajo');row.append(h);const d=document.createElement('p');d.className='v168-meta';d.textContent=(v.alcaldia||'')+' · '+(v.direccion||'')+' · '+(v.estatus||'Pendiente');row.append(d);const link=document.createElement('a');link.className='v168-action v168-secondary';link.textContent='Navegar en Google Maps';const url=mapsUrl(v);if(url){link.href=url;link.target='_blank';link.rel='noopener noreferrer'}else{link.textContent='Sin ubicación disponible';link.setAttribute('aria-disabled','true')}row.append(link);host.append(row)})}
 function render(){
