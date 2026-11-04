@@ -1,4 +1,4 @@
-/* V16.8.14 — Visitas Territoriales: interfaz y cola local secuencial */
+/* V16.8.15 — Visitas Territoriales: interfaz y cola local secuencial */
 (()=>{'use strict';
 const $=id=>document.getElementById(id);let visits=[],current=null,syncing=false,mapInstance=null,mapLoading=null;
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -27,32 +27,41 @@ async function showMap(){
   if(!valid.length){notice.textContent='No hay coordenadas válidas en las columnas H e I de la hoja Visitas.';return}
   notice.textContent=valid.length+' ubicaciones disponibles de '+visits.length+' visitas.';
   if(!navigator.onLine){notice.textContent+=' Se requiere conexión para visualizar el mapa base.';return}
-  // Aislar Leaflet en un iframe: el CSS general del sistema no puede desplazar sus mosaicos.
+  // MapLibre GL JS renderiza mapas vectoriales en WebGL. OpenFreeMap aporta
+  // un estilo vectorial basado en datos OSM, sin clave API. Servicio externo.
+  // El iframe evita conflictos con el CSS del sistema institucional.
   const iframe=document.createElement('iframe');
-  iframe.title='Mapa interactivo de visitas territoriales';iframe.setAttribute('loading','eager');
+  iframe.title='Mapa vectorial de visitas territoriales';iframe.setAttribute('loading','eager');
   iframe.setAttribute('sandbox','allow-scripts allow-popups allow-popups-to-escape-sandbox');
-  iframe.style.cssText='display:block;width:100%;height:clamp(340px,60vh,650px);border:0;border-radius:12px;background:#eee';
+  iframe.style.cssText='display:block;width:100%;height:clamp(360px,65vh,680px);border:0;border-radius:12px;background:#f1f1f1';
   const data=valid.map(({v,i,pos})=>({i,lat:pos[0],lng:pos[1],nombre:String(v.sucursal||'Centro de trabajo'),direccion:String(v.direccion||''),estatus:String(v.estatus||'Pendiente'),orden:String(v.orden||''),url:mapsUrl(v)}));
   const encoded=JSON.stringify(data).replace(/</g,'\\u003c').replace(/>/g,'\\u003e').replace(/&/g,'\\u0026');
-  const html=`<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"><style>html,body,#map{margin:0;width:100%;height:100%;overflow:hidden}body{font:14px system-ui,Arial,sans-serif}#error{position:absolute;inset:12px;display:none;background:#fff;padding:16px;border-radius:8px;z-index:9999}.leaflet-popup-content button{display:block;margin-top:9px;background:#691b31;color:#fff;border:0;border-radius:6px;padding:8px;cursor:pointer}.leaflet-popup-content a{color:#691b31}</style></head><body><div id="map"></div><div id="error"></div><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"><\/script><script>
+  const html=`<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet"><style>html,body,#map{margin:0;width:100%;height:100%;overflow:hidden}body{font:14px system-ui,Arial,sans-serif}#error{position:absolute;inset:12px;display:none;background:#fff;padding:16px;border-radius:8px;z-index:9999;box-sizing:border-box}.maplibregl-popup-content{max-width:270px;line-height:1.5}.maplibregl-popup-content button{display:block;margin-top:9px;background:#691b31;color:#fff;border:0;border-radius:6px;padding:8px;cursor:pointer}.maplibregl-popup-content a{color:#691b31;display:block;margin-top:8px}.maplibregl-control-container{font-size:12px}</style></head><body><div id="map"></div><div id="error"></div><script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"><\/script><script>
   const visits=${encoded};
-  function fail(message){const el=document.getElementById('error');el.textContent=message;el.style.display='block'}
+  function fail(message){const el=document.getElementById('error');el.textContent=message+' Puedes utilizar los enlaces de Google Maps desde el listado.';el.style.display='block'}
   try{
-    if(!window.L)throw Error('No se pudo cargar Leaflet. Comprueba tu conexión.');
-    const map=L.map('map',{scrollWheelZoom:false});
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors'}).addTo(map);
-    const bounds=[];
+    if(!window.maplibregl)throw Error('No se pudo cargar MapLibre. Comprueba tu conexión.');
+    if(!maplibregl.supported())throw Error('Este navegador no tiene disponible WebGL.');
+    const map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/liberty',center:[-99.1332,19.4326],zoom:10,attributionControl:true});
+    map.addControl(new maplibregl.NavigationControl({showCompass:false}),'top-left');
+    map.scrollZoom.disable();
+    let mapReady=false;
+    map.on('load',()=>{mapReady=true;map.resize()});
+    map.on('error',e=>{if(!mapReady)console.warn('Mapa vectorial: recurso no disponible',e.error||e)});
+    const bounds=new maplibregl.LngLatBounds();
     visits.forEach(v=>{
       const done=v.estatus.trim().toLowerCase()==='realizada';
-      const marker=L.circleMarker([v.lat,v.lng],{radius:10,color:done?'#46714a':'#691b31',weight:3,fillColor:done?'#838e5d':'#9d2449',fillOpacity:.92}).addTo(map);
+      const dot=document.createElement('div');dot.style.cssText='width:20px;height:20px;border-radius:50%;border:3px solid '+(done?'#46714a':'#691b31')+';background:'+(done?'#838e5d':'#9d2449')+';box-shadow:0 2px 5px #0005;cursor:pointer;box-sizing:border-box';
       const content=document.createElement('div');const title=document.createElement('strong');title.textContent=(v.orden?'#'+v.orden+' · ':'')+v.nombre;content.append(title);
       const detail=document.createElement('p');detail.textContent=v.direccion+' · '+v.estatus;content.append(detail);
       if(v.url){const link=document.createElement('a');link.href=v.url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Cómo llegar en Google Maps';content.append(link)}
       if(!done){const button=document.createElement('button');button.type='button';button.textContent='Realizar cuestionario';button.onclick=()=>parent.postMessage({type:'EOTS_V168_OPEN_VISIT',index:v.i},'*');content.append(button)}
-      marker.bindPopup(content);bounds.push([v.lat,v.lng]);
+      new maplibregl.Marker({element:dot,anchor:'center'}).setLngLat([v.lng,v.lat]).setPopup(new maplibregl.Popup({offset:16}).setDOMContent(content)).addTo(map);
+      bounds.extend([v.lng,v.lat]);
     });
-    if(bounds.length===1)map.setView(bounds[0],15);else map.fitBounds(bounds,{padding:[30,30],maxZoom:15});
-    setTimeout(()=>map.invalidateSize(),150);
+    if(visits.length===1)map.setCenter([visits[0].lng,visits[0].lat]),map.setZoom(15);
+    else map.fitBounds(bounds,{padding:45,maxZoom:15,duration:0});
+    new ResizeObserver(()=>map.resize()).observe(document.getElementById('map'));
   }catch(err){fail('Mapa no disponible: '+err.message)}
   <\/script></body></html>`;
   iframe.srcdoc=html;
