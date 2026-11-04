@@ -1,4 +1,4 @@
-/* V16.8.16 — Visitas Territoriales: interfaz y cola local secuencial */
+/* V16.8.18 — Visitas Territoriales: interfaz y cola local secuencial */
 (()=>{'use strict';
 const $=id=>document.getElementById(id);let visits=[],current=null,syncing=false,mapInstance=null,mapLoading=null;
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -11,7 +11,7 @@ function panel(html){clearMap();$('v168Area').innerHTML=html}
 function show(btn){if(!USUARIO){alert('Debes iniciar sesión');return}const section=$('v168Visitas');if(!section||!section.closest('#appView .content')){alert('La sección Visitas no está integrada al contenedor del sistema.');return}abrirModulo('v168Visitas',btn||$('btnV168Visitas'));window.scrollTo({top:0,behavior:'instant'});load()}
 async function load(){panel('<div class="v168-panel">Consultando visitas asignadas…</div>');const r=await call('v168VisitList');if(!r.ok){panel('<p>'+escape(r.mensaje)+'</p><button onclick="v168Visitas.local()">Ver visitas descargadas</button>');return}visits=Array.isArray(r.visitas)?r.visitas:[];try{localStorage.setItem('EOTS_VISITAS_CACHE_'+USUARIO.curp,JSON.stringify(visits))}catch(e){}try{render()}catch(e){console.error('Visitas: error al dibujar interfaz',e);panel('<div class="v168-panel">No se pudo mostrar el listado: '+escape(e.message)+'<div class="v168-toolbar"><button id="v168Retry">Reintentar</button></div></div>');$('v168Retry').onclick=load}}
 function local(){try{visits=JSON.parse(localStorage.getItem('EOTS_VISITAS_CACHE_'+USUARIO.curp)||'[]')}catch(e){visits=[]}render()}
-// Coordenadas oficiales de la hoja Visitas: H (latitud), I (longitud).
+// Coordenadas oficiales de la hoja Visitas: G (latitud), H (longitud).
 function coord(value,min,max){const n=Number(String(value??'').trim().replace(',','.'));return Number.isFinite(n)&&n>=min&&n<=max&&String(value??'').trim()!==''?n:null}
 function locationOf(v){const lat=coord(v.lat,-90,90),lng=coord(v.lng,-180,180);return lat!==null&&lng!==null&&!(lat===0&&lng===0)?[lat,lng]:null}
 function mapsUrl(v){const pos=locationOf(v);const target=pos?pos.join(','):String(v.direccion||'').trim();return target?'https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(target)+'&travelmode=walking':''}
@@ -24,7 +24,7 @@ async function showMap(){
   host.innerHTML=tabs('map')+'<div class="v168-toolbar"><button id="v168BackList" type="button">Volver al listado</button><button class="v168-secondary" id="v168MapReload" type="button">Actualizar visitas</button></div><div class="v168-panel"><h3 class="v168-section-title">Mapa de visitas asignadas</h3><p class="v168-meta">Marcadores de las visitas de tu sesión. Verde: realizada · Vino: pendiente.</p><div id="v168MapFrameHost"></div><p id="v168MapNotice" class="v168-meta"></p></div>';
   bindTabs();$('v168BackList').onclick=render;$('v168MapReload').onclick=load;
   const notice=$('v168MapNotice');
-  if(!valid.length){notice.textContent='No hay coordenadas válidas en las columnas H e I de la hoja Visitas.';return}
+  if(!valid.length){notice.textContent='No hay coordenadas válidas en las columnas G y H de la hoja Visitas.';return}
   notice.textContent=valid.length+' ubicaciones disponibles de '+visits.length+' visitas.';
   if(!navigator.onLine){notice.textContent+=' Se requiere conexión para visualizar el mapa base.';return}
   // MapLibre GL JS renderiza mapas vectoriales en WebGL. OpenFreeMap aporta
@@ -86,7 +86,50 @@ function bindTabs(){
   button.onclick=()=>{const view=button.getAttribute('data-v168-view');if(view==='map')showMap();else if(view==='route')showRoute();else render()};
  });
 }
-function showRoute(){const ordered=[...visits].sort((a,b)=>String(a.alcaldia||'').localeCompare(String(b.alcaldia||''))||(Number(a.orden)||999999)-(Number(b.orden)||999999));panel(tabs('route')+'<div class="v168-panel"><h3 class="v168-section-title">Ruta inteligente · Orden asignado</h3><p class="v168-meta">Se respeta la secuencia de la columna C de la hoja Visitas. La navegación se abre en Google Maps.</p><div id="v168RouteList" class="v168-grid"></div></div>');bindTabs();const host=$('v168RouteList');if(!ordered.length){host.textContent='No hay visitas asignadas.';return}ordered.forEach(v=>{const row=document.createElement('article');row.className='v168-card';const h=document.createElement('h3');h.textContent=(v.orden?'#'+v.orden+' · ':'')+(v.sucursal||'Centro de trabajo');row.append(h);const d=document.createElement('p');d.className='v168-meta';d.textContent=(v.alcaldia||'')+' · '+(v.direccion||'')+' · '+(v.estatus||'Pendiente');row.append(d);const link=document.createElement('a');link.className='v168-action v168-secondary';link.textContent='Navegar en Google Maps';const url=mapsUrl(v);if(url){link.href=url;link.target='_blank';link.rel='noopener noreferrer'}else{link.textContent='Sin ubicación disponible';link.setAttribute('aria-disabled','true')}row.append(link);host.append(row)})}
+// Optimización heurística por distancia geográfica (no tiempo real de caminata).
+function routeDistance(a,b){const R=6371,rad=Math.PI/180,dLat=(b[0]-a[0])*rad,dLon=(b[1]-a[1])*rad,x=Math.sin(dLat/2)**2+Math.cos(a[0]*rad)*Math.cos(b[0]*rad)*Math.sin(dLon/2)**2;return 2*R*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))}
+function routePending(){return visits.filter(v=>String(v.estatus||'').trim().toLowerCase()!=='realizada')}
+function routeOptimize(items,start){
+ const remaining=items.map((v,i)=>({v,i,pos:locationOf(v)})).filter(x=>x.pos);
+ const result=[];let current=start;
+ if(!current&&remaining.length){ // Sin ubicación: usar como inicio el primer centro según orden asignado.
+  remaining.sort((a,b)=>(Number(a.v.orden)||999999)-(Number(b.v.orden)||999999));const first=remaining.shift();result.push(first);current=first.pos;
+ }
+ while(remaining.length){let best=0,dist=Infinity;remaining.forEach((x,i)=>{const d=routeDistance(current,x.pos);if(d<dist){dist=d;best=i}});const next=remaining.splice(best,1)[0];result.push(next);current=next.pos}
+ return result;
+}
+function routeGoogleUrl(ordered,start){
+ if(!ordered.length)return '';
+ const last=ordered[ordered.length-1].pos.join(',');
+ const params=new URLSearchParams({api:'1',destination:last,travelmode:'walking'});
+ if(start)params.set('origin',start.join(','));else if(ordered.length>1)params.set('origin',ordered[0].pos.join(','));
+ const middle=start?ordered.slice(0,-1):ordered.slice(1,-1);
+ // Google Maps puede limitar los puntos intermedios según dispositivo/navegador.
+ if(middle.length)params.set('waypoints',middle.map(x=>x.pos.join(',')).join('|'));
+ return 'https://www.google.com/maps/dir/?'+params.toString();
+}
+function showRoute(){
+ const pending=routePending(),valid=pending.filter(v=>locationOf(v)),missing=pending.length-valid.length;
+ panel(tabs('route')+'<div class="v168-panel"><h3 class="v168-section-title">Ruta inteligente · Visitas pendientes</h3><p class="v168-meta">Se propone un recorrido por proximidad geográfica entre centros de trabajo. No representa el tiempo real a pie ni garantiza la ruta más rápida; Google Maps calcula las indicaciones peatonales.</p><div class="v168-toolbar"><button type="button" id="v168RouteLocation">Usar mi ubicación como inicio</button><button type="button" class="v168-secondary" id="v168RouteDefault">Iniciar en el primer centro asignado</button></div><p id="v168RouteInfo" class="v168-meta" role="status"></p><div id="v168RouteActions" class="v168-toolbar"></div><div id="v168RouteList" class="v168-grid"></div></div>');
+ bindTabs();const info=$('v168RouteInfo'),host=$('v168RouteList'),actions=$('v168RouteActions');
+ function draw(start){
+  const ordered=routeOptimize(pending,start);host.replaceChildren();actions.replaceChildren();
+  if(!pending.length){info.textContent='Todas las visitas asignadas están realizadas.';return}
+  if(!ordered.length){info.textContent='Las visitas pendientes no tienen coordenadas válidas. Revisa las columnas G y H de la hoja Visitas.';return}
+  let total=0,previous=start;for(const x of ordered){if(previous)total+=routeDistance(previous,x.pos);previous=x.pos}
+  info.textContent=ordered.length+' visitas pendientes con ubicación'+(missing?' · '+missing+' sin coordenadas (no incluidas)':'')+' · Distancia en línea recta entre paradas: '+total.toFixed(1)+' km (no es distancia caminando).'+(start?' Inicio: ubicación autorizada.':' Inicio: primer centro por orden asignado.');
+  const all=document.createElement('a');all.className='v168-action';all.textContent='Abrir recorrido completo en Google Maps';all.href=routeGoogleUrl(ordered,start);all.target='_blank';all.rel='noopener noreferrer';actions.append(all);
+  const warning=document.createElement('p');warning.className='v168-meta';warning.textContent='Si Google Maps limita las paradas, utiliza los enlaces individuales para continuar el recorrido.';actions.append(warning);
+  ordered.forEach((x,i)=>{const v=x.v,row=document.createElement('article');row.className='v168-card';const h=document.createElement('h3');h.textContent=(i+1)+'. '+(v.sucursal||'Centro de trabajo');row.append(h);const d=document.createElement('p');d.className='v168-meta';d.textContent=(v.alcaldia||'')+' · '+(v.direccion||'')+' · Folio '+(v.folio||'');row.append(d);const link=document.createElement('a');link.className='v168-action v168-secondary';link.textContent='Navegar a esta visita';link.href=mapsUrl(v);link.target='_blank';link.rel='noopener noreferrer';row.append(link);host.append(row)});
+ }
+ $('v168RouteDefault').onclick=()=>draw(null);
+ $('v168RouteLocation').onclick=()=>{
+  if(!navigator.geolocation){info.textContent='Tu navegador no admite geolocalización. Se mantiene la ruta desde el primer centro.';return}
+  info.textContent='Solicitando autorización para usar tu ubicación…';
+  navigator.geolocation.getCurrentPosition(p=>draw([p.coords.latitude,p.coords.longitude]),()=>{draw(null);info.textContent+=' No se obtuvo tu ubicación; se usó el primer centro como inicio.'},{enableHighAccuracy:true,timeout:12000,maximumAge:60000});
+ };
+ draw(null);
+}
 function render(){
  const pend=visits.filter(v=>String(v.estatus).toLowerCase()!=='realizada').length;
  panel(tabs('list')+'<div class="v168-summary"><div class="v168-stat"><strong>'+visits.length+'</strong><span>Asignadas</span></div><div class="v168-stat"><strong>'+pend+'</strong><span>Pendientes</span></div><div class="v168-stat"><strong>'+(visits.length-pend)+'</strong><span>Realizadas</span></div></div><div class="v168-toolbar"><button id="v168Reload">Actualizar</button><button class="v168-secondary" id="v168MapButton">Ver mapa</button><button class="v168-secondary" id="v168Offline">Guardadas sin conexión</button><button class="v168-secondary" id="v168Sync">Sincronizar</button></div><div id="v168List" class="v168-grid"></div>');

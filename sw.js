@@ -1,4 +1,4 @@
-const CACHE='eots-v16817-static';
+const CACHE='eots-v16818-static';
 const ASSETS=['./','./index.html','./v167_public_offline.js','./visitas_v168.js','./manifest.webmanifest','./favicon_eots.svg','./favicon_eots.png','./logo_jcf_blanco.svg','./logo_eots.png'];
 self.addEventListener('install',event=>{event.waitUntil(caches.open(CACHE).then(c=>c.addAll(ASSETS)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',event=>{event.waitUntil(caches.keys().then(keys=>Promise.all(keys.filter(k=>k.startsWith('eots-')&&k!==CACHE).map(k=>caches.delete(k)))).then(()=>self.clients.claim()))});
