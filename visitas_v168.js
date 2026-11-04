@@ -1,4 +1,4 @@
-/* V16.8.15 — Visitas Territoriales: interfaz y cola local secuencial */
+/* V16.8.16 — Visitas Territoriales: interfaz y cola local secuencial */
 (()=>{'use strict';
 const $=id=>document.getElementById(id);let visits=[],current=null,syncing=false,mapInstance=null,mapLoading=null;
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -41,7 +41,7 @@ async function showMap(){
   function fail(message){const el=document.getElementById('error');el.textContent=message+' Puedes utilizar los enlaces de Google Maps desde el listado.';el.style.display='block'}
   try{
     if(!window.maplibregl)throw Error('No se pudo cargar MapLibre. Comprueba tu conexión.');
-    if(!maplibregl.supported())throw Error('Este navegador no tiene disponible WebGL.');
+    // MapLibre GL JS v4 no expone maplibregl.supported(); el constructor valida WebGL.
     const map=new maplibregl.Map({container:'map',style:'https://tiles.openfreemap.org/styles/liberty',center:[-99.1332,19.4326],zoom:10,attributionControl:true});
     map.addControl(new maplibregl.NavigationControl({showCompass:false}),'top-left');
     map.scrollZoom.disable();
