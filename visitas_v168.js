@@ -1,16 +1,27 @@
-/* V16.8.18 — Visitas Territoriales: interfaz y cola local secuencial */
+/* V16.8.20 — Visitas Territoriales: interfaz y cola local secuencial */
 (()=>{'use strict';
-const $=id=>document.getElementById(id);let visits=[],current=null,syncing=false,mapInstance=null,mapLoading=null;
+const $=id=>document.getElementById(id);let visits=[],current=null,syncing=false,mapInstance=null,mapLoading=null,offlineMode=false;
 const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const db=()=>new Promise((resolve,reject)=>{const r=indexedDB.open('EOTS_VISITAS_V168',1);r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains('envios'))d.createObjectStore('envios',{keyPath:'id'})};r.onsuccess=()=>resolve(r.result);r.onerror=()=>reject(r.error)});
 async function store(mode,fn){const d=await db();return new Promise((res,rej)=>{const t=d.transaction('envios',mode),o=t.objectStore('envios');let req;try{req=fn(o)}catch(e){d.close();rej(e);return}req.onsuccess=()=>res(req.result);req.onerror=()=>rej(req.error);t.oncomplete=()=>d.close()})}
 const all=()=>store('readonly',o=>o.getAll());const put=v=>store('readwrite',o=>o.put(v));const del=id=>store('readwrite',o=>o.delete(id));
-const call=(method,...args)=>new Promise(resolve=>{try{google.script.run.withSuccessHandler(resolve).withFailureHandler(e=>resolve({ok:false,mensaje:e.message}))[method](TOKEN,...args)}catch(e){resolve({ok:false,mensaje:String(e)})}});
+const call=(method,...args)=>new Promise(resolve=>{let finished=false;const timer=setTimeout(()=>finish({ok:false,mensaje:'Tiempo de espera agotado. Comprueba la conexión.'}),25000);function finish(result){if(finished)return;finished=true;clearTimeout(timer);resolve(result)}try{google.script.run.withSuccessHandler(finish).withFailureHandler(e=>finish({ok:false,mensaje:e.message||String(e)}))[method](TOKEN,...args)}catch(e){finish({ok:false,mensaje:String(e)})}});
+const cacheKey=()=>USUARIO&&USUARIO.curp?'EOTS_VISITAS_CACHE_'+USUARIO.curp:'';
+const isDone=v=>String(v.estatus||'').trim().toLowerCase()==='realizada';
+const dateString=d=>{if(!d)return '';const dt=new Date(d);return Number.isNaN(dt.getTime())?String(d):dt.toLocaleString('es-MX',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'})};
+function saveCache(){try{if(cacheKey())localStorage.setItem(cacheKey(),JSON.stringify(visits))}catch(e){status('No se pudo actualizar el respaldo local.')}}
+function offlineBanner(){return '<div class="v168-panel" style="background:#f6f1f2;margin-bottom:12px"><strong>'+ (offlineMode?'Modo offline: solo Visitas territoriales':'Modo online') +'</strong><p class="v168-meta">'+(offlineMode?'Las visitas y fotografías se guardan en este dispositivo. Para sincronizar, vuelve al modo online.':'Puedes consultar nuevas asignaciones y sincronizar visitas.')+'</p><div class="v168-toolbar"><button type="button" id="v168ModeToggle">'+(offlineMode?'Activar modo online':'Activar modo offline')+'</button></div></div>'}
+function bindMode(){const b=$('v168ModeToggle');if(b)b.onclick=()=>offlineMode?goOnline():enableOffline()}
+function onlineLogin(){offlineMode=false;localStorage.removeItem('EOTS_VISITAS_OFFLINE_MODE');document.body.classList.remove('eots-visits-offline');if(typeof cerrarSesionLocal==='function')cerrarSesionLocal()}
+function enableOffline(){if(!USUARIO||!cacheKey())return status('Inicia sesión y descarga tus visitas antes de activar el modo offline.');offlineMode=true;localStorage.setItem('EOTS_VISITAS_OFFLINE_MODE','1');document.body.classList.add('eots-visits-offline');if(typeof v164StopGuard==='function')v164StopGuard();local();}
+async function goOnline(){if(!navigator.onLine){status('Sin conexión. Mantendremos tus visitas disponibles.');return}if(!TOKEN){status('Para actualizar asignaciones es necesario iniciar sesión con Internet.');return}status('Verificando sesión y nuevas asignaciones…');const auth=await call('validarSesion');if(!auth.ok){status('La sesión del servidor venció. Tus visitas locales están protegidas.');const b=$('v168ModeToggle');if(b){b.textContent='Iniciar sesión para sincronizar';b.onclick=onlineLogin}return}const r=await call('v168VisitList');if(!r.ok){status('No se pudieron consultar asignaciones: '+r.mensaje);return}const incoming=Array.isArray(r.visitas)?r.visitas:[];const existing=new Set(visits.map(v=>String(v.folio)));const fresh=incoming.filter(v=>!existing.has(String(v.folio)));let accept=true;if(fresh.length)accept=confirm('Se te han asignado '+fresh.length+' visita(s) nueva(s). ¿Quieres descargar la información?');if(accept){visits=incoming;saveCache()}else{const byFolio=new Map(incoming.map(v=>[String(v.folio),v]));visits=visits.map(v=>byFolio.get(String(v.folio))||v);saveCache()}offlineMode=false;localStorage.removeItem('EOTS_VISITAS_OFFLINE_MODE');document.body.classList.remove('eots-visits-offline');if(typeof v164StartGuard==='function')v164StartGuard();render();status(fresh.length?(accept?'Se descargaron '+fresh.length+' visitas nuevas.':'Las visitas nuevas no se descargaron.'):'Sin asignaciones nuevas.');await sync();}
+function restoreOffline(){if(!USUARIO||!cacheKey())return false;try{const rows=JSON.parse(localStorage.getItem(cacheKey())||'null');if(!Array.isArray(rows))return false}catch(e){return false}offlineMode=true;localStorage.setItem('EOTS_VISITAS_OFFLINE_MODE','1');document.body.classList.add('eots-visits-offline');if(typeof v164StopGuard==='function')v164StopGuard();if(typeof mostrarApp==='function')mostrarApp();setTimeout(()=>{show();local()},0);return true}
+
 function status(s){const el=$('v168Status');if(el)el.textContent=s}
 function panel(html){clearMap();$('v168Area').innerHTML=html}
-function show(btn){if(!USUARIO){alert('Debes iniciar sesión');return}const section=$('v168Visitas');if(!section||!section.closest('#appView .content')){alert('La sección Visitas no está integrada al contenedor del sistema.');return}abrirModulo('v168Visitas',btn||$('btnV168Visitas'));window.scrollTo({top:0,behavior:'instant'});load()}
-async function load(){panel('<div class="v168-panel">Consultando visitas asignadas…</div>');const r=await call('v168VisitList');if(!r.ok){panel('<p>'+escape(r.mensaje)+'</p><button onclick="v168Visitas.local()">Ver visitas descargadas</button>');return}visits=Array.isArray(r.visitas)?r.visitas:[];try{localStorage.setItem('EOTS_VISITAS_CACHE_'+USUARIO.curp,JSON.stringify(visits))}catch(e){}try{render()}catch(e){console.error('Visitas: error al dibujar interfaz',e);panel('<div class="v168-panel">No se pudo mostrar el listado: '+escape(e.message)+'<div class="v168-toolbar"><button id="v168Retry">Reintentar</button></div></div>');$('v168Retry').onclick=load}}
-function local(){try{visits=JSON.parse(localStorage.getItem('EOTS_VISITAS_CACHE_'+USUARIO.curp)||'[]')}catch(e){visits=[]}render()}
+function show(btn){if(!USUARIO){alert('Debes iniciar sesión');return}const section=$('v168Visitas');if(!section||!section.closest('#appView .content')){alert('La sección Visitas no está integrada al contenedor del sistema.');return}abrirModulo('v168Visitas',btn||$('btnV168Visitas'));window.scrollTo({top:0,behavior:'instant'});if(offlineMode||!navigator.onLine)local();else load()}
+async function load(){if(offlineMode||!navigator.onLine){local();return}panel('<div class="v168-panel">Consultando visitas asignadas…</div>');const r=await call('v168VisitList');if(!r.ok){status('No se pudo actualizar: '+r.mensaje);local();return}visits=Array.isArray(r.visitas)?r.visitas:[];saveCache();try{render()}catch(e){console.error('Visitas: error al dibujar interfaz',e);panel('<div class="v168-panel">No se pudo mostrar el listado: '+escape(e.message)+'<div class="v168-toolbar"><button id="v168Retry">Reintentar</button></div></div>');$('v168Retry').onclick=load}}
+function local(){try{visits=JSON.parse(localStorage.getItem(cacheKey())||'[]')}catch(e){visits=[]}render()}
 // Coordenadas oficiales de la hoja Visitas: G (latitud), H (longitud).
 function coord(value,min,max){const n=Number(String(value??'').trim().replace(',','.'));return Number.isFinite(n)&&n>=min&&n<=max&&String(value??'').trim()!==''?n:null}
 function locationOf(v){const lat=coord(v.lat,-90,90),lng=coord(v.lng,-180,180);return lat!==null&&lng!==null&&!(lat===0&&lng===0)?[lat,lng]:null}
@@ -21,7 +32,7 @@ async function showMap(){
   clearMap();
   const host=$('v168Area');if(!host)return;
   const valid=visits.map((v,i)=>({v,i,pos:locationOf(v)})).filter(x=>x.pos);
-  host.innerHTML=tabs('map')+'<div class="v168-toolbar"><button id="v168BackList" type="button">Volver al listado</button><button class="v168-secondary" id="v168MapReload" type="button">Actualizar visitas</button></div><div class="v168-panel"><h3 class="v168-section-title">Mapa de visitas asignadas</h3><p class="v168-meta">Marcadores de las visitas de tu sesión. Verde: realizada · Vino: pendiente.</p><div id="v168MapFrameHost"></div><p id="v168MapNotice" class="v168-meta"></p></div>';
+  host.innerHTML=tabs('map')+'<div class="v168-toolbar"><button id="v168BackList" type="button">Volver al listado</button><button class="v168-secondary" id="v168MapReload" type="button">Actualizar visitas</button><button id="v168LocateMe" type="button">Mostrar mi ubicación</button></div><div class="v168-panel"><h3 class="v168-section-title">Mapa de visitas asignadas</h3><p class="v168-meta">Marcadores de las visitas de tu sesión. Verde: realizada · Vino: pendiente.</p><div id="v168MapFrameHost"></div><p id="v168MapNotice" class="v168-meta"></p></div>';
   bindTabs();$('v168BackList').onclick=render;$('v168MapReload').onclick=load;
   const notice=$('v168MapNotice');
   if(!valid.length){notice.textContent='No hay coordenadas válidas en las columnas G y H de la hoja Visitas.';return}
@@ -48,6 +59,26 @@ async function showMap(){
     let mapReady=false;
     map.on('load',()=>{mapReady=true;map.resize()});
     map.on('error',e=>{if(!mapReady)console.warn('Mapa vectorial: recurso no disponible',e.error||e)});
+    let userMarker=null, accuracyCircle=null;
+    window.addEventListener('message',event=>{
+      if(event.source!==parent || !event.data || event.data.type!=='EOTS_V168_USER_LOCATION')return;
+      const {lat,lng,accuracy}=event.data;
+      if(!Number.isFinite(lat)||!Number.isFinite(lng))return;
+      if(!userMarker){
+        const dot=document.createElement('div');dot.title='Mi ubicación actual';
+        dot.style.cssText='width:19px;height:19px;border-radius:50%;background:#2379df;border:3px solid #fff;box-shadow:0 0 0 3px #2379df55,0 2px 9px #0005;box-sizing:border-box';
+        userMarker=new maplibregl.Marker({element:dot,anchor:'center'}).setLngLat([lng,lat]).setPopup(new maplibregl.Popup({offset:15}).setText('Mi ubicación actual (aproximada)')).addTo(map);
+      }else userMarker.setLngLat([lng,lat]);
+      if(Number.isFinite(accuracy)&&accuracy>0){
+        const steps=48,coords=[],R=6378137,rad=Math.PI/180;
+        for(let i=0;i<=steps;i++){const a=2*Math.PI*i/steps;coords.push([lng+(accuracy*Math.cos(a))/(R*Math.cos(lat*rad))*180/Math.PI,lat+(accuracy*Math.sin(a))/R*180/Math.PI])}
+        const circle={type:'Feature',geometry:{type:'Polygon',coordinates:[coords]},properties:{}};
+        if(map.getSource('user-accuracy'))map.getSource('user-accuracy').setData(circle);
+        else map.once('load',()=>{if(!map.getSource('user-accuracy')){map.addSource('user-accuracy',{type:'geojson',data:circle});map.addLayer({id:'user-accuracy-fill',type:'fill',source:'user-accuracy',paint:{'fill-color':'#2379df','fill-opacity':0.12}});map.addLayer({id:'user-accuracy-outline',type:'line',source:'user-accuracy',paint:{'line-color':'#2379df','line-opacity':0.35,'line-width':1}})}});
+      }
+      map.easeTo({center:[lng,lat],zoom:Math.max(map.getZoom(),14),duration:600});
+    });
+    parent.postMessage({type:'EOTS_V168_MAP_READY'},'*');
     const bounds=new maplibregl.LngLatBounds();
     visits.forEach(v=>{
       const done=v.estatus.trim().toLowerCase()==='realizada';
@@ -65,14 +96,35 @@ async function showMap(){
   }catch(err){fail('Mapa no disponible: '+err.message)}
   <\/script></body></html>`;
   iframe.srcdoc=html;
+  let watchId=null,lastPosition=null,frameReady=false;
+  const locate=$('v168LocateMe');
+  const publishPosition=()=>{if(frameReady&&lastPosition&&iframe.contentWindow)iframe.contentWindow.postMessage({type:'EOTS_V168_USER_LOCATION',...lastPosition},'*')};
+  locate.onclick=()=>{
+    if(watchId!==null){navigator.geolocation.clearWatch(watchId);watchId=null;locate.textContent='Mostrar mi ubicación';notice.textContent='Ubicación en tiempo real detenida.';return}
+    if(!navigator.geolocation){notice.textContent='Tu navegador no admite geolocalización.';return}
+    locate.disabled=true;notice.textContent='Solicitando permiso para mostrar tu ubicación…';
+    let first=true;
+    watchId=navigator.geolocation.watchPosition(p=>{
+      lastPosition={lat:p.coords.latitude,lng:p.coords.longitude,accuracy:p.coords.accuracy};
+      publishPosition();locate.disabled=false;locate.textContent='Detener seguimiento de ubicación';
+      notice.textContent='Punto azul: tu ubicación actual · Precisión aproximada: '+Math.round(p.coords.accuracy)+' m.';
+      first=false;
+    },err=>{
+      locate.disabled=false;locate.textContent='Mostrar mi ubicación';
+      notice.textContent='No se pudo obtener tu ubicación: '+(err.code===1?'permiso denegado':err.code===2?'posición no disponible':'tiempo de espera agotado')+'.';
+      if(watchId!==null){navigator.geolocation.clearWatch(watchId);watchId=null}
+    },{enableHighAccuracy:true,maximumAge:10000,timeout:15000});
+  };
   const listener=event=>{
-    if(event.source!==iframe.contentWindow||!event.data||event.data.type!=='EOTS_V168_OPEN_VISIT')return;
+    if(event.source!==iframe.contentWindow||!event.data)return;
+    if(event.data.type==='EOTS_V168_MAP_READY'){frameReady=true;publishPosition();return}
+    if(event.data.type!=='EOTS_V168_OPEN_VISIT')return;
     const index=event.data.index;
     if(!Number.isInteger(index)||!valid.some(item=>item.i===index)||!visits[index]||String(visits[index].estatus).trim().toLowerCase()==='realizada')return;
     clearMap();form(visits[index]);
   };
   window.addEventListener('message',listener);
-  mapInstance={remove(){window.removeEventListener('message',listener);iframe.remove()}};
+  mapInstance={remove(){if(watchId!==null)navigator.geolocation.clearWatch(watchId);window.removeEventListener('message',listener);iframe.remove()}};
   $('v168MapFrameHost').append(iframe);
 }
 // Selector de vistas: requerido por render(), showMap() y showRoute().
@@ -132,10 +184,10 @@ function showRoute(){
 }
 function render(){
  const pend=visits.filter(v=>String(v.estatus).toLowerCase()!=='realizada').length;
- panel(tabs('list')+'<div class="v168-summary"><div class="v168-stat"><strong>'+visits.length+'</strong><span>Asignadas</span></div><div class="v168-stat"><strong>'+pend+'</strong><span>Pendientes</span></div><div class="v168-stat"><strong>'+(visits.length-pend)+'</strong><span>Realizadas</span></div></div><div class="v168-toolbar"><button id="v168Reload">Actualizar</button><button class="v168-secondary" id="v168MapButton">Ver mapa</button><button class="v168-secondary" id="v168Offline">Guardadas sin conexión</button><button class="v168-secondary" id="v168Sync">Sincronizar</button></div><div id="v168List" class="v168-grid"></div>');
- bindTabs();$('v168Reload').onclick=load;$('v168MapButton').onclick=showMap;$('v168Offline').onclick=queue;$('v168Sync').onclick=sync;
+ panel(offlineBanner()+tabs('list')+'<div class="v168-summary"><div class="v168-stat"><strong>'+visits.length+'</strong><span>Asignadas</span></div><div class="v168-stat"><strong>'+pend+'</strong><span>Pendientes</span></div><div class="v168-stat"><strong>'+(visits.length-pend)+'</strong><span>Realizadas</span></div></div><div class="v168-toolbar"><button id="v168Reload">Actualizar</button><button class="v168-secondary" id="v168MapButton">Ver mapa</button><button class="v168-secondary" id="v168Offline">Guardadas sin conexión</button><button class="v168-secondary" id="v168Sync">Sincronizar</button></div><div id="v168List" class="v168-grid"></div>');
+ bindTabs();bindMode();$('v168Reload').onclick=offlineMode?local:load;$('v168MapButton').onclick=showMap;$('v168Offline').onclick=queue;$('v168Sync').onclick=()=>sync();
  const host=$('v168List');if(!visits.length){host.innerHTML='<div class="v168-panel">No hay visitas asignadas a tu usuario.</div>';return}
- visits.forEach(v=>{const done=String(v.estatus).toLowerCase()==='realizada';const e=document.createElement('article');e.className='v168-card';e.innerHTML='<div class="v168-heading"><h3>'+escape(v.sucursal)+'</h3><span class="v168-badge '+(done?'done':'')+'">'+escape(v.estatus||'Pendiente')+'</span></div><p class="v168-meta">'+escape(v.alcaldia)+' · Orden '+escape(v.orden)+'</p><p class="v168-meta">'+escape(v.direccion)+'</p><p class="v168-meta"><b>Folio sucursal:</b> '+escape(v.folio)+'</p><div class="v168-toolbar"></div>';
+ visits.slice().sort((a,b)=>Number(isDone(a))-Number(isDone(b))||(Number(a.orden)||999999)-(Number(b.orden)||999999)).forEach(v=>{const done=isDone(v);const e=document.createElement('article');e.className='v168-card';e.innerHTML='<div class="v168-heading"><h3>'+escape(v.sucursal)+'</h3><span class="v168-badge '+(done?'done':'')+'">'+escape(v.estatus||'Pendiente')+(done&&v.fechaRealizada?'<small style="display:block;font-size:11px;margin-top:4px">'+escape(dateString(v.fechaRealizada))+'</small>':'')+'</span></div><p class="v168-meta">'+escape(v.alcaldia)+' · Orden '+escape(v.orden)+'</p><p class="v168-meta">'+escape(v.direccion)+'</p><p class="v168-meta"><b>Folio sucursal:</b> '+escape(v.folio)+'</p><div class="v168-toolbar"></div>';
  const b=document.createElement('button');b.textContent=done?'Visita realizada':'Realizar cuestionario';b.disabled=done;b.onclick=()=>form(v);e.lastElementChild.append(b);
  const m=document.createElement('a');m.textContent='Abrir Google Maps';m.className='v168-action v168-secondary';m.target='_blank';m.rel='noopener noreferrer';m.href=mapsUrl(v);if(!m.href||!v.direccion&&!locationOf(v)){m.removeAttribute('href');m.textContent='Ubicación no disponible';m.setAttribute('aria-disabled','true');}e.lastElementChild.append(m);host.append(e)})
 }
@@ -175,8 +227,8 @@ function readPhoto(file){return new Promise((resolve,reject)=>{
  };
  img.src=url;
 })} 
-async function save(e){e.preventDefault();const f=e.currentTarget;try{const data=new FormData(f),a=Object.fromEntries(data.entries());delete a.foto;a.aprendices=[...f.querySelectorAll('.v168-name')].map(x=>x.value.trim()).filter(Boolean);const foto=await readPhoto(f.elements.foto.files[0]);const rec={id:crypto.randomUUID(),fila:current.fila,folio:current.folio,respuestas:a,foto,curp:USUARIO.curp,created:Date.now(),state:'pendiente'};await put(rec);status('Visita guardada en este dispositivo.');render();if(navigator.onLine)sync()}catch(e){status('No se guardó: '+e.message)}}
-async function queue(){const rows=(await all()).filter(x=>x.curp===USUARIO.curp);panel('<div class="v168-panel"><h3 class="v168-section-title">Visitas guardadas localmente</h3><div class="v168-toolbar"><button class="v168-secondary" id="v168Back">Volver</button><button id="v168Sync">Sincronizar</button></div><div id="v168Saved"></div></div>');$('v168Back').onclick=render;$('v168Sync').onclick=sync;$('v168Saved').replaceChildren(...rows.map(r=>{const d=document.createElement('p');d.textContent=r.folio+' · '+r.state+' · '+(r.error||'');return d}))}
-async function sync(){if(syncing||!navigator.onLine||!TOKEN)return;syncing=true;try{const rows=(await all()).filter(x=>x.curp===USUARIO.curp&&x.state!=='confirmado').sort((a,b)=>a.created-b.created);for(const rec of rows){status('Enviando folio '+rec.folio+'...');const r=await call('v168VisitSave',rec);if(r.ok){await del(rec.id);status('Visita '+rec.folio+' confirmada.')}else{rec.state='error';rec.error=r.mensaje||'Sin confirmación';await put(rec);status('Sincronización detenida: '+rec.error);break}}}finally{syncing=false}}
-window.addEventListener('online',()=>{if(USUARIO)sync()});window.v168Visitas={show,local,sync,queue,showMap,showRoute};
+async function save(e){e.preventDefault();const f=e.currentTarget;try{const data=new FormData(f),a=Object.fromEntries(data.entries());delete a.foto;a.aprendices=[...f.querySelectorAll('.v168-name')].map(x=>x.value.trim()).filter(Boolean);const foto=await readPhoto(f.elements.foto.files[0]);const rec={id:crypto.randomUUID(),fila:current.fila,folio:current.folio,respuestas:a,foto,curp:USUARIO.curp,created:Date.now(),state:'pendiente'};await put(rec);status('Visita guardada en este dispositivo.');render();if(navigator.onLine&&!offlineMode)sync()}catch(e){status('No se guardó: '+e.message)}}
+async function queue(){const rows=(await all()).filter(x=>x.curp===USUARIO.curp);panel(offlineBanner()+'<div class="v168-panel"><h3 class="v168-section-title">Visitas guardadas localmente</h3><div class="v168-toolbar"><button class="v168-secondary" id="v168Back">Volver</button><button id="v168Sync">Sincronizar pendientes</button></div><div id="v168Saved"></div></div>');bindMode();$('v168Back').onclick=render;$('v168Sync').onclick=()=>sync();const host=$('v168Saved');rows.forEach(r=>{const d=document.createElement('div');d.className='v168-card';const info=document.createElement('p');info.textContent=r.folio+' · '+r.state+(r.error?' · '+r.error:'');d.append(info);if(r.state==='error'){const retry=document.createElement('button');retry.textContent='Reintentar esta visita';retry.onclick=()=>sync(r.id);d.append(retry)}host.append(d)});if(!rows.length)host.textContent='No hay visitas pendientes.'}
+async function sync(onlyId){if(syncing)return;if(offlineMode||!navigator.onLine){status('Modo offline: las visitas siguen guardadas en este dispositivo.');return}if(!TOKEN){status('Inicia sesión para sincronizar.');return}syncing=true;let sent=0,failed=0;try{const rows=(await all()).filter(x=>x.curp===USUARIO.curp&&x.state!=='confirmado'&&(!onlyId||x.id===onlyId)).sort((a,b)=>a.created-b.created);for(const rec of rows){status('Enviando folio '+rec.folio+'...');const r=await call('v168VisitSave',rec);if(r&&r.ok){await del(rec.id);sent++;const item=visits.find(v=>String(v.folio)===String(rec.folio)&&Number(v.fila)===Number(rec.fila));if(item){item.estatus='Realizada';item.fechaRealizada=r.fechaRealizada||new Date().toISOString();saveCache()}}else{rec.state='error';rec.error=r&&r.mensaje||'Sin confirmación del servidor';await put(rec);failed++;console.warn('Visita pendiente de revisión',rec.folio,rec.error);/* Continuar con los demás registros, sin borrar el fallido. */}}status('Sincronización: '+sent+' enviada(s), '+failed+' con error. Los errores se conservan para reintentar.');if($('v168Saved'))await queue();else if($('v168List'))render()}catch(e){status('Error de sincronización: '+e.message)}finally{syncing=false}}
+window.addEventListener('offline',()=>{if(USUARIO&&!offlineMode&&cacheKey()&&localStorage.getItem(cacheKey()))enableOffline()});window.addEventListener('online',()=>{if(USUARIO&&!offlineMode)sync()});window.v168Visitas={show,local,sync,queue,showMap,showRoute,enableOffline,goOnline,restoreOffline,isOffline:()=>offlineMode};
 })();
